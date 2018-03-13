@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+</head>
+<body>
+	<style>
+		.addMusic_outA{
+			width: 45px;
+			height: 35px;
+			display: inline-block;
+			font-size: 20px;
+			line-height: 30px;
+			text-align: center;
+			padding: 0px;
+			text-decoration: none;
+			color: #FFFFFF;
+			position: absolute;
+			top: 20px;
+			left: 20px;
+		}
+		.addMusic_pageTitle{
+			width: 100%;
+			position: absolute;
+			top: 16px;
+			font-size: 25px;
+			margin: 0;
+			padding: 0;
+			text-align: center;
+			pointer-events: none;
+		}
+			.cloudMusicManagerInfo{
+				width: 100%;
+				height: 81%;
+			}
+			.cloudMusicManagerInfo>.tableDiv{
+				width: 100%;
+				height: calc( 100% - 100px);
+				overflow: auto;
+				position: relative;
+				box-shadow: 0px -3px 3px #E0E0E0;
+			}
+			.cloudMusicManager_addMusic{
+				font-size: 18px;
+			}
+			.cloudMusicManagerInfo>.tableDiv>.table>tbody>tr>td>button{
+				width: 26px;
+				height: 26px;
+				display: inline-block;
+			}
+			
+			.cloudMusicManagerInfo>.tableDiv>.table>tbody>tr>td>button>i.icon-cloud-download{
+				position: relative;
+				left: -2px;
+			}
+			.cloudMusicManagerInfo>.tableDiv>.table>tbody>tr>td>button>i.icon-reorder{
+				position: relative;
+				left: -1px;
+			}
+			.list{
+				width: calc( 100% - 4px );
+				height: auto;
+				overflow-y: auto;
+				margin: 0 auto;
+			}
+			.list>li{
+				width: 100%;
+			}
+			.list>li>b{
+				position: absolute;
+				right: 10px;
+				font-size: 16px;
+				color: #333333;
+				line-height: 42px;
+				width: 100px;
+    			text-align: right;
+    			white-space: nowrap;
+    			overflow: hidden;
+    			text-overflow: ellipsis;
+			}
+			.listButton{
+				width: 600px;
+			    display: inline-block;
+			    position: absolute;
+			    left: 10px;
+			} 
+			.listButton>li {
+			    padding: 4px 12px;
+			    background-color: #FFFFFF;
+			    font-size: 20px;
+			    margin: 3px 8px;
+			    color: #999999;
+			    box-shadow: 0px 0px 2px #333333;
+			    border-radius: 3px;
+			    cursor: pointer;
+			    display: inline-block;
+			}
+			#processvalue{
+				display: inline-block;
+				width: 50px;
+				text-align: left;
+			}
+	</style>
+	<style>
+		.processbar {
+　　		height: 30px;　　　　　　　  
+　　		width: 100px;　　　　　　　　
+　　		border: 4px solid gold;       
+　　		background-color: red;　　  
+　　		color: black;　　　　　　　
+		}
+		progress::-webkit-progress-bar {
+　　		background-color: red;    
+		}
+		progress::-webkit-progress-value {
+　　		background-color: black;  
+		}
+		progress::-moz-progress-bar {
+　　		background-color: black; 
+		}
+	</style>
+	<script id="cloudMusicManagerInfo" type="text/template">
+		<tr>
+			<td musicno="{[musicno]}">{[musicno]}</td>
+			<td>{[music_name]}</td>
+			<td>{[music_singers]}</td>
+			<td class="complete">
+				<progress class="processbar" max="100" value="{[percent]}" style="width: 90px;margin-right: 5px;" gid="{[gid]}"></progress><label id="processvalue">{[percent]}%</label>
+			</td>
+			<td class="status">{[status]}</td>
+			<td>
+				<button class="btn yellow pauseDownLoad" title="暂停下载">
+					<i class="icon-pause"></i>
+				</button>
+				<button class="btn green playDownLoad" title="继续下载">
+					<i class="icon-play">&nbsp;</i>
+				</button>
+				<!-- <button class="btn red stopDownLoad" title="取消下载">
+					<i class="icon-stop">&nbsp;</i>
+				</button> -->
+			</td>
+		</tr>
+	</script>
+	<div>
+		<a class="addMusic_outA btn blue">
+			<i class="icon-arrow-left"></i>
+		</a>
+		<h4 class="addMusic_pageTitle">下载详情</h4>
+	</div>
+	<div class="cloudMusicManagerInfo">
+		<div class="tableDiv div_load" style="margin-top: 80px;">
+			<table class="table scroll">
+				<thead>
+					<tr>
+						<th>编号</th>
+						<th>名称</th>
+						<th>歌手</th>
+						<th>进度</th>
+						<th>状态</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					
+				</tbody>
+			</table>
+		</div>
+		<footer class="listPageNum">
+		</footer>
+	</div>
+	<script>
+		$(function(){
+			$(".addMusic_outA").one("click",function(e){
+				e.stopPropagation();
+				clearInterval(window.timer);
+				window.timer = null;
+				$.toBack($(this).parentU("indexView"));
+			});
+			if(!$.cloudMusicManagerInfo_pageNum)
+				$.cloudMusicManagerInfo_pageNum=1;
+			if(!$.cloudMusicManagerInfo_pageSize)
+				$.cloudMusicManagerInfo_pageSize=10;
+			function toDownLoadInfo(){
+				musicLoadList($.cloudMusicManagerInfo_pageNum,$.cloudMusicManagerInfo_pageSize,function(json){
+					if(!json||!json.result||!json.result.data){
+						clearInterval(window.timer);
+						$(".cloudMusicManagerInfo>.tableDiv>.table>tbody").html("");
+						$.altAuto("暂无数据");
+						$(".tableDiv").removeClass("div_load");
+						return;
+					}else{
+						if(json.result.data.length==0){
+							clearInterval(window.timer);
+						}
+						$.data_currentPageMusic=json.result.data;
+						for(var i=0;i<$.data_currentPageMusic.length;i++){
+							var status;
+							switch ($.data_currentPageMusic[i].status) {
+								case 'complete':
+									status = "下载完成";
+									break
+								case 'active':
+									status = "正在下载";
+									break
+								case 'paused':
+									status = "暂停";
+									break
+								case 'error':
+									status = "下载出错";
+									break
+								case 'removed':
+									status = "任务已经取消";
+									break
+								case 'waiting':
+									status = "等待下载";
+									break
+								default:
+									break
+							}
+							$.data_currentPageMusic[i].status = status;
+						}
+						if(document.getElementById("cloudMusicManagerInfo")){
+							var html=$.fillData(document.getElementById("cloudMusicManagerInfo").innerHTML,$.data_currentPageMusic);
+							$(".cloudMusicManagerInfo>.tableDiv>.table>tbody").html(html);
+							$(".tableDiv").removeClass("div_load");
+						}
+					}
+				});
+			}
+			function loadData(){
+				$(".tableDiv").addClass("div_load");
+				toDownLoadInfo()
+				if(!window.timer){
+					window.timer=setInterval(function(){
+						toDownLoadInfo();
+					},3000)
+				}
+			}
+			loadData()
+			function musicLoadList(page,limit,fn){
+				$.ajax({
+					type:"get",
+					url:$.baseUrl+"/dl/list?offset="+(page-1)*limit+"&limit="+limit,
+					dataType:"json",
+					success:function(json){
+						if(!!fn)
+							fn(json);
+					},
+					error:function(){
+						$.altAuto("无法访问或服务器发生异常");
+					}
+				})
+			}
+			// 继续下载
+			$.tap(".playDownLoad",function(){
+				$.musicno = $(this).parent().parent().children("td").first().html();
+				$.status = $(this).parent().parent().children("td").eq(4).html();
+				if($.status == "暂停"){
+					$.ajax({
+						type:"post",
+						url:$.baseUrl+"/dl/start",
+						dataType:"json",
+						data:{no:$.musicno},
+						success:function(json){
+							if(json.code!=1){
+								$.altAuto(json.msg)
+							}
+						},
+						error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					})
+				}
+				
+			});
+			// 暂停下载
+			$.tap(".pauseDownLoad",function(){
+				$.musicno = $(this).parent().parent().children("td").first().html();
+				$.status = $(this).parent().parent().children("td").eq(4).html();
+				if($.status == "正在下载"){
+					$.ajax({
+						type:"post",
+						url:$.baseUrl+"/dl/pause",
+						dataType:"json",
+						data:{no:$.musicno},
+						success:function(json){
+							if(json.code!=1){
+								$.altAuto(json.msg)
+							}
+						},
+						error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					})
+				}
+				
+			});
+			musicLoadList($.cloudMusicManagerInfo_pageNum,$.cloudMusicManagerInfo_pageSize,function(json){
+				$(".listPageNum").paging(json.result.total,$.cloudMusicManagerInfo_pageNum,$.cloudMusicManagerInfo_pageSize,function(num){
+					$.cloudMusicManagerInfo_pageNum=num;
+				});
+			});
+		})
+	</script>
+</body>
+</html>

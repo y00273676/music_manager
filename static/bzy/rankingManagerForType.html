@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<style>
+			.rankingManagerForType{
+				width: 100%;
+				height: 100%;
+				padding-bottom: 50px;
+    			overflow-y: auto;
+			}
+			.rankingManagerForType>.tableDiv{
+				width: 100%;
+				height: 100%;
+				overflow: auto;
+				position: relative;
+				box-shadow: 0px -3px 3px #E0E0E0;
+			}
+			.rankingManagerForType>.tableDiv>.table>tbody>tr>td>button{
+				width: 26px;
+				height: 26px;
+				display: inline-block;
+			}
+			
+			.rankingManagerForType>.tableDiv>.table>tbody>tr>td>button>i.icon-arrow-up{
+				position: relative;
+				left: -1px;
+			}
+			.rankingManagerForType>.tableDiv>.table>tbody>tr>td>button>i.icon-arrow-down{
+				position: relative;
+				left: -1px;
+			}
+			.rankingManagerForType>.listButton>li.active{
+				color: #FFFFFF;
+				background-color: #337AB7;
+			}
+			.listButton>li.mediaTypeManager{
+				display: none;
+			}
+			.rankingManagerForType>.listButton>li.active~.mediaTypeManager{
+				display: inline-block;
+			}
+			.mediaTypeManagerHTMLDiv{
+				width: 100%;
+				height: 100%;
+			}
+			
+			.mediaTypeManagerHTMLDiv>ul{
+				width: calc( 100% - 4px );
+				height: 100%;
+				overflow-y: auto;
+				margin: 0 auto;
+			}
+			.mediaTypeManagerHTMLDiv>ul>li{
+				width: 100%;
+			}
+			.mediaTypeManagerHTMLDiv>ul>li>i{
+				position: absolute;
+				right: 10px;
+				font-size: 24px;
+				color: #999999;
+				line-height: 42px;
+			}
+			.mediaTypeManagerHTMLDiv>ul>li>i:hover{
+				color: #333333;
+			}
+			.listButton>li{
+				padding: 2px 5px;
+			    background-color: #FFFFFF;
+			    font-size: 15px;
+			    margin: 6px 6px;
+			    color: #999999;
+			    box-shadow: 0px 2px 2px rgba(51, 51, 51, 0.29);
+			    border-radius: 1px;
+			    cursor: pointer;
+			    display: inline-block;
+			}
+			.listButton>li:hover{
+				color: #333333;
+			}
+			
+			.musicTypeManager_form{
+				width: 80%;
+			    display: inline-block;
+			    position: absolute;
+			    top: 20%;
+			    left: 0;
+			    right: 0px;
+			    bottom: 0;
+			    margin: auto;
+			}
+			.musicTypeManager_form>label{
+				line-height: 36px;
+				font-size: 16px;
+				display: block;
+			}
+			.musicTypeManager_form>input{
+				line-height: 32px;
+				font-size: 16px;
+				display: block;
+				width: 100%;
+			}
+			.musicTypeManager_form>select{
+				height: 36px;
+				line-height: 36px;
+				font-size: 16px;
+				display: block;
+				width: 100%;
+			}
+			.musicTypeManager_form>center>button{
+				margin-top: 20px;
+				padding: 10px 30px;
+			}
+			.rankingManagerForType>.listButton{
+				position: relative;
+			}
+			.listButton>li.openAndShrink{
+				width: 25px;
+				border-radius: 50%;
+				position: absolute;
+				right: 5px;
+				bottom: 0px;
+				text-align: center;
+			}
+			.listButton>li.shrink+li+li+li+li+li+li+li+li+li+li+li+li~li{
+				display: none;
+			}
+			.rankingManagerForType>.listButton>li.addMediaType{
+				display: inline-block;
+			}
+			.rankingManagerForType>.listButton>li.addMediaType{
+				display: none;
+			}
+		</style>
+		<script id="rankingManagerForTypeDataTemplate" type="text/template">
+			<tr>
+				<td>{[media_no]}</td>
+				<td>{[media_name]}</td>
+				<td>{[media_actname1]} {[media_actname2]} {[media_actname3]} {[media_actname4]}</td>
+				<td>{[media_click]}</td>
+				<td>
+					<button class="btn orange updateOrderCount" mediaNo="{[media_no]}">
+						<i class="icon-edit"></i>
+					</button>
+				</td>
+			</tr>
+		</script>
+		<script id="mediaTypeManagerHTML" type="text/template">
+			<form class="musicTypeManager_form">
+				<label>
+					类别名称
+				</label>
+				<input required="required" class="inputBox mediaTypeName" />
+				<input class="curid" type="hidden" value="0" />
+				<label>
+					类别说明
+				</label>
+				<input class="inputBox mediaTypeDescription" />
+				<label>
+					类别选项
+				</label>
+				<select class="selectBox mediaTypeLX">
+					<option value="">请选择</option>
+					<option value="0">电影</option>
+					<option value="1">卡拉OK</option>
+					<option value="2">广告</option>
+					<option value="3">电影,卡拉OK</option>
+					<option value="4">电影,广告</option>
+					<option value="5">卡拉OK,广告</option>
+					<option value="6">电影,卡拉OK,广告</option>
+				</select>
+				<center>
+					<button type="submit" class="btn green musicTypeManager_formSubmit">提交</button>
+				</center>
+			</form>
+		</script>
+		<div class="rankingManagerForType">
+			<ul class="listButton">
+			</ul>
+			<div class="tableDiv">
+				
+				<table class="table scroll">
+					<thead>
+						<tr>
+							<th>编号</th>
+							<th>名称</th>
+							<th>歌手</th>
+							<th>点播量</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						
+					</tbody>
+				</table>
+			</div>
+			<footer class="listPageNum">
+			</footer>
+		</div>
+		<script>
+			$(function(){
+				$.tap(".rankingManagerForType>.listButton>li:not(.mediaTypeManager,.addMediaType,.openAndShrink)",function(){
+					$(".rankingManagerForType>.listButton>li.active").removeClass("active");
+					$(this).addClass("active");
+					var type = $(this).attr("type");
+					loadDataCreatePaging(type);
+				});
+				$.tap(".mediaTypeManager",function(){
+					var _this=$(this);
+					_.popPanel("分类编辑",document.getElementById("mediaTypeManagerHTML").innerHTML,"400px","500px");
+					var li=$(".rankingManagerForType>.listButton>li.active");
+					var id=li.attr("musicTypeId");
+					$(".mediaTypeName").attr("readonly","readonly");
+					$(".mediaTypeDescription").attr("readonly","readonly");
+					for(var i in $.data_selectmusicType){
+						if($.data_selectmusicType.hasOwnProperty(i)){
+							var obj = $.data_selectmusicType[i];
+							if(obj.MediaType_ID==id){
+								$(".mediaTypeName").val(obj.MediaType_Name);
+								$(".mediaTypeDescription").val(obj.MediaType_Description);
+								if(!obj.type){
+									if(obj.MediaType_IsMovie=="1"&&obj.MediaType_IsKaraok=="1"&&obj.MediaType_IsAds=="1")
+										obj['type']=6;
+									else if(obj.MediaType_IsKaraok=="1"&&obj.MediaType_IsAds=="1")
+										obj['type']=5;
+									else if(obj.MediaType_IsMovie=="1"&&obj.MediaType_IsAds=="1")
+										obj['type']=4;
+									else if(obj.MediaType_IsMovie=="1"&&obj.MediaType_IsKaraok=="1")
+										obj['type']=3;
+									else if(obj.MediaType_IsAds=="1")
+										obj['type']=2;
+									else if(obj.MediaType_IsKaraok=="1")
+										obj['type']=1;
+									else if(obj.MediaType_IsMovie=="1")
+										obj['type']=0;
+								}
+								$(".mediaTypeLX").val(obj['type']);
+								$(".curid").val(id);
+							}
+						}
+					}
+					$(".musicTypeManager_form").off("submit").on("submit",function(e){
+						if (e && e.preventDefault) 
+							e.preventDefault(); 
+						if(event)
+							event.preventDefault();
+						if(! - [1,]){
+							event.returnValue = false;
+						}
+						var obj={};
+						obj.name=$(".mediaTypeName").val();
+						obj.description=$(".mediaTypeDescription").val();
+						obj.typeid=$(".mediaTypeLX").val();
+						obj.curid=$(".curid").val();
+						if(!$.regTestChinese(obj.name)){
+							$(".mediaTypeName").val("");
+							$.altAuto("请输入正确的类别名称");
+							return;
+						}
+						if(!!obj.description&&!$.regTestChinese(obj.description)){
+							$(".mediaTypeDescription").val("");
+							$.altAuto("请输入正确的类别说明");
+							return;
+						}
+						if((obj.name+"").length>8){
+							$.altAuto("类别名称过长,最长为8个字");
+							return;
+						}
+						if(!!obj.description&&(obj.description+"").length>50){
+							$.altAuto("类别名称过长,最长为50个字");
+							return;
+						}
+						sendAddmusicTypes(JSON.stringify(obj),function(json){
+							if(!!json&&!!json.msg){
+								$.altAuto(json.msg);
+								return;
+							}
+							if(!!json&&json.code=="0"){
+								$.altAuto("操作成功!");
+								$(".musicTypeManager_form")[0].reset();
+								_.popPanelClose();
+								var li=$(".rankingManagerForType>.listButton>li.active");
+								var id=li.attr("musicTypeId");
+								li.attr("type",obj.name).html(obj.name);
+								for(var i in $.data_selectmusicType){
+									if($.data_selectmusicType.hasOwnProperty(i)){
+										var arrObj = $.data_selectmusicType[i];
+										if(arrObj.MediaType_ID==id){
+											arrObj.MediaType_Name=obj.name;
+											arrObj.MediaType_Description=obj.description;
+											arrObj.type=obj.typeid;
+										}
+									}
+								}
+							}
+						});
+					});
+				});
+				$.tap(".addMediaType",function(){
+					var _this=$(this);
+					_.popPanel("添加分类",document.getElementById("mediaTypeManagerHTML").innerHTML,"400px","500px");
+					$(".musicTypeManager_form").off("submit").on("submit",function(e){
+						if (e && e.preventDefault) 
+							e.preventDefault(); 
+						if(event)
+							event.preventDefault();
+						if(! - [1,]){
+							event.returnValue = false;
+						}
+						var obj={};
+						obj.name=$(".mediaTypeName").val();
+						obj.description=$(".mediaTypeDescription").val();
+						obj.typeid=$(".mediaTypeLX").val();
+						obj.curid=0;
+						if(!$.regTestChinese(obj.name)){
+							$(".mediaTypeName").val("");
+							$.altAuto("请输入正确的类别名称");
+							return;
+						}
+						if(!!obj.description&&!$.regTestChinese(obj.description)){
+							$(".mediaTypeDescription").val("");
+							$.altAuto("请输入正确的类别说明");
+							return;
+						}
+						if((obj.name+"").length>8){
+							$.altAuto("类别名称过长,最长为8个字");
+							return;
+						}
+						if(!!obj.description&&(obj.description+"").length>50){
+							$.altAuto("类别名称过长,最长为50个字");
+							return;
+						}
+						sendAddmusicTypes(JSON.stringify(obj),function(json){
+							if(!!json&&!!json.msg){
+								$.altAuto(json.msg);
+								return;
+							}
+							if(!!json&&json.code=="0"){
+								$.altAuto("操作成功!");
+								$(".musicTypeManager_form")[0].reset();
+								_.popPanelClose();
+								obj.curid=json.data;
+								_this.before("<li musicTypeId=\""+obj.curid+"\" type=\""+obj.name+"\">"+obj.name+"</li>");
+								var mediaType={}
+								mediaType.MediaType_ID=obj.curid;
+								mediaType.MediaType_Name=obj.name;
+								mediaType.MediaType_Description=obj.description;
+								mediaType.type=obj.typeid;
+								$.data_selectmusicType.push(mediaType);
+							}
+						});
+					});
+				});
+				$.tap(".updateOrderCount",function(e){
+					e.stopPropagation();
+					var _this = $(this);
+					var num = _this.parent().prev().html();
+					var id = _this.attr("mediaNo");
+					$.createConfirmBoxInput({"title":"点播编辑","content":"请输入要修改的点播量","inputVal":num,"placeholder":"点播量","click":function(){
+						var val=$(".confirmBoxInput>div>input").val();
+						if(!$.regTestNumber(val)){
+							$(".confirmBoxInput>div>input").val("");
+							$.altAuto("点播量只能为数字");
+							$(".confirmBoxInput").addClass("show");
+							return;
+						}
+						if((val+"").length>8){
+							$(".confirmBoxInput>div>input").val("");
+							$.altAuto("点播量最大为8位数字");
+							$(".confirmBoxInput").addClass("show");
+							return;
+						}
+						var type=$(".rankingManagerForType>.listButton>li.active").attr("type");
+						var obj={};
+						obj.media_no=id;
+						obj.media_click=val;
+						sendUpdateOrderCount(JSON.stringify(obj),function(json){
+							if(!!json&&json.code==0){
+								$.altAuto("修改成功!");
+								loadDataCreatePaging(type);
+							}
+						});
+					}});
+				});
+				sendSelectmusicType(function(json){
+					var html="";
+					if(!!json&&!!json.data&&!!json.data.matches){
+						$.data_selectmusicType=json.data.matches;
+						for(var i in json.data.matches){
+							if(json.data.matches.hasOwnProperty(i)){
+								var obj=json.data.matches[i];
+								html+="<li musicTypeId=\""+obj.MediaType_ID+"\" type=\""+obj.MediaType_Name+"\">"+obj.MediaType_Name+"</li>";
+							}
+						}
+					}
+					$(".rankingManagerForType>ul").html(html);
+					$(".rankingManagerForType>.listButton>li:first").click();
+					$(".rankingManagerForType>ul").append("<li class=\"addMediaType\" title=\"新增\"><i class=\"icon-plus\"></i></li>");
+					$(".rankingManagerForType>ul").append("<li class=\"mediaTypeManager\" title=\"管理\"><i class=\"icon-cog\"></i></li>");
+					$(".rankingManagerForType>ul").prepend("<li class=\"openAndShrink shrink\" title=\"开关\"><i class=\"icon-double-angle-down\"></i></li>");
+				});
+				$.tap(".openAndShrink",function(){
+					if($(this).hasClass("open"))
+						$(this).removeClass("open").addClass("shrink").children("i").addClass("icon-double-angle-down").removeClass("icon-double-angle-up");
+					else
+						$(this).removeClass("shrink").addClass("open").children("i").addClass("icon-double-angle-up").removeClass("icon-double-angle-down");
+				});
+				function loadDataCreatePaging(id){
+					$.rankingManagerForType_pageNum=1;
+					$.rankingManagerForType_pageSize=9;
+					initLoadMediaDetailsForType(id);
+                    return;
+					sendSelectMediaTypeFromMediaDetailsCount(id,function(json){
+						if(!!json&&!!json.msg){
+							$.altAuto(json.msg+",暂时无法显示该页数据");
+							return;
+						}
+						$(".listPageNum").paging(json.data,$.rankingManagerForType_pageNum,$.rankingManagerForType_pageSize,function(num){
+							$.rankingManagerForType_pageNum=num;
+							initLoadMediaDetailsForType(id);
+						});
+					});
+				}
+				function initLoadMediaDetailsForType(id){
+					sendSelectMediaDetailsForType(id,$.rankingManagerForType_pageNum,$.rankingManagerForType_pageSize,function(json){
+						if(!!json&&!!json.msg&&json.code!=0){
+							$.altAuto(json.msg+",暂时无法显示该页数据");
+							return;
+						}
+						if(!json||!json.result){
+							$(".rankingManagerForType>.tableDiv>.table>tbody").html("");
+							$.altAuto("暂无数据");
+							$(".tableDiv").removeClass("div_load");
+							return;
+						}
+						if($("#rankingManagerForTypeDataTemplate").length>0){
+							var html=$.fillData(document.getElementById("rankingManagerForTypeDataTemplate").innerHTML,json.result.matches);
+							$(".rankingManagerForType>.tableDiv>.table>tbody").html(html);
+							$(".tableDiv").removeClass("div_load");
+						}
+						$(".listPageNum").paging(json.result.total,$.rankingManagerForType_pageNum,$.rankingManagerForType_pageSize,function(num){
+							$.rankingManagerForType_pageNum=num;
+							initLoadMediaDetailsForType(id);
+						});
+					});
+				}
+				function sendSelectMediaDetailsForType(type,page,psize,fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/medias/bytag?page="+page+"&psize="+psize+"&type="+type,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendSelectMediaTypeFromMediaDetailsCount(type,fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/sql/selectMediaTypeFromMediaDetailsCount?type="+type,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendSelectmusicType(fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/mediatype/list",
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendUpdateOrderCount(data,fn){
+					$.ajax({
+						type:"post",
+						url:$.baseUrl+"/medias/click",
+						data:data,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+	
+				function sendSelectmusicType(fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/mediatype/list",
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendUpdatemusicTypes(data,fn){
+					$.ajax({
+						type:"post",
+						url:$.baseUrl+"/mediatype/update",
+						data: data,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendAddmusicTypes(data,fn){
+					$.ajax({
+						type:"post",
+						url:$.baseUrl+"/sql/addMusicType",
+						data: data,
+						dataType:"json",
+						processData:false,
+		                contentType:false,
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+			});
+		</script>
+	</body>
+</html>

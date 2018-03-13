@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<style>
+			.scpFile_outA{
+				width: 45px;
+			    height: 35px;
+			    display: inline-block;
+			    font-size: 20px;
+			    line-height: 30px;
+			    text-align: center;
+			    padding: 0px;
+			    text-decoration: none;
+			    color: #FFFFFF;
+			    position: absolute;
+			    top: 20px;
+			    left: 20px;
+			}
+			.scpFile_pageTitle{
+				width: 100%;
+				position: absolute;
+				top: 16px;
+				font-size: 25px;
+				margin: 0;
+				padding: 0;
+				text-align: center;
+				pointer-events: none;
+			}
+			.scpFile{
+				width: 100%;
+				height: 100%;
+			}
+			.scpFile>div>ul>li>i{
+				position: absolute;
+			    right: 18px;
+    			line-height: 39px;
+    			color: #CECECE;
+			}
+			.scpFile>div>ul>li.active>i{
+				color: #333333;
+			}
+			.scpFile>div>ul>li>.ipCountSpan{
+				position: absolute;
+				right: 50px;
+			}
+			.scpFile>div>center>button{
+				margin-top: 20px;
+    			padding: 10px 30px;
+    			margin-left: 10px;
+    			margin-right: 10px;
+			}
+			.scpFile>.optionArea{
+			    width: 560px;
+			    height: 560px;
+			    overflow-y: auto;
+			    box-shadow: 0px 0px 5px #C1C1C1;
+			    border-radius: 5px;
+			    display: inline-block;
+			    position: absolute;
+			    left: 50px;
+			    top: 100px;
+			    background-color: #ffffff;
+			}
+			.scpFile>.showResultDiv {
+			    width: 560px;
+			    height: 560px;
+			    box-shadow: 0px 0px 5px #C1C1C1;
+			    border-radius: 5px;
+			    display: inline-block;
+			    position: absolute;
+			    right: 50px;
+			    top: 100px;
+			    overflow-y: auto;
+			}
+		</style>
+		<a class="scpFile_outA btn blue">
+			<i class="icon-arrow-left"></i>
+		</a>
+		<h4 class="scpFile_pageTitle">磁盘均衡</h4>
+		<div class="scpFile">
+			<div class="optionArea">
+				<label class="titleLabel">主服务器：</label>
+				<ul class="listRadius">
+				</ul>
+				<label class="titleLabel">从服务器：</label>
+				<ul class="listRadius">
+				</ul>
+				<center>
+					<button type="button" class="btn green importTxt">比对</button>
+				</center>
+			</div>
+			<div class="showResultDiv">
+				<table class="table scroll">
+					<thead>
+						<tr>
+							<th class="showResultDivTableIp1">ip1</th>
+							<th class="showResultDivTableIp2">ip2</th>
+							<th><button class="btn blue">全部同步</button></th>
+						</tr>
+					</thead>
+					<tbody>
+						
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<script>
+			$(function(){
+				$(".scpFile_outA").one("click",function(e){
+					e.stopPropagation();
+					$.toBack($(this).parentU("indexView"));
+				});
+				$.tap(".mainService",function(){
+					$(".otherService").removeClass("active");
+					if($(this).hasClass("active")){
+						$(this).removeClass("active");
+					}else{
+						if($(".mainService.active").length<2){
+							$(this).addClass("active");
+						}
+					}
+				});
+				$.tap(".otherService",function(){
+					$(".mainService").removeClass("active");
+					if($(this).hasClass("active")){
+						$(this).removeClass("active");
+					}else{
+						if($(".otherService.active").length<2){
+							$(this).addClass("active");
+						}
+					}
+				});
+				sendLoadFileServer(1,function(json){
+					if(!!json&&!!json.data&&!!json.data.matches&&json.data.matches.length>0){
+						var html=$.fillData("<li class=\"mainService\" ip=\"{[FileServer_IpAddress]}\">{[FileServer_IpAddress]}<i class=\"icon-ok\"></i></li>",json.data.matches);
+						$(".scpFile>div>ul:eq(0)").html(html);
+						mainIpCountLoad(".scpFile>div>ul:eq(0)");
+					}
+				});
+				sendLoadFileServer(0,function(json){
+					if(!!json&&!!json.data&&!!json.data.matches&&json.data.matches.length>0){
+						var html=$.fillData("<li class=\"otherService\" ip=\"{[FileServer_IpAddress]}\">{[FileServer_IpAddress]}<i class=\"icon-ok\"></i></li>",json.data.matches);
+						$(".scpFile>div>ul:eq(1)").html(html);
+						mainIpCountLoad(".scpFile>div>ul:eq(1)");
+					}
+				});
+				function mainIpCountLoad(selecter){
+					$(selecter).children("li").each(function(){
+						var _this=$(this);
+						sendLoadFileCount(_this.text()+":"+$.protNo,function(json){
+							if(!!json&&!!json.msg){
+								$.altAuto(json.msg+",暂时无法显示该页数据");
+								return;
+							}
+							if(!!json&&json.code=="0"){
+								var count = json.data;
+								_this.append("<span class=\"ipCountSpan\">"+count+"</span>");
+							}
+						});
+					});
+				}
+				$.tap(".importTxt",function(){
+					var ip1="";
+					var ip2="";
+					if($(".scpFile>div>ul>li.mainService.active").length>0){
+						var mainIp1 = $(".scpFile>div>ul>li.mainService.active:eq(0)").attr("ip");
+						var mainIp2 = $(".scpFile>div>ul>li.mainService.active:eq(1)").attr("ip");
+						ip1=mainIp1;
+						ip2=mainIp2;
+					}
+					if($(".scpFile>div>ul>li.otherService.active").length>0){
+						var otherIp1 = $(".scpFile>div>ul>li.otherService.active:eq(0)").attr("ip");
+						var otherIp2 = $(".scpFile>div>ul>li.otherService.active:eq(1)").attr("ip");
+						ip1=otherIp1;
+						ip2=otherIp2;
+					}
+					sendMatchingDisk(ip1,ip2,function(json){
+						$(".showResultDivTableIp1").html(json.ip1);
+						$(".showResultDivTableIp2").html(json.ip2);
+						var html="";
+						var ip1List=json.ip1ResultDataHave;
+						var ip2List=json.ip2ResultDataHave;
+						var htmlList=[];
+						var count=0;
+						for(var i in ip1List){
+							if(ip1List.hasOwnProperty(i)){
+								html+="<tr><td>"+i+"</td><td></td><td><button class=\"btn blue synchronizationBtn\">同步</button></td></tr>";
+							}
+							count++;
+							if(count>50){
+								htmlList.push(html);
+								html="";
+								count=0;
+							}
+						}
+						for(var i in ip2List){
+							if(ip2List.hasOwnProperty(i)){
+								html+="<tr><td></td><td>"+i+"</td><td><button class=\"btn blue synchronizationBtn\">同步</button></td></tr>";
+							}
+							count++;
+							if(count>50){
+								htmlList.push(html);
+								html="";
+								count=0;
+							}
+						}
+						htmlList.push(html);
+						count=0;
+						$(".showResultDiv>table>tbody").append(htmlList[0]);
+						$(".scpFile").removeClass("div_load");
+					});
+					$(".scpFile").addClass("div_load");
+				});
+				$(".showResultDiv").off("scroll").on("scroll",function(){
+				});
+				function sendLoadFileServer(isMain,fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/fileservers/list?isMain="+isMain,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendMatchingDisk(ip1,ip2,fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/sql/matchingDisk?ip1="+ip1+"&ip2="+ip2,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendLoadFileCount(ip,fn){
+					$.ajax({
+						type:"get",
+						url:"http://"+ip+"/sql/get_file_listSize",
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+			});
+		</script>
+	</body>
+</html>

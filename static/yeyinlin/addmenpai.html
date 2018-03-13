@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+		<style>
+			.ADManagerSelect {
+				width: 100%;
+				height: 100%;
+			}
+			
+			.ADManagerSelect>.tableDiv {
+				width: 100%;
+				height: calc( 100% - 100px);
+				overflow: auto;
+				position: relative;
+				box-shadow: 0px -3px 3px #E0E0E0;
+			}
+			
+			.ADManagerSelect_musicForm {
+				width: 100%;
+				height: 50px;
+				padding: 5px 10px 5px 10px;
+				text-align: right;
+			}
+			
+			.ADManagerSelect_musicForm>input {
+				width: calc( 100% - 300px);
+				height: 40px;
+			}
+			
+			.ADManagerSelect_musicForm>button {
+				width: 100px;
+				height: 40px;
+				outline: none;
+				margin-right: 10px;
+			}
+			
+			.ADManagerSelect_addMusic {
+				font-size: 18px;
+			}
+			
+			.ADManagerSelect>.tableDiv>.table>tbody>tr>td>button {
+				width: 26px;
+				height: 26px;
+				display: inline-block;
+			}
+			
+			.ADManagerSelect>.tableDiv>.table>tbody>tr>td>button>i.icon-edit {
+				position: relative;
+				left: -1px;
+			}
+			
+			.ADManagerSelect>.tableDiv>.table>tbody>tr>td>button>i.icon-reorder {
+				position: relative;
+				left: -1px;
+			}
+			
+			.ADManagerSelect_outA {
+				width: 45px;
+				height: 35px;
+				display: inline-block;
+				font-size: 20px;
+				line-height: 30px;
+				text-align: center;
+				padding: 0px;
+				text-decoration: none;
+				color: #FFFFFF;
+				margin-right: 10px;
+			}
+			
+			.ADManagerSelect>.tableDiv>.table>thead>tr>th>.switch {
+				top: 8px;
+				margin-right: 50px;
+			}
+			
+			.ADManagerSelect>.tableDiv>.table>tbody>tr>td>.switch {
+				top: 8px;
+				margin-right: 50px;
+			}
+			
+			.btn_bs_ad {
+				margin-top: 12px;
+				width: 140px;
+				height: 40px;
+			}
+			
+			.ADsetone_form>div {
+				width: 80%;
+				height: 40px;
+				position: relative;
+				margin-top: 10px;
+				margin-left: 0px;
+				display: block;
+				left: 51px;
+			}
+			
+			.ADsetone_form>div>label {
+				width: 128px;
+				height: 100%;
+				font-size: 16px;
+				text-align: left;
+				padding-right: 20px;
+				line-height: 40px;
+				display: inline-block;
+			}
+			
+			.ADsetone_form>div>input {
+				width: 53%;
+			}
+			
+			.ADsetone_form>div>select {
+				width: 53%;
+				height: 50px;
+			}
+			
+			.check_ad {
+				position: absolute;
+				top: 33px;
+			}
+		</style>
+		<script id="ADManagerSelectDataTemplate" type="text/template">
+			<tr>
+				<td>{[Media_SerialNo]}</td>
+				<td>{[Media_Name]}</td>
+				<td>
+					<input type="checkbox" mediaId="{[Media_SerialNo]}" class="switch ADManagerSelect_switch" />
+				</td>
+			</tr>
+		</script>
+		
+		
+		<div class="ADManagerSelect">
+			
+			
+			<div class="ADManagerSelect_musicForm">
+				<a class="ADManagerSelect_outA btn blue">
+					<i class="icon-arrow-left"></i>
+				</a>
+				<input class="inputBox " type="text" style="visibility: hidden;" placeholder="检索请输入编号、名称、歌手、类型或语种" />
+				<button type="button" class="btn yellow " style="visibility: hidden;">
+					<i class="icon-search"></i>
+				</button>
+				<button type="button" class="btn sky ADManagerSelect_OK">
+					<i class="icon-ok"></i>
+				</button>
+			</div>
+			<div class="tableDiv ">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>广告编号</th>
+							<th>广告名称</th>
+							<th><input type="checkbox" class="switch ADManagerSelect_allChecked" /></th>
+						</tr>
+					</thead>
+					<tbody>
+
+					</tbody>
+				</table>
+			</div>
+
+		</div>
+
+		<script id="ad_type" type="text/template">
+
+			<form class="ADsetone_form">
+				<div id="select_mainname">
+					<label>
+                选择横竖版：</label>
+					<select class="selectBox" id="server_text">
+						<option value="0">横版</option>
+						<option value="1">竖版</option>
+					</select>
+
+				</div>
+
+				<div id="select_mainname">
+					<label>
+                匹配其他：</label>
+					<input type="checkbox" class="switch check_ad" id="otherroomad" />
+				</div>
+				<center>
+					<button type="button" id="btcancel" class="btn green btn_bs_ad">确定</button>
+				</center>
+			</form>
+
+		</script>
+		<script>
+			var stadtype = "0";
+			$(".ADManagerSelect_outA").one("click",function(){
+				$.toBack($(this).parentU("indexView"));
+			});
+			$.tap(".ADManagerSelect>.tableDiv>.table>tbody>tr", function(e) {
+				$(this).find(".ADManagerSelect_switch").click();
+			});
+
+			$.tap(".ADManagerSelect_switch", function(e) {
+				e.stopPropagation();
+			});
+
+			var switchArr = [];
+
+			$.tap(".ADManagerSelect_allChecked", function() {
+				var active = $(this).attr("mk");
+				if(active == "active") {
+					$(".ADManagerSelect_switch").each(function() {
+						$(this)[0].checked = false;
+					});
+					$(this).attr("mk", "");
+				} else {
+					$(".ADManagerSelect_switch").each(function() {
+						$(this)[0].checked = true;
+					});
+					$(this).attr("mk", "active");
+				}
+			});
+
+			$.tap(".ADManagerSelect_OK", function() {
+
+				switchArr.splice(0, switchArr.length);
+				var _this = $(this);
+
+				$(".ADManagerSelect_switch:checked").each(function() {
+					switchArr.push($(this).attr("mediaId"));
+				});
+
+				if(switchArr.length == 0) {
+					mtoast("当前没有选择任何广告");
+					return;
+				}
+
+				_.popPanel("选择门牌类型", document.getElementById("ad_type").innerHTML, "400px", "250px", false);
+				$("#server_text").val($.roomadinfo.MenPaiType_ID);
+				
+				$("#server_text").off("change").on("change", function() {
+					stadtype = $(this).val();
+				});
+
+				$(".btn_bs_ad").click(function() {
+					$.createConfirmBox({
+						"title": "系统提示",
+						"content": "是否确认添加门牌广告?",
+						"click": function() {
+							var roomarr = []
+							var otherroom = ($("#otherroomad")[0].checked) ? "Y" : "N";
+							roomarr.push($.adroomid);
+							sendAD(otherroom, roomarr, stadtype, switchArr);
+						}
+					});
+
+				});
+			});
+
+			initaddad();
+
+			function initaddad() {
+				addadform($.mediaad.matches);
+			}
+
+			function addadform(jsondata) {
+
+				var html = $.fillData(document.getElementById("ADManagerSelectDataTemplate").innerHTML, jsondata);
+
+				$(".ADManagerSelect>.tableDiv>.table>tbody").html(html);
+
+				//$.roomadinfo //匹配默认的值
+				$(".ADManagerSelect_switch").each(function() {
+					
+					var arr = $.roomadinfo.menpaiarr;
+					
+					for(var i = 0; i < arr.length; i++) {
+//						alert(arr[i].MenPaiAdSetting_SerialNo);
+						if(arr[i].MenPaiAdSetting_SerialNo == $(this).attr("mediaId")) {
+							$(this)[0].checked = true;
+						}
+					}
+
+				});
+
+			}
+
+			function sendAD(isall, roomid, type, adinfo) {
+				//					$.adroomid
+
+				var url = $.baseUrl + "/menpai";
+				var strjson = {};
+				strjson.isall = isall;
+				strjson.roomid = roomid;
+				strjson.adtype = type;
+				strjson.adinfo = adinfo;
+
+				$.ajax({
+					type: 'post',
+					url: url,
+					dataType: 'json',
+					data: 'mdata=' + JSON.stringify(strjson) + '&type=' + "6",
+					success: function(str) {
+
+						if(str.code == "0") {
+							_.popPanelClose();
+							backupview();
+
+							mtoast('操作成功')
+						} else {
+							mtoast('操作失败')
+						}
+
+					},
+					error: function(msg) {
+						mtoast('网络有问题')
+					}
+				});
+
+			}
+
+			function backupview() {
+				$.toBack($(".ADManagerSelect_outA").parentU("indexView"));
+			}
+
+			function mtoast(text) {
+				$.createConfirmBoxOK({
+					"title": "系统提示",
+					"content": text,
+					"click": function() {}
+				});
+			}
+		</script>
+
+	</body>
+
+</html>

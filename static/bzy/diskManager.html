@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<style>
+			.diskManager_outA{
+				width: 45px;
+			    height: 35px;
+			    display: inline-block;
+			    font-size: 20px;
+			    line-height: 30px;
+			    text-align: center;
+			    padding: 0px;
+			    text-decoration: none;
+			    color: #FFFFFF;
+			    position: absolute;
+			    top: 20px;
+			    left: 20px;
+			}
+			.diskManager{
+				width: 100%;
+				height: 100%;
+			}
+			.diskManager>.tableDiv{
+				width: 100%;
+				height: 500px;
+				position: relative;
+				box-shadow: 0px -3px 3px #E0E0E0;
+				top: 70px;
+			}
+			.diskManager>.tableDiv>.table>tbody>tr>td>button{
+				width: 52px;
+				height: 26px;
+				display: inline-block;
+			}
+			
+			.diskManager>.tableDiv>.table>tbody>tr>td>button>i.icon-arrow-up{
+				position: relative;
+				left: -1px;
+			}
+			.diskManager>.tableDiv>.table>tbody>tr>td>button>i.icon-arrow-down{
+				position: relative;
+				left: -1px;
+			}
+			.setPublicTypeHTMLDiv{
+				width: 100%;
+				text-align: center;
+			}
+			.setPublicTypeHTMLSelect{
+				width: 90%;
+			    height: 38px;
+			    line-height: 38px;
+			    margin: 0 auto;
+			}
+			.setPublicTypeHTMLInput{
+				width: 90%;
+			    height: 38px;
+			    line-height: 38px;
+			    margin: 0 auto;
+			}
+			.setPublicTypeHTMLSubmitBtn{
+				width: 30%;
+			    height: 38px;
+			    margin-top: 10px;
+			}
+			.diskManager>.tableDiv>.table>tbody>tr>td>i{
+				color: #CECECE;
+			}
+			.diskManager>.tableDiv>.table>tbody>tr.act>td>i{
+				color: #333333;
+			}
+			.diskManager>.tableDiv>.table>tbody>tr>td>button {
+			    width: auto;
+			    height: 26px;
+			    display: inline-block;
+			}
+			.openFileDiskDiv>ul>li:hover{
+				background-color: #ECEFEE;
+			}
+			.openFileDiskDiv>ul:nth-of-type(2)>li:active,
+			.openFileDiskDiv>ul:nth-of-type(4)>li:active{
+				background-color: #296BA7;
+				color: #FFFFFF;
+			}
+			.openFileDiskDiv>ul>li>i{
+				position: absolute;
+				right: 10px;
+				top:13px;
+			    color: #848484;
+			}
+			.openFileDiskDiv>ul:nth-of-type(2)>li:active>i,
+			.openFileDiskDiv>ul:nth-of-type(4)>li:active>i,
+			.openFileDiskDiv>ul:nth-of-type(2)>li:active>b,
+			.openFileDiskDiv>ul:nth-of-type(4)>li:active>b{
+				color: #FFFFFF;
+			}
+			.openFileDiskDiv{
+				width: 100%;
+				height: 100%;
+				position: relative;
+			}
+			.openFileDiskDiv>.list{
+			    position: absolute;
+			}
+			
+			.openFileDiskDiv>ul:nth-of-type(2),.openFileDiskDiv>ul:nth-of-type(4){
+				height: calc( 100% - 43px );
+				top: 43px;
+			}
+			.openFileDiskDiv>ul>li.toParentLi>i{
+				left: 10px;
+			}
+			.openFileDiskDiv>ul:nth-of-type(3)>li>input{
+			    width: 90%;
+    			height: 30px;
+    			line-height: 30px;
+			}
+			.openFileDiskDiv>.list>li{
+			    width: 99%;
+			    height: 42px;
+			    left: 0;
+			    right: 0;
+			    margin: auto;
+			}
+			.openFileDiskDiv>.list>li>b{
+				position: absolute;
+				right: 10px;
+				font-size: 16px;
+				color: #333333;
+				line-height: 42px;
+				pointer-events: none;
+			}  
+			.openFileDiskDiv>.list>li>i+b{
+				right: 30px;
+			}
+			.seachAndList{
+			    width: 42px;
+			    height: 42px;
+			    display: block;
+			    position: absolute;
+			    right: 0px;
+			    font-size: 18px;
+			    text-align: center;
+			    line-height: 42px;
+			    cursor: pointer;
+			}
+		</style>
+		<script id="diskManagerDataTemplate" type="text/template">
+			<tr>
+				<td>{[mount]}</td>
+				<td>{[is_mount]}</td>
+                <td>{[left]}</td>
+				<td>{[used]}</td>
+				<td>{[size]}</td>
+				<td>
+					<button class="btn green openFileDisk" path="{[mount]}" title="详情">
+						详情
+					</button>
+					<!--<button class="btn violet diskDeleteAllData" title="格式化" key="{[phyaddr]}">
+						格式化
+					</button>-->
+				</td>
+			</tr>
+		</script>
+		<script id="openFileDiskHTML" type="text/template">
+			<div class="openFileDiskDiv">
+				<ul class="list">
+					<li class="toParentLi"></li>
+				</ul>
+				<ul class="list">
+				</ul>
+				<ul class="list" style="display: none;">
+					<li>
+						<input class="inputBox" type="text" placeholder="检索"/>
+					</li>
+				</ul>
+				<ul class="list" style="display: none;">
+				</ul>
+				<span class="seachAndList">
+					<i class="icon-search">&nbsp;</i>
+				</span>
+			</div>
+		</script>
+		
+		<div class="diskManager">
+			<a class="diskManager_outA btn blue">
+				<i class="icon-arrow-left"></i>
+			</a>
+			<div class="tableDiv div_load">
+				<table class="table scroll">
+					<thead>
+						<tr>
+							<th>磁盘</th>
+							<th>是否挂载</th>
+							<th>未使用</th>
+							<th>已使用</th>
+							<th>总大小</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<script>
+			$(".diskManager_outA").one("click",function(e){
+				e.stopPropagation();
+				$.toBack($(this).parentU("indexView"));
+			});
+			function initSendGet_all_disk_info(){
+				sendGet_all_disk_info(function(json){
+					if(!!json){
+						var arr=[];
+						for(var i in json.data){
+                            var obj = json.data[i];
+                            if(obj.is_mount)
+                                obj.is_mount="已挂载";
+                            else
+                                obj.is_mount="未挂载";
+                            arr.push(obj);
+						}
+						arr=$.jsonSort(arr,"mount");
+						var html=$.fillData(document.getElementById("diskManagerDataTemplate").innerHTML,arr);
+						$(".diskManager>.tableDiv>.table>tbody").htm(html);
+						$(".tableDiv").removeClass("div_load");
+						//loadDiskInfo();
+					}
+				});
+			}
+			initSendGet_all_disk_info();
+			$.tap(".openFileDisk",function(){
+				_.popPanel("磁盘文件列表",document.getElementById("openFileDiskHTML").innerHTML,"520px","650px",false);
+				$.data_openFilePath=[];
+				$.data_openFilePath.push($(this).attr("path"));
+				sendOpenFile($.data_openFilePath.join("/"),function(json){
+					if(!!json&&json.code=="0"){
+						$(".openFileDiskDiv>ul:eq(0)>li:eq(0)").html("<i class='icon-chevron-left'></i>&emsp;"+$.data_openFilePath.join("/"));
+						var lst=$.sliceArrListData(json.data,20);
+						$(".openFileDiskDiv>ul:eq(1)").scrollLoad(lst,function(arr){
+							var html="";
+							for(var i in arr){
+								if(arr.hasOwnProperty(i)){
+									var file=arr[i];
+									if(file.type=="f")
+                                        html+="<li onclick='download_file(this)'>"+file.name+"<b>"+file.size+"</b></li>";
+									else if(file.type=="d")
+										html+="<li class='openFileDisk_files' onclick='openFileDisk_filesClick(this)'>"+file.name+"<i class='icon-chevron-right'></i></li>";
+								}
+							}
+							return html;
+						});
+						if(json.data.length==0){
+							$.altAuto("该磁盘下无文件");
+						}
+						openFileDisk_filesBindEvent();
+					}
+				});
+				function eventBindSeachAndListClcik(){
+					$(".seachAndList").off("click").on("click",function(){
+						var i = $(this).children("i");
+						if(i.hasClass("icon-search")){
+							$(".openFileDiskDiv>ul.list:eq(0)").hide();
+							$(".openFileDiskDiv>ul.list:eq(1)").hide();
+							$(".openFileDiskDiv>ul.list:eq(2)").show();
+							$(".openFileDiskDiv>ul.list:eq(3)").show();
+							i.addClass("icon-reorder").removeClass("icon-search");
+							var path=$.data_openFilePath[$.data_openFilePath.length-1];
+							if(!path){
+								path="所有磁盘";
+							}
+							$(".openFileDiskDiv>ul:eq(2)>li>input").attr("placeholder","检索 "+path+"(输入完成回车提交)")
+						}else{
+							$(".openFileDiskDiv>ul.list:eq(0)").show();
+							$(".openFileDiskDiv>ul.list:eq(1)").show();
+							$(".openFileDiskDiv>ul.list:eq(2)").hide();
+							$(".openFileDiskDiv>ul.list:eq(3)").hide();
+							i.addClass("icon-search").removeClass("icon-reorder");
+						}
+					});
+				}
+				eventBindSeachAndListClcik();
+				$(".openFileDiskDiv>ul:eq(2)>li>input").off("keyup").on("keyup",function(e){
+					if(e.keyCode==13){
+						var val=$(this).val();
+						$(".openFileDiskDiv>ul:eq(2)>li>input").attr("readonly","readonly");
+						$(".seachAndList").off("click");
+						$(".openFileDiskDiv").addClass("div_load");
+						sendSeachFile($.data_openFilePath.join("/"),val,function(json){
+							if(!!json&&json.code=="0"){
+								if(json.data.length==2&&json.data[0].indexOf("find:")==0){
+									$(".openFileDiskDiv>ul:eq(2)>li>input").removeAttr("readonly");
+									eventBindSeachAndListClcik();
+									$(".openFileDiskDiv").removeClass("div_load");
+									$(".openFileDiskDiv>ul:eq(3)").html("");
+									return;
+								}
+								var lst=$.sliceArrListData(json.data,20);
+								$(".openFileDiskDiv>ul:eq(3)").scrollLoad(lst,function(arr){
+									var html="";
+									for(var i in arr){
+										if(arr.hasOwnProperty(i)){
+                                            debugger;
+                                            var url = "http://" + $.data_diskManagerIp + arr[i]
+											html+="<li onclick='javascript:window.open(\"" + url + "\")'>" + arr[i] + "</li>";
+										}
+									}
+									return html;
+								});
+								$(".openFileDiskDiv>ul:eq(2)>li>input").removeAttr("readonly");
+								eventBindSeachAndListClcik();
+								$(".openFileDiskDiv").removeClass("div_load");
+							}else{
+								$(".openFileDiskDiv>ul:eq(2)>li>input").removeAttr("readonly");
+								eventBindSeachAndListClcik();
+								$(".openFileDiskDiv").removeClass("div_load");
+								$(".openFileDiskDiv>ul:eq(3)").html("");
+							}
+						});
+					}
+				});
+			});
+			function openFileDisk_filesBindEvent(){
+				$(".toParentLi").off("click").on("click",function(){
+					$.data_openFilePath.pop();
+					sendOpenFile($.data_openFilePath.join("/"),function(json){
+						if(!!json&&json.code=="0"){
+							if($.data_openFilePath.length>0)
+								$(".openFileDiskDiv>ul:eq(0)>li:eq(0)").html("<i class='icon-chevron-left'></i>&emsp;"+$.data_openFilePath.join("/"));
+							else
+								$(".openFileDiskDiv>ul:eq(0)>li:eq(0)").html("");
+							var lst=$.sliceArrListData(json.data,20);
+							$(".openFileDiskDiv>ul:eq(1)").scrollLoad(lst,function(arr){
+								var html="";
+								for(var i in arr){
+									if(arr.hasOwnProperty(i)){
+										var file=arr[i];
+										if(file.type=="f")
+                                            html+="<li  onclick='download_file(this)'>"+file.name+"<b>"+file.size+"</b></li>";
+										else if(file.type=="d")
+											html+="<li class='openFileDisk_files' onclick='openFileDisk_filesClick(this)'>"+file.name+"<i class='icon-chevron-right'></i></li>";
+									}
+								}
+								return html;
+							});
+							openFileDisk_filesBindEvent();
+						}
+					});
+				});
+			}
+			function openFileDisk_filesClick(_this){
+				var text = "";
+				$(_this).contents().each(function(){ 
+					if(this.nodeType === 3){ 
+						text = this.wholeText; 
+					} 
+				});
+				$.data_openFilePath.push(text);
+				sendOpenFile($.data_openFilePath.join("/"),function(json){
+					if(!!json&&json.code=="0"){
+						$(".openFileDiskDiv>ul:eq(0)>li:eq(0)").html("<i class='icon-chevron-left'></i>&emsp;"+$.data_openFilePath.join("/"));
+						var lst=$.sliceArrListData(json.data,20);
+						$(".openFileDiskDiv>ul:eq(1)").scrollLoad(lst,function(arr){
+							var html="";
+							for(var i in arr){
+								if(arr.hasOwnProperty(i)){
+									var file=arr[i];
+									if(file.type=="f")
+                                        html+="<li  onclick='download_file(this)'>"+file.name+"<b>"+file.size+"</b></li>";
+									else if(file.type=="d")
+										html+="<li class='openFileDisk_files' onclick='openFileDisk_filesClick(this)'>"+file.name+"<i class='icon-chevron-right'></i></li>";  	
+								}
+							}
+							//<b>"+file.size+"</b>
+							return html;
+						});
+						openFileDisk_filesBindEvent();
+					}
+				});
+			}
+			function download_file(_this){
+				var text = "";
+				$(_this).contents().each(function(){ 
+					if(this.nodeType === 3){ 
+						text = this.wholeText; 
+					} 
+				});
+				//$.data_openFilePath.push(text);
+				//window.location.href = "http://" + $.data_diskManagerIp + "/video/" + $.data_openFilePath.join("/");
+				window.open("http://" + $.data_diskManagerIp + "/video/" + $.data_openFilePath.join("/") + "/" + text);
+			}
+
+			$.tap(".diskDeleteAllData",function(){
+				var _this=$(this);
+				$.createConfirmBox({"title":"系统提示","content":"该操作磁盘内文件将会全部清除,是否确认格式化?","click":function(){
+					$(".loading").css("display","block");
+					sendFormat_disk(_this.attr("key"),function(json){
+						$(".loading").css("display","none");
+						if(!!json&&json.code=="0"){
+							$.altAuto("格式化成功!");
+							initSendGet_all_disk_info();
+						}else{
+							$.altAuto("磁盘被占用无法进行格式化,请重启后重试");
+						}
+					});
+				}});
+			});
+			function loadDiskInfo(){
+				sendLoadDiskSizeInfo(function(json){
+					if(!!json&&json.code=="0"){
+						$(".diskManager>.tableDiv>.table>tbody>tr").each(function(){
+							var _this=$(this);
+							var diskName=_this.children("td:eq(0)").html();
+							for(var i in json.data){
+								if(json.data.hasOwnProperty(i)){
+									var obj = json.data[i];
+									if(obj.mp=="/video/"+diskName){
+										_this.children("td:eq(3)").html(obj.left);
+										_this.children("td:eq(4)").html(obj.used);
+										_this.children("td:eq(5)").html(obj.size);
+									}
+								}
+							}
+							sendLoadDiskInfo(diskName,function(json){
+								if(!!json&&json.code=="0")
+									_this.children("td:eq(2)").html(json.data);
+							});
+						});
+					}	
+				});
+			}
+			function sendLoadDiskList(fn){
+				$.ajax({
+					type:"get",
+					url:"http://"+$.data_diskManagerIp+":"+$.protNo+"/sql/selectAllDisk",
+					dataType:"json",
+					success:function(json){
+						if(!!fn)
+							fn(json);
+					},error:function(){
+						$.altAuto("无法访问或服务器发生异常");
+					}
+				});
+			}
+			function sendLoadDiskInfo(diskName,fn){
+				$.ajax({
+					type:"get",
+					url:"http://"+$.data_diskManagerIp+":"+$.protNo+"/sql/getDiskListSize?diskName="+diskName,
+					dataType:"json",
+					success:function(json){
+						if(!!fn)
+							fn(json);
+					},error:function(){
+						$.altAuto("无法访问或服务器发生异常");
+					}
+				});
+			}
+			function sendLoadDiskSizeInfo(fn){
+				$.ajax({
+					type:"get",
+					url:"http://"+$.data_diskManagerIp+":"+$.protNo+"/sql/get_disk_statInfo",
+					dataType:"json",
+					success:function(json){
+						if(!!fn)
+							fn(json);
+					},error:function(){
+						$.altAuto("无法访问或服务器发生异常");
+					}
+				});
+			}
+			function sendOpenFile(path,fn){
+				$.ajax({
+					type:"get",
+					url:"http://"+$.data_diskManagerIp+":"+$.protNo+"/servers/listdir?path=" + path,
+					dataType:"json",
+					success:function(json){
+						if(!!fn)
+							fn(json);
+					},error:function(){
+						$.altAuto("无法访问或服务器发生异常");
+					}
+				});
+			}
+			function sendGet_all_disk_info(fn){
+				$.ajax({
+					type:"get",
+					url:"http://"+$.data_diskManagerIp+":"+$.protNo+"/servers/listdisk",
+					dataType:"json",
+					success:function(json){
+						if(!!fn)
+							fn(json);
+					},error:function(){
+						$.altAuto("无法访问或服务器发生异常");
+					}
+				});
+			}
+			function sendFormat_disk(key,fn){
+				$.ajax({
+					type:"get",
+					url:"http://"+$.data_diskManagerIp+":"+$.protNo+"/sql/format_disk?key="+key,
+					dataType:"json",
+					success:function(json){
+						if(!!fn)
+							fn(json);
+					},error:function(){
+						$.altAuto("无法访问或服务器发生异常");
+					}
+				});
+			}
+			function sendSeachFile(path,name,fn){
+				$.ajax({
+					type:"get",
+					url:"http://"+$.data_diskManagerIp+":"+$.protNo+"/sql/seachFile?path="+path+"&name="+name,
+					dataType:"json",
+					success:function(json){
+						if(!!fn)
+							fn(json);
+					},error:function(){
+						$.altAuto("无法访问或服务器发生异常");
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

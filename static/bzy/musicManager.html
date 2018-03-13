@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<style>
+			.musicManager{
+				width: 100%;
+				height: 100%;
+			}
+			.musicManager>.tableDiv{
+				width: 100%;
+				height: calc( 100% - 100px);
+				overflow: auto;
+				position: relative;
+				box-shadow: 0px -3px 3px #E0E0E0;
+			}
+			.musicManager_musicForm{
+				width: 100%;
+				height: 50px;
+				padding: 5px 10px 5px 10px;
+				text-align: right;
+			}
+			.musicManager_musicForm>input{
+				width: calc( 100% - 345px);
+				height: 40px;
+			}
+			.musicManager_musicForm>button{
+				width: 100px;
+			    height: 40px;
+			    outline: none;
+			    margin-right: 10px;
+			}
+			.musicManager_addMusic{
+				font-size: 18px;
+			}
+			.musicManager>.tableDiv>.table>tbody>tr>td>button{
+				width: 26px;
+				height: 26px;
+				display: inline-block;
+			}
+			
+			.musicManager>.tableDiv>.table>tbody>tr>td>button>i.icon-edit{
+				position: relative;
+				left: -1px;
+			}
+			.musicManager>.tableDiv>.table>tbody>tr>td>button>i.icon-reorder{
+				position: relative;
+				left: -1px;
+			}
+			
+			
+			
+		</style>
+		<style>
+			.musicInfo_infoUl.list{
+				width: calc( 100% - 4px );
+				height: auto;
+				overflow-y: auto;
+				margin: 0 auto;
+			}
+			.musicInfo_infoUl.list>li{
+				width: 100%;
+			}
+			.musicInfo_infoUl.list>li>b{
+				position: absolute;
+				right: 10px;
+				font-size: 16px;
+				color: #333333;
+				line-height: 42px;
+				text-overflow:ellipsis;
+				white-space:nowrap;
+				overflow:hidden;
+				width: 300px;
+    			text-align: right;
+			}
+			
+		</style>
+		<script id="musicInfoHTML" type="text/template">
+			<ul class="musicInfo_infoUl list">
+				<li>歌曲名称<b>加载中...</b></li>
+				<li>歌曲编号<b>加载中...</b></li>
+				<li>语种<b>加载中...</b></li>
+				<li>歌手<b>加载中...</b></li>
+				<li>歌曲类型<b>加载中...</b></li>
+				<li>载体名称<b>加载中...</b></li>
+				<li>音频格式<b>加载中...</b></li>
+				<li>文件地址<b>加载中...</b></li>
+			</ul>
+		</script>
+		<script id="musicManagerDataTemplate" type="text/template">
+			<tr>
+				<td>{[Media_SerialNo]}</td>
+				<td>{[Media_Name]}</td>
+				<td>{[Actor_Name1]}</td>
+				<td>{[MediaType_Name1]}</td>
+				<td>{[Language_Name]}</td>
+				<td>
+					<button class="btn green musicInfo" title="详情" serialno="{[Media_SerialNo]}" mediaid="{[Media_SerialNo]}">
+						<i class="icon-reorder"></i>
+					</button>
+					<button class="btn orange updateMusic" title="编辑" serialno="{[Media_SerialNo]}" mediaid="{[Media_ID]}">
+						<i class="icon-edit"></i>
+					</button>
+					<button class="btn violet musicDelete" title="删除" serialno="{[Media_SerialNo]}" mediaid="{[Media_ID]}">
+						<i class="icon-trash"></i>
+					</button>
+				</td>
+			</tr>
+		</script>
+		<div class="musicManager">
+			<div class="musicManager_musicForm">
+				<input class="inputBox musicManager_search" type="text" placeholder="检索请输入编号、名称、歌手、类型或语种" />
+				<button type="button" title="检索" class="btn yellow musicManager_formSearch">
+					<i class="icon-search"></i>
+				</button>
+	            <button type="button" title="导出自己添加的歌曲信息" class="btn sky musicManagerExport_export">
+					自加导出
+				</button>
+				<button type="button" title="导出全部歌曲信息" class="btn sky musicManagerExport_exportAll">
+					全库导出
+				</button>
+
+				<!--<button type="button" multiple="multiple" class="btn sky musicManager_addMusic">
+					<i class="icon-plus"></i>
+				</button>-->
+			</div>
+			<div class="tableDiv div_load">
+				<table class="table scroll">
+					<thead>
+						<tr>
+							<th>编号</th>
+							<th>名称</th>
+							<th>歌手</th>
+							<th>类型</th>
+							<th>语种</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+
+					</tbody>
+				</table>
+			</div>
+			<footer class="listPageNum">
+			</footer>
+		</div>
+		<script>
+			$(function(){
+
+                $.tap(".musicManagerExport_exportAll",function(){
+                    var _this=$(this);
+                    $.createConfirmBox({"title":"系统提示","content":"全库导出较慢,请耐心等待,是否确认导出？","click":function(){
+                        $(".loading").css("display","block");
+                        sendExport("all",function(json){
+                            if(!!json && json.code != 0){
+                                $.createConfirmBoxOK({"title":"系统提示","content":json.msg});
+                                $(".loading").css("display","none");
+                                return;
+                            }
+                            if(!!json && !!json.data){
+                                var a = document.createElement("a");
+                                a.href = $.baseUrl + "/" + json.data;
+                                $(a).attr("download", "export.txt");
+                                a.style.width = "0px";
+                                $("body").append($(a));
+                                $(".loading").css("display", "none");
+                                a.click();
+                            }
+                        });
+                    }});
+                });
+                $.tap(".musicManagerExport_export",function(){
+                    var _this=$(this);
+                    $.createConfirmBox({"title":"系统提示","content":"仅导出用户自己添加的歌曲（歌曲编号9000000及以上的歌曲），否确认导出？","click":function(){
+                        $(".loading").css("display","block");
+                        sendExport("customer",function(json){
+                            if(!!json && json.code != 0){
+                                $.createConfirmBoxOK({"title":"系统提示","content":json.msg});
+                                $(".loading").css("display","none");
+                                return;
+                            }
+                            if(!!json && !!json.data){
+                                var a = document.createElement("a");
+                                a.href = $.baseUrl + "/" + json.data;
+                                $(a).attr("download", "export.txt");
+                                a.style.width = "0px";
+                                $("body").append($(a));
+                                $(".loading").css("display", "none");
+                                a.click();
+                            }
+                        });
+                    }});
+                });
+ 
+                function sendExport(scope, fn){
+                    $.ajax({
+                        type:"get",
+                        url:$.baseUrl+"/medias/export",
+                        dataType:"json",
+                        data: "scope=" + scope,
+                        processData:false,
+                        contentType:false,
+                        success:function(json){
+                            if(!!fn)
+                                fn(json);
+                        },error:function(){
+                            $.altAuto("无法访问或服务器发生异常");
+                        }
+                    });
+                }
+
+				$.tap(".musicManager>.tableDiv>.table>tbody>tr>td>button.updateMusic",function(e){
+					e.stopPropagation();
+					var no=$(this).attr("serialno");
+					$.data_updateMusicSerialno=no;
+					$.hrefPage("bzy/addMusic.html",$(this).parentU("indexView"));
+				});
+				$(".musicManager_search").off('keyup').on('keyup', function(event) {
+					if (event.keyCode == "13") {
+						searchData();
+					}
+				});
+				$.tap(".musicManager_formSearch",function(){
+					searchData();
+				});
+				
+				sendSelectAddMusic(function(json){
+					if(!!json&&!!json.data){
+						$.data_uploadAndAddMusicListArr = json.data;
+					}
+				});
+				function sendSelectAddMusic(fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/sql/selectAllAddMedia",
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				
+				$.tap(".musicManager>.tableDiv>.table>tbody>tr>td>button.musicInfo",function(e){
+					e.stopPropagation();
+					//$.musicInfo_musicId = $(this).parent().parent().children("td").first().html();
+					$.musicInfo_musicId = $(this).attr("mediaid");
+					_.popPanel("歌曲详情",document.getElementById("musicInfoHTML").innerHTML,"400px","513px");
+					loadMusicInfo();
+				});
+				$.tap(".musicManager>.tableDiv>.table>tbody>tr>td>button.musicDelete",function(e){
+					e.stopPropagation();
+					var _this=$(this);
+					var tr=$(this).parent().parent();
+					//$.musicInfo_musicId = tr.children("td").first().html();
+					$.musicInfo_musicId = $(this).attr("mediaid");
+					$.createConfirmBox({"title":"系统提示","content":"是否确认删除该歌曲?","click":function(){
+						var addMusic={};
+						addMusic.AddMedia_SerialNo=_this.attr("serialno");
+						addMusic.AddMedia_ID =_this.attr("mediaid");
+						sendDeleteAddMusic($.createObjDataOnlyKey(addMusic), function(json){
+							if(!!json.msg){
+								$.altAuto(json.msg);
+								return;
+							}
+							if(!!json&&json.code=="0"){
+								loadData();
+								
+								$.altAuto("删除成功!");
+							}
+						});
+					}});
+				});
+				function searchData(){
+					$.musicManager_pageNum=1;
+					loadData();
+					sendSelectMusicCount($(".musicManager_search").val(),function(json){
+						$(".listPageNum").paging(json.data.total,$.musicManager_pageNum,$.musicManager_pageSize,function(num){
+							$.musicManager_pageNum=num;
+							loadData();
+						});
+					});
+				}
+				if(!$.musicManager_pageNum)
+					$.musicManager_pageNum=1;
+				if(!$.musicManager_pageSize)
+					$.musicManager_pageSize=10;
+				
+				loadData();
+				function loadData(){
+					$(".tableDiv").addClass("div_load");
+					sendSelectMusic($.musicManager_pageNum,$.musicManager_pageSize,$(".musicManager_search").val(),function(json){
+						if(!json||!json.data||!json.data.matches){
+							$(".musicManager>.tableDiv>.table>tbody").html("");
+							$.altAuto("暂无数据");
+							$(".tableDiv").removeClass("div_load");
+							return;
+						}
+						$.data_currentPageMusic=json.data.matches;
+						if($("#musicManagerDataTemplate").length>0){
+							var html=$.fillData(document.getElementById("musicManagerDataTemplate").innerHTML,$.data_currentPageMusic);
+							$(".musicManager>.tableDiv>.table>tbody").htm(html);
+							$(".tableDiv").removeClass("div_load");
+						}
+					});
+				}
+				sendSelectMusicCount($(".musicManager_search").val(),function(json){
+					$(".listPageNum").paging(json.data.total,$.musicManager_pageNum,$.musicManager_pageSize,function(num){
+						$.musicManager_pageNum=num;
+						loadData();
+					});
+				});
+				function sendSelectMusic(page,pSize,text,fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/search?page="+page+"&psize="+pSize+"&text="+text,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendSelectMusicCount(text,fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/searchcount?text="+text,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendSelectMusicType(fn){
+					if(!!$.data_selectMusicType){
+						if(!!fn)
+							fn($.data_selectMusicType);
+					}else{
+						$.ajax({
+							type:"get",
+							url:$.baseUrl+"/musictype",
+							dataType:"json",
+							success:function(json){
+								$.data_selectMusicType=json;
+								if(!!fn)
+									fn(json);
+							},error:function(){
+								$.altAuto("无法访问或服务器发生异常");
+							}
+						});
+					}
+				}
+				function sendDeleteMusic(id,fn){
+					$.ajax({
+						type:"post",
+						url:$.baseUrl+"/sql/deleteMusic",
+						data:"{\"media_id\":"+id+"}",
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendDeleteAddMusic(data,fn){
+					$.ajax({
+						type:"post",
+						url:$.baseUrl+"/mediadel",
+						data:data,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				
+			});
+		</script>
+		<script>
+			function getMusicLoadLink(no,fn){
+				$.ajax({
+					type:"get",
+					url:$.baseUrl+"/mediafile/exists?no="+no,
+					dataType:"json",
+					success:function(json){
+						if(!!fn)
+							fn(json);
+					},error:function(){
+						$.altAuto("无法访问或服务器发生异常")
+					}
+				})
+			}
+			function loadMusicInfo(){
+				var currentMusic=null;
+				for(var i in $.data_currentPageMusic){
+					if($.data_currentPageMusic.hasOwnProperty(i)){
+						var obj=$.data_currentPageMusic[i];
+						
+						if(obj.Media_SerialNo==$.musicInfo_musicId){
+							currentMusic=obj;
+							$.Media_SerialNo=obj.Media_SerialNo
+							break;
+						}
+					}
+				}
+				if(!currentMusic)
+					return;
+				var ul=$(".musicInfo_infoUl");
+				ul.children("li:eq(0)").children("b").html(currentMusic.Media_Name);
+				ul.children("li:eq(1)").children("b").html(currentMusic.Media_SerialNo);
+				ul.children("li:eq(2)").children("b").html(currentMusic.Language_Name);
+				ul.children("li:eq(3)").children("b").html(currentMusic.Actor_Name1);
+				if(!!currentMusic.Actor_Name2)
+					ul.children("li:eq(3)").children("b").append(","+currentMusic.Actor_Name2);
+				if(!!currentMusic.Actor_Name3)
+					ul.children("li:eq(3)").children("b").append(","+currentMusic.Actor_Name3);
+				if(!!currentMusic.Actor_Name4)
+					ul.children("li:eq(3)").children("b").append(","+currentMusic.Actor_Name4);
+				ul.children("li:eq(4)").children("b").html(currentMusic.MediaType_Name1);
+				if(!!currentMusic.MediaType_Name2)
+					ul.children("li:eq(4)").children("b").append(","+currentMusic.MediaType_Name2);
+				if(!!currentMusic.MediaType_Name3)
+					ul.children("li:eq(4)").children("b").append(","+currentMusic.MediaType_Name3);
+				ul.children("li:eq(5)").children("b").html(currentMusic.Carrier);
+				ul.children("li:eq(6)").children("b").html(currentMusic.Audio_type);
+				ul.children("li:eq(7)").children("b").html(currentMusic.Media_File);
+			}
+
+
+
+		</script>
+	</body>
+</html>

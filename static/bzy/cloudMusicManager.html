@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<style>
+			.cloudMusicManager{
+				width: 100%;
+				height: 100%;
+			}
+			.cloudMusicManager>.tableDiv{
+				width: 100%;
+				height: calc( 100% - 100px);
+				overflow: auto;
+				position: relative;
+				box-shadow: 0px -3px 3px #E0E0E0;
+			}
+			.cloudMusicManager_musicForm{
+				width: 100%;
+				height: 50px;
+				padding: 5px 10px 5px 10px;
+				text-align: right;
+			}
+			.cloudMusicManager_musicForm>input{
+				width: calc( 100% - 280px);
+				height: 40px;
+			}
+			.cloudMusicManager_musicForm>button{
+				width: 75px;
+			    height: 35px;
+			    outline: none;
+			    margin-right: 10px;
+			}
+			.cloudMusicManager_addMusic{
+				font-size: 18px;
+			}
+			.cloudMusicManager>.tableDiv>.table>tbody>tr>td>button{
+				width: 26px;
+				height: 26px;
+				display: inline-block;
+			}
+			
+			.cloudMusicManager>.tableDiv>.table>tbody>tr>td>button>i.icon-cloud-download{
+				position: relative;
+				left: -2px;
+			}
+			.cloudMusicManager>.tableDiv>.table>tbody>tr>td>button>i.icon-reorder{
+				position: relative;
+				left: -1px;
+			}
+			.loadSign,.loadSign:hover{
+				color:orange;
+				font-size: 12px;
+			}
+			.loadSign{
+				display: none;
+			}
+		</style>
+		<style>
+			.list{
+				width: calc( 100% - 4px );
+				height: auto;
+				overflow-y: auto;
+				margin: 0 auto;
+			}
+			.list>li{
+				width: 100%;
+			}
+			.list>li>b{
+				position: absolute;
+				right: 10px;
+				font-size: 16px;
+				color: #333333;
+				line-height: 42px;
+				width: 100px;
+    			text-align: right;
+    			white-space: nowrap;
+    			overflow: hidden;
+    			text-overflow: ellipsis;
+			}
+			.listButton{
+				width: 600px;
+			    display: inline-block;
+			    position: absolute;
+			    left: 10px;
+			} 
+			.listButton>li {
+			    padding: 4px 12px;
+			    background-color: #FFFFFF;
+			    font-size: 20px;
+			    margin: 3px 8px;
+			    color: #999999;
+			    box-shadow: 0px 0px 2px #333333;
+			    border-radius: 3px;
+			    cursor: pointer;
+			    display: inline-block;
+			}
+		</style>
+		<script id="musicInfoHTML" type="text/template">
+			<ul class="musicInfo_infoUl list">
+				<li>歌曲ID<b>加载中...</b></li>
+				<li>歌曲名称<b>加载中...</b></li>
+				<li>歌曲编号<b>加载中...</b></li>
+				<li>语种<b>加载中...</b></li>
+				<li>歌手<b>加载中...</b></li>
+				<li>歌曲类型<b>加载中...</b></li>
+				<li>音频格式<b>加载中...</b></li>
+			</ul>
+		</script>
+		<script id="cloudMusicManagerDataTemplate" type="text/template">
+			<tr>
+				<td>{[Music_No]}</td>
+				<td>{[Music_Name]}</td>
+				<td>{[Music_Singer]}</td>
+				<td>{[Music_type1]}</td>
+				<td>{[Music_lang]}</td>
+				<td>
+					<button class="btn green musicInfo" title="详情">
+						<i class="icon-reorder"></i>
+					</button>
+					<button class="btn orange downloadMusic" title="下载" serialno="{[Music_No]}" musicName="{[Music_Name]}">
+						<i class="icon-cloud-download">&nbsp;</i>
+					</button>
+					<a href="javascript:void(0)" class="loadSign">正在下载</a>
+				</td>
+			</tr>
+		</script>
+		<div class="cloudMusicManager">
+			<div class="cloudMusicManager_musicForm">
+				<input class="inputBox cloudMusicManager_search" type="text" placeholder="检索请输入编号、名称、歌手、类型或语种" />
+				<button type="button" title="检索" class="btn yellow cloudMusicManager_formSearch">
+					<i class="icon-search"></i>
+				</button>
+				<button class="btn blue downloadMusicInfo" title="下载详情">
+					<i class="icon-tasks"></i>
+				</button>
+				<button class="btn green loadhistory" title="下载历史记录">
+					<i class="icon-qrcode"></i>
+				</button>
+			</div>
+			<div class="tableDiv div_load">
+				<table class="table scroll">
+					<thead>
+						<tr>
+							<th>编号</th>
+							<th>名称</th>
+							<th>歌手</th>
+							<th>类型</th>
+							<th>语种</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+
+					</tbody>
+				</table>
+			</div>
+			<footer class="listPageNum">
+			</footer>
+		</div>
+		<script>
+			$(function(){
+				$(".cloudMusicManager_search").off('keyup').on('keyup', function(event) {
+					if (event.keyCode == "13") {
+						if($(".cloudMusicManager_search").val()){
+							searchData();
+						}
+					}
+				});
+				$.tap(".cloudMusicManager_formSearch",function(){
+					if($(".cloudMusicManager_search").val()){
+						searchData();
+					}
+				});
+				function searchData(){
+					$.cloudMusicManager_pageNum=1;
+					loadData();
+					sendSelectMusicCount($(".cloudMusicManager_search").val(),function(json){
+						$(".listPageNum").paging(json.result.total,$.cloudMusicManager_pageNum,$.cloudMusicManager_pageSize,function(num){
+							$.cloudMusicManager_pageNum=num;
+							loadData();
+						});
+					});
+				}
+				if(!$.cloudMusicManager_pageNum)
+					$.cloudMusicManager_pageNum=1;
+				if(!$.cloudMusicManager_pageSize)
+					$.cloudMusicManager_pageSize=10;
+				loadData();
+				function loadData(){
+					$(".tableDiv").addClass("div_load");
+					sendSelectMusic($.cloudMusicManager_pageNum,$.cloudMusicManager_pageSize,$(".cloudMusicManager_search").val(),function(json){
+						if(!json||!json.result||!json.result.matches){
+							$(".cloudMusicManager>.tableDiv>.table>tbody").html("");
+							$.altAuto("暂无数据");
+							$(".tableDiv").removeClass("div_load");
+							return;
+						}  
+						$.data_currentPageMusic=json.result.matches;
+						// if(document.getElementById("cloudMusicManagerDataTemplate")){
+							var html=$.fillData(document.getElementById("cloudMusicManagerDataTemplate").innerHTML,$.data_currentPageMusic);
+							$(".cloudMusicManager>.tableDiv>.table>tbody").html(html);
+							$(".tableDiv").removeClass("div_load");
+						// }
+					});
+				}
+				sendSelectMusicCount($(".cloudMusicManager_search").val(),function(json){
+					$(".listPageNum").paging(json.result.total,$.cloudMusicManager_pageNum,$.cloudMusicManager_pageSize,function(num){
+						$.cloudMusicManager_pageNum=num;
+						loadData();
+					});
+				});
+				function sendSelectMusic(page,limit,key,fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/clmusic/list?offset="+(page-1)*limit+"&limit="+limit+"&key="+key,
+						dataType:"json",
+						success:function(json){
+							if(json.code==1){
+								if(!!fn)
+									fn(json);
+							}
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendSelectMusicCount(key,fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/clmusic/search?key="+key,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				$.tap(".cloudMusicManager>.tableDiv>.table>tbody>tr>td>button.musicInfo",function(e){
+					e.stopPropagation();
+					$.musicInfo_musicId = $(this).parent().parent().children("td").first().html();
+					$.musicInfo_musicName = $(this).parent().parent().children("td").first().next().html();
+					_.popPanel("歌曲详情",document.getElementById("musicInfoHTML").innerHTML,"400px","469px");
+					loadMusicInfo();
+
+				});
+				function loadMusicInfo(){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/clmusic/info?nos="+$.musicInfo_musicId,
+						dataType:"json",
+						success:function(json){
+							var currentMusics = json.result;
+							for(var i=0;i<currentMusics.length;i++){
+								var currentMusic = currentMusics[i];
+							}
+							var ul=$(".musicInfo_infoUl");
+							ul.children("li:eq(0)").children("b").html(currentMusic.Music_Id);
+							ul.children("li:eq(1)").children("b").html(currentMusic.Music_Caption);
+							ul.children("li:eq(2)").children("b").html(currentMusic.Music_No);
+							ul.children("li:eq(3)").children("b").html(currentMusic.Music_Language);
+							ul.children("li:eq(4)").children("b").html(currentMusic.Music_SingerName);
+							if(!!currentMusic.Actor_Name2)
+								ul.children("li:eq(4)").children("b").append(","+currentMusic.Actor_Name2);
+							if(!!currentMusic.Actor_Name3)
+								ul.children("li:eq(4)").children("b").append(","+currentMusic.Actor_Name3);
+							if(!!currentMusic.Actor_Name4)
+								ul.children("li:eq(4)").children("b").append(","+currentMusic.Actor_Name4);
+							ul.children("li:eq(5)").children("b").html(currentMusic.Music_Normal1);
+							if(!!currentMusic.MediaType_Name2)
+								ul.children("li:eq(5)").children("b").append(","+currentMusic.MediaType_Name2);
+							if(!!currentMusic.MediaType_Name3)
+								ul.children("li:eq(5)").children("b").append(","+currentMusic.MediaType_Name3);
+							ul.children("li:eq(6)").children("b").html(currentMusic.Music_VideoFormat);
+						},
+						error:function(){
+							$.altAuto("网络不通或服务未开启")
+						}
+					})
+				}
+				$.tap(".downloadMusic",function(){
+					var no = $(this).attr("serialno");
+					function addMusic(){
+						$.ajax({
+							type:'post',
+							url:$.baseUrl+"/dl/add",
+							dataType:'json',
+							data:{
+								no : no
+							},
+							success:function(json){
+								if(json.code == 1){
+									$.altAuto('歌曲正在下载，请到下载详情查看');
+									$(this).next().css("display","inline-block");
+								}else{
+									$.altAuto(json.msg)
+								}
+							},
+							error:function(){
+								$.altAuto("服务器未开启或网络连接不通");
+							}
+						})
+					}
+					$.ajax({
+						type:'get',
+						url:$.baseUrl+"/mediafile/exists?no="+no,
+						dataType:'json',
+						success:function(json){
+							if(json.code == 0 && json.result == null){
+								addMusic();
+							}else{
+								var confirmReload = confirm("歌曲已经下载，是否要重新下载？");
+								if(confirmReload){
+									addMusic()
+								}else{
+									return;
+								}
+							}
+						},error:function(){
+							$.altAuto("服务器未开启或网络连接不通")
+						}
+					})
+				});
+				$.tap(".cloudMusicManager_musicForm>.listButton>li",function(){
+					$(".cloudMusicManager_musicForm>.listButton>li.active").removeClass("active");
+					$(this).addClass("active");
+				});
+				//点击进入下载详情
+				$.tap('.downloadMusicInfo',function(e){
+					e.stopPropagation();
+					$.hrefPage("bzy/musicLoadInfo.html",$(this).parentU("indexView"));
+				});
+				// 点击进入下载历史记录
+				$.tap('.loadhistory',function(e){
+					e.stopPropagation();
+					$.hrefPage("bzy/loadhistory.html",$(this).parentU("indexView"))
+				})
+			});
+			
+		</script>
+	</body>
+</html>

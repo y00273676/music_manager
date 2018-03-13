@@ -1,0 +1,23 @@
+[STB]
+clienttype = 0
+dynconfig = 0
+screenmode = 1
+vgares = 1
+tvmode = 1
+dns = 255.255.255.0
+gateway = 0.0.0.0
+ip = 
+mac = 00e04c51ca88
+server = 192.168.0.202
+name = 
+othersettings = 
+nmask = 255.255.255.0
+bootfile = pxelinux.0
+defaultrouter = 
+domainname = 
+stbtype = 
+vgatype = 
+recordsvr = 
+
+[PROSET]
+

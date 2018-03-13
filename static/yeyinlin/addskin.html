@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <style>
+            .addActor_outA{
+                width: 45px;
+                height: 35px;
+                display: inline-block;
+                font-size: 20px;
+                line-height: 30px;
+                text-align: center;
+                padding: 0px;
+                text-decoration: none;
+                color: #FFFFFF;
+                position: absolute;
+                top: 20px;
+                left: 20px;
+            }
+            .addActor_pageTitle{
+                width: 100%;
+                position: absolute;
+                top: 16px;
+                font-size: 25px;
+                margin: 0;
+                padding: 0;
+                text-align: center;
+                pointer-events: none;
+            }
+            .addActor_form{
+                width: 420px;
+                height: auto;
+                position: absolute;
+                top: 60px;
+                left: 0px;
+                right: 0px;
+                margin: 0 auto;
+            }
+            .addActor_form>div{
+                width: 100%;
+                height: 40px;
+                position: relative;
+                margin-top: 10px;
+            }
+            .addActor_form>div>label{
+                position: absolute;
+                width: 30%;
+                height: 100%;
+                left: 0px;
+                font-size: 16px;
+                text-align: right;
+                padding-right: 20px;
+                line-height: 40px;
+            }
+            .addActor_form>div>input,.addActor_form>div>select,.addActor_form>div>button{
+                position: absolute;
+                width: 70%;
+                height: 100%;
+                right: 0px;
+            }
+            .addActor_form>div>input[type='file'],.addActor_form>div>select{
+                cursor: pointer;
+            }
+            .addActor_form>div>input[type='file']:active+button.selectBox{
+                background: -webkit-linear-gradient(top,#D0D0D0,#DCDCDC);
+            }
+            .addActor_form>center{
+                margin-top: 20px;
+            }
+            .addActor_form>center>button{
+                font-size: 20px;
+                padding: 6px 30px 8px 30px;
+            }
+            .actorImgUpload{
+                opacity: 0;
+                z-index: 9;
+            }
+            .thumbnailImg{
+                width: 100px;
+                height: 100px;
+                display: block;
+                margin: 0 auto;
+                position: absolute;
+                top: -60px;
+                right: -100px;
+            }
+            .thumbnailImg.hide{
+                display: none;
+            }
+        </style>
+    <a class="addActor_outA btn blue"> <i class="icon-arrow-left"></i>
+    </a>
+    <h4 class="addActor_pageTitle">添加主题皮肤</h4>
+    <form class="addActor_form">
+        <div>
+            <label>主题皮肤名称</label>
+            <select class="selectBox" id="skin_name">
+                <option value="90后v2">90后v2</option>
+            </select>
+        </div>
+       
+        <center>
+            <button  type="button" class="btn green" onclick="add_skin()">提交</button>
+        </center>
+    </form>
+    <script>
+            $(".addActor_outA").one("click",function(e){
+            	e.stopPropagation();
+				$.toBack($(this).parentU("indexView"));
+			});
+
+            function get_local_theme() {
+                var url=$.baseUrl+"/skins/local";
+                var strjson=getsubmitdata ();
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    dataType: 'json',
+                    //data:'mdata='+JSON.stringify(strjson)+'&type=4'+'&updatatype='+updatatype,
+                    success: function (res) {
+                        if (!res.result){
+                            return;
+                        }
+                        var theme = res.result;
+                        var html = "";
+                        for(var i = 0; i < theme.length; i++) {
+                            var obj = theme[i];
+                            html += "<option value=\"" + obj + "\">" + obj + "</option>";
+                        }
+                        $("#skin_name").html(html);  
+                    },
+                    error: function (msg) {
+                    }
+                });
+            }
+
+            function add_skin() {
+                var url=$.baseUrl+"/skins/add";
+                var strjson=getsubmitdata ();
+                $.ajax({
+                    type: 'post',
+                    url: url,
+                    dataType: 'json',
+                    //data: 'mdata='+JSON.stringify(strjson)+'&type=4'+'&updatatype='+updatatype,
+                    data: strjson,
+                    success: function (str) {
+                        if(str.code=="0"){
+                            $.toBack($("#skin_name").parentU("indexView"));
+                            //backupview();
+                            //mtoast(str.msg);
+                        }else{
+                            mtoast(str.msg);
+                        }
+                        
+                            // addnewview(str);
+
+                                    },
+                    error: function (msg) {
+                    }
+                });
+            }
+
+            $(".actorImgUpload").off("change").on("change",function(){
+
+                if($(this).attr("id")=="theme_localpath_file"){
+                     $("#theme_localpath").val($(this).attr("value"));
+                }else{
+                    $("#theme_text_path").val($(this).attr("value"));
+                }
+            });
+
+            function getsubmitdata () {
+                var jsondata={};
+                 jsondata.skin_name= $("#skin_name").val();
+                 return jsondata;
+            }
+
+            get_local_theme();
+            //initdata();
+            function initdata () {
+                if($.themefrom=="addtheme"){
+					setthemedata($.mjsondata.localtheme);
+               }
+            }
+
+           function setthemedata (theme) {
+            var html = "";
+			for(var i = 0; i < theme.length; i++) {
+				var obj = theme[i];
+				html += "<option value=\"" + obj + "\">" + obj + "</option>";
+			}
+			$("#skin_name").html(html);  
+            }
+           
+           function mtoast(text) {
+			$.createConfirmBoxOK({
+				"title": "系统提示",
+				"content": text,
+				"click": function() {}
+			});
+		}
+
+
+
+        </script>
+</body>
+</html>

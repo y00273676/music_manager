@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+</head>
+<body>
+<style>
+	.addMusic_outA{
+		width: 45px;
+		height: 35px;
+		display: inline-block;
+		font-size: 20px;
+		line-height: 30px;
+		text-align: center;
+		padding: 0px;
+		text-decoration: none;
+		color: #FFFFFF;
+		position: absolute;
+		top: 20px;
+		left: 20px;
+	}
+	.addMusic_pageTitle{
+		width: 100%;
+		position: absolute;
+		top: 16px;
+		font-size: 25px;
+		margin: 0;
+		padding: 0;
+		text-align: center;
+		pointer-events: none;
+	}
+	.cloudMusicManagerInfo{
+		width: 100%;
+		height: 81%;
+	}
+	.cloudMusicManagerInfo>.tableDiv{
+		width: 100%;
+		height: calc( 100% - 100px);
+		overflow: auto;
+		position: relative;
+		box-shadow: 0px -3px 3px #E0E0E0;
+	}
+	.cloudMusicManager_addMusic{
+		font-size: 18px;
+	}
+	.cloudMusicManagerInfo>.tableDiv>.table>tbody>tr>td>button{
+		width: 26px;
+		height: 26px;
+		display: inline-block;
+	}
+	
+	.cloudMusicManagerInfo>.tableDiv>.table>tbody>tr>td>button>i.icon-cloud-download{
+		position: relative;
+		left: -2px;
+	}
+	.cloudMusicManagerInfo>.tableDiv>.table>tbody>tr>td>button>i.icon-reorder{
+		position: relative;
+		left: -1px;
+	}
+	.list{
+		width: calc( 100% - 4px );
+		height: auto;
+		overflow-y: auto;
+		margin: 0 auto;
+	}
+	.list>li{
+		width: 100%;
+	}
+	.list>li>b{
+		position: absolute;
+		right: 10px;
+		font-size: 16px;
+		color: #333333;
+		line-height: 42px;
+		width: 100px;
+    	text-align: right;
+    	white-space: nowrap;
+    	overflow: hidden;
+    	text-overflow: ellipsis;
+	}
+	.listButton{
+		width: 600px;
+	    display: inline-block;
+	    position: absolute;
+	    left: 10px;
+	} 
+	.listButton>li {
+	    padding: 4px 12px;
+	    background-color: #FFFFFF;
+	    font-size: 20px;
+	    margin: 3px 8px;
+	    color: #999999;
+	    box-shadow: 0px 0px 2px #333333;
+	    border-radius: 3px;
+	    cursor: pointer;
+	    display: inline-block;
+	}
+</style>
+<script id="cloudMusicManagerInfo" type="text/template">
+	<tr>
+		<td music_no="{[music_no]}">{[music_no]}</td>
+		<td>{[music_caption]}</td>
+		<td>{[music_singer]}</td>
+		<td>{[music_type]}</td>
+		<td>{[down_etime]}</td>
+	</tr>
+</script>
+<div>
+	<a class="addMusic_outA btn blue">
+		<i class="icon-arrow-left"></i>
+	</a>
+	<h4 class="addMusic_pageTitle">下载历史记录</h4>
+</div>
+<div class="cloudMusicManagerInfo">
+	<div class="tableDiv div_load" style="margin-top: 80px;">
+		<table class="table scroll">
+			<thead>
+				<tr>
+					<th>编号</th>
+					<th>名称</th>
+					<th>歌手</th>
+					<th>歌曲类型</th>
+					<th>下载完成时间</th>
+				</tr>
+			</thead>
+			<tbody>
+				
+			</tbody>
+		</table>
+	</div>
+	<footer class="listPageNum">
+	</footer>
+</div>
+<script>
+	$(function(){
+		// 返回
+		$(".addMusic_outA").one("click",function(e){
+			e.stopPropagation();
+			$.toBack($(this).parentU("indexView"));
+		});
+		// 页码初始化
+		if(!$.cloudMusicManagerInfo_pageNum)
+			$.cloudMusicManagerInfo_pageNum=1;
+		if(!$.cloudMusicManagerInfo_pageSize)
+			$.cloudMusicManagerInfo_pageSize=10;
+		// 歌曲下载历史
+		function loadhistorylist(page,limit,fn){
+			$.ajax({
+				type:"get",
+				url:$.baseUrl+"/clmusic/dlog?offset="+(page-1)*limit+"&limit="+limit,
+				dataType:"json",
+				success:function(json){
+					if(!!fn)
+						fn(json);
+				}
+			})
+		}
+		function loadhistory(){
+			$(".tableDiv").addClass("div_load");
+			loadhistorylist($.cloudMusicManagerInfo_pageNum,$.cloudMusicManagerInfo_pageSize,function(json){
+				if(!json || !json.result || !json.result.matches){
+					$(".cloudMusicManagerInfo>.tableDiv>.table>tbody").html("");
+					$.altAuto("暂无数据");
+					$(".tableDiv").removeClass("div_load");
+					return;
+				}else{
+					$.data_currentPageMusic=json.result.matches;
+					for(var i=0;i < $.data_currentPageMusic.length;i++){
+						if($.data_currentPageMusic[i].down_etime == null){
+							$.data_currentPageMusic[i].down_etime = "未完成";
+						}
+					}
+					var html=$.fillData(document.getElementById("cloudMusicManagerInfo").innerHTML,$.data_currentPageMusic);
+					$(".cloudMusicManagerInfo>.tableDiv>.table>tbody").html(html);
+					$(".tableDiv").removeClass("div_load");
+				}
+			})
+		}
+		loadhistory();
+		loadhistorylist($.cloudMusicManagerInfo_pageNum,$.cloudMusicManagerInfo_pageSize,function(json){
+			$(".listPageNum").paging(json.result.total,$.cloudMusicManagerInfo_pageNum,$.cloudMusicManagerInfo_pageSize,function(num){
+				$.cloudMusicManagerInfo_pageNum=num;
+				loadhistory();
+			});
+		});
+	})
+</script>
+</body>
+</html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+		<style>
+			.video_style {
+				width: 100%;
+				height: 100%;
+			}
+			
+			.video_style>div {
+				display: inline-block;
+				width: 25%;
+				height: 200px;
+				position: relative;
+			}
+			
+			.video_style>div>img {
+				width: 100%;
+				height: 100%;
+				position: absolute;
+				z-index: 1;
+			}
+			
+			.video_style>div>img:hover+div {
+				display: block;
+			}
+			
+			.video_style>div>img+div:hover {
+				display: block;
+			}
+			
+			.video_style>div>label {
+				position: absolute;
+				font-size: 15px;
+				color: black;
+			}
+			
+			.video_name {
+				font-size: 15px;
+			}
+			
+			.video_file_name {
+				margin: 0px;
+				white-space: nowrap;
+				width: 66%;
+				overflow: hidden;
+				-o-text-overflow: ellipsis;
+				text-overflow: ellipsis;
+				float: left;
+				font-size: 20px;
+				color: white;
+			}
+			
+			.video_file_del {
+				background: url("img/delete_white.png") no-repeat scroll 0 0 transparent;
+				width: 18px;
+				height: 18px;
+				display: inline;
+				-moz-user-select: none;
+				position: absolute;
+				right: 3px;
+				margin-top: 4px;
+			}
+			
+			.video_title {
+				height: 50px;
+				padding: 5px;
+				display: block;
+				background: black;
+				z-index: 2;
+				position: absolute;
+				width: 100%;
+			}
+			
+			.video_title_hover {
+				height: 50px;
+				padding: 5px;
+				display: block;
+				background: black;
+				z-index: 2;
+				position: absolute;
+			}
+			
+			.VideosetList {
+				margin-top: 20px;
+				width: 100%;
+				height: 100%;
+			}
+			
+			.VideosetList>.tableDiv {
+				width: 100%;
+				height: calc( 100% - 100px);
+				overflow: auto;
+				position: relative;
+				box-shadow: 0px -3px 3px #E0E0E0;
+			}
+			
+			.VideosetList>.tableDiv>.table>tbody>tr>td>button {
+				width: 26px;
+				height: 26px;
+				display: inline-block;
+			}
+			
+			.VideosetList>.tableDiv>.table>tbody>tr>td>button>i.icon-edit {
+				position: relative;
+				left: -1px;
+			}
+			
+			.VideosetList>.tableDiv>.table>tbody>tr>td>button>i.icon-reorder {
+				position: relative;
+				left: -1px;
+			}
+			
+			.VideosetList_actorsForm {
+				width: 100%;
+				height: 50px;
+				padding: 5px 10px 5px 10px;
+				text-align: right;
+			}
+			
+			.enc_p_text {
+				width: 100%;
+				font-size: 15px;
+				color: red;
+				position: absolute;
+				top: 40px;
+				pointer-events: none;
+				text-align: center;
+			}
+		</style>
+		<div>
+			<ul class="listButton">
+
+			</ul>
+			<p class="enc_p_text"></p>
+		</div>
+
+		<div class="VideosetList">
+			<ul class="listButton">
+				<!--<li class=" system_pic_upload" multiple="multiple"><i class="icon-plus">&nbsp;</i>上传文件</li>-->
+				<li class="system_pic_upload" accept=".ts,.mpg,.TS,.MPG"><i class="icon-plus">&nbsp;</i>上传视频</li>
+			</ul>
+			<div class="tableDiv">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>视频名称</th>
+							<th>视频地址</th>
+							<!--<th>视频格式</th>-->
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+
+		<div class="video_style">
+
+		</div>
+
+		<script id="VideoDataTemplate" type="text/template">
+			<tr>
+
+				<td>{[filename]}</td>
+				<td>{[path]}</td>
+				
+				<td>
+
+					<!--<button class="btn orange Videoupdata"> <i class="icon-signout"></i>
+                    </button>-->
+					<button class="btn violet VideoDelete">
+                        <i class="icon-trash"></i>
+                    </button>
+				</td>
+			</tr>
+		</script>
+
+		<script>
+			$.tap(".VideosetList>.tableDiv>.table>tbody>tr>td>button.Videoupdata", function(e) {
+
+			});
+
+			$.tap(".VideosetList>.tableDiv>.table>tbody>tr>td>button.VideoDelete", function(e) {
+				var tempthis = $(this);
+				var mthis = this;
+
+				$.createConfirmBox({
+					"title": "系统提示",
+					"content": "是否确认删除该条目?",
+					"click": function() {
+						var videoname = tempthis.parent().parent().children("td").first().html();
+						delectvideoFile(lastvalue, videoname, mthis);
+					}
+				});
+
+			});
+
+			var lastvalue = "welcomepic"
+
+			function onmovechange() {
+
+			}
+
+			function onmoveout() {
+
+			}
+			var arrdog = [$.baseUrl + "/fujia?type=3&value=" + "openroomtoplay"];
+
+			function comsetting_initcst(key) {
+				lastvalue = key;
+				getdatavideo(key);
+			}
+
+			function getdatavideo(appkey) {
+
+				var url = $.baseUrl + "/fujia";
+				var strjson = {}
+
+				$.ajax({
+					type: 'post',
+					url: url,
+					dataType: 'json',
+					data: 'imgurl=' + JSON.stringify(strjson) + '&type=5&value=' + appkey,
+					success: function(str) {
+
+						if(str.code == "0") {
+							addvideodata(str.data[0]);
+							arrdog = [$.baseUrl + "/fujia?type=3&value=" + str.data[0].key];
+							var format = str.data[0].format;
+							$(".enc_p_text").html("*" + str.data[0].describe);
+							var maccept = "." + format;
+							$(".system_pic_upload").attr("accept", maccept);
+							$(".system_pic_upload").uploadBtnYYL(arrdog[0],function(name,path,size){
+								getdatavideo(lastvalue);
+							},function(file){
+								if (str.data[0].filename && (str.data[0].filename).indexOf(file.name)==-1){
+									mtoast("提示："+str.data[0].describe);
+									return false;
+								}else{
+									return true;
+								}
+							});
+
+//							$(".system_pic_upload").upload(arrdog[0], function(xhr, input) {
+//								getdatavideo(lastvalue);
+//							}, null, function(input) {
+//								
+//								if(str.ishaserver == "1") {
+//									mtoast("必须到系统设置中添加视频服务器才能进行此操作");
+//									return false;
+//								}
+//								return true;
+//
+//							});
+						}
+
+					},
+					error: function(msg) {
+
+					}
+				});
+			}
+
+			function addvideodata(jsondata) {
+
+				//		
+				var myjsonarr = [];
+
+				for(var i = 0; i < jsondata.ishave.length; i++) {
+					var mytemp = {};
+					mytemp.path = jsondata.path;
+					mytemp.format = jsondata.format;
+					mytemp.filename = jsondata.ishave[i];
+					myjsonarr.push(mytemp);
+				}
+				
+				var sortarr=$.jsonSort(myjsonarr,'filename')
+				var html = $.fillData(document.getElementById("VideoDataTemplate").innerHTML, sortarr);
+
+				$(".VideosetList>.tableDiv>.table>tbody").html(html);
+
+			}
+
+			function delectvideoFile(appkey, filename, _this) {
+				var url = $.baseUrl + "/fujia";
+				var strjson = {}
+
+				$.ajax({
+					type: 'post',
+					url: url,
+					dataType: 'json',
+					data: 'imgurl=' + JSON.stringify(strjson) + '&type=7&value=' + appkey + '&picname=' + filename,
+					success: function(str) {
+						if(str.code == "0") {
+							mtoast('删除成功');
+							//							getdatavideo(lastvalue);
+							$(_this).parent().parent().remove();
+						}
+
+					},
+					error: function(msg) {
+
+					}
+				});
+			}
+
+			function mtoast(text) {
+				$.createConfirmBoxOK({
+					"title": "系统提示",
+					"content": text,
+					"click": function() {}
+				});
+			}
+		</script>
+
+	</body>
+
+</html>

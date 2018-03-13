@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+		<style>
+			.addActor_outA {
+				width: 45px;
+				height: 35px;
+				display: inline-block;
+				font-size: 20px;
+				line-height: 30px;
+				text-align: center;
+				padding: 0px;
+				text-decoration: none;
+				color: #FFFFFF;
+				position: absolute;
+				top: 20px;
+				left: 20px;
+			}
+			
+			.musicManager {
+				width: 100%;
+				height: 100%;
+			}
+			
+			.musicManager>.tableDiv {
+				width: 100%;
+				height: calc( 100% - 100px);
+				overflow: auto;
+				position: relative;
+				box-shadow: 0px -3px 3px #E0E0E0;
+			}
+			
+			.musicManager_musicForm {
+				width: 100%;
+				height: 50px;
+				padding: 5px 10px 5px 10px;
+				text-align: right;
+			}
+			
+			.musicManager_musicForm>input {
+				width: calc( 100% - 125px);
+				height: 40px;
+			}
+			
+			.musicManager_musicForm>button {
+				width: 100px;
+				height: 40px;
+				outline: none;
+				margin-right: 10px;
+			}
+			
+			.musicManager_addMusic {
+				font-size: 18px;
+			}
+			
+			.musicManager>.tableDiv>.table>tbody>tr>td>button {
+				width: 26px;
+				height: 26px;
+				display: inline-block;
+			}
+			
+			.musicManager>.tableDiv>.table>tbody>tr>td>button>i.icon-edit {
+				position: relative;
+				left: -1px;
+			}
+			
+			.musicManager>.tableDiv>.table>tbody>tr>td>button>i.icon-reorder {
+				position: relative;
+				left: -1px;
+			}
+			
+			.starManagerList_actorsForm {
+				width: 100%;
+				height: 50px;
+				padding: 5px 10px 5px 10px;
+				text-align: right;
+			}
+		</style>
+
+		<script id="themeDataTemplate" type="text/template">
+			<tr>
+				<td>{[skin_id]}</td>
+				<td>{[skin_name]}</td>
+				<td>
+					<button class="btn violet configdelete"> <i class="icon-trash"></i>
+                    </button>
+				</td>
+			</tr>
+		</script>
+
+		<a class="addActor_outA btn blue">
+			<i class="icon-arrow-left"></i>
+		</a>
+		<div class="starManagerList">
+			<div class="starManagerList_actorsForm">
+
+				<button type="button" class="btn sky " onclick="addskin()" id="addskin">添加</button>
+			</div>
+
+			<!--<button type="button" multiple="multiple" class="btn sky musicManager_addMusic">
+        <i class="icon-plus"></i>
+    </button>
+    -->
+			<div class="tableDiv">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>皮肤ID</th>
+							<th>皮肤名称</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+
+		</div>
+
+		<script>
+			$.tap(".addActor_outA", function() {
+				$.toBack($(this).parentU("indexView"));
+			});
+
+			$.tap(".starManagerList>.tableDiv>.table>tbody>tr>td>button.configupdata", function(e) {
+
+				// e.stopPropagation();
+				var showname = $(this).parent().parent().children("td").first().html();
+				var alldata = $.mjsondata.theme;
+				for(var i = 0; i < alldata.length; i++) {
+					if((alldata)[i].theme_id == showname) {
+						$.selecttheme = alldata[i];
+					}
+				}
+				$.themefrom = "updatatheme"
+				$.hrefPage("yeyinlin/addskin.html", $(this).parentU("indexView"));
+			});
+			$.tap(".starManagerList>.tableDiv>.table>tbody>tr>td>button.configdelete", function(e) {
+				var tempthis = $(this);
+				var mthis = this;
+
+				$.createConfirmBox({
+					"title": "系统提示",
+					"content": "是否确认删除该配置?",
+					"click": function() {
+						var skin_id = tempthis.parent().parent().children("td").first().html();
+						delete_skin(skin_id);
+					}
+				});
+
+			});
+
+			findinitdata();
+
+			function findinitdata() {
+				var url = $.baseUrl + "/skins/list";
+				var strjson = {}
+				$.ajax({
+					type: 'get',
+					url: url,
+					dataType: 'json',
+					//data: 'mdata=' + JSON.stringify(strjson) + '&type=4' + '&updatatype=' + updatatype,
+					success: function(res) {
+                        if (!res.result) {
+                            return
+                        }
+						$.mjsondata = res.result.matches;
+                        var html = $.fillData(document.getElementById("themeDataTemplate").innerHTML, res.result.matches);
+                        $(".starManagerList>.tableDiv>.table>tbody").html(html);
+						// addnewview(str);
+					},
+					error: function(msg) {}
+				});
+			}
+
+			function delete_skin(skin_id) {
+				var url = $.baseUrl + "/skins/del";
+				var strjson = $.deletetheme;
+				$.ajax({
+					type: 'post',
+					url: url,
+					dataType: 'json',
+					data: 'skin_id=' + skin_id,
+					success: function(res) {
+                        if (res.code == 0) {
+                            //success
+                            findinitdata();
+                            return;
+                        }
+                        else{
+                            mtoast(res.msg);
+                            return;
+                        }
+					},
+					error: function(msg) {}
+				});
+			}
+
+			function addskin() {
+				$.themefrom = "addtheme"
+				$.hrefPage("yeyinlin/addskin.html", $("#addskin").parentU("indexView"));
+				// body...
+			}
+			
+			  
+           function mtoast(text) {
+			$.createConfirmBoxOK({
+				"title": "系统提示",
+				"content": text,
+				"click": function() {}
+			});
+		}
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<style>
+			.starManagerList{
+				width: 100%;
+				height: 100%;
+			}
+			.starManagerList>.tableDiv{
+				width: 100%;
+				height: calc( 100% - 100px);
+				overflow: auto;
+				position: relative;
+				box-shadow: 0px -3px 3px #E0E0E0;
+			}
+			.starManagerList_actorsForm{
+				width: 100%;
+				height: 50px;
+				padding: 5px 10px 5px 10px;
+				text-align: right;
+			}
+			.starManagerList_actorsForm>input{
+				width: calc( 100% - 240px);
+				height: 40px;
+			}
+			.starManagerList_actorsForm>button{
+				width: 100px;
+			    height: 40px;
+			    outline: none;
+			    margin-right: 10px;
+			}
+			.starManagerList_addActors{
+				font-size: 18px;
+			}
+			.starManagerList>.tableDiv>.table>tbody>tr>td>button{
+				width: 26px;
+				height: 26px;
+				display: inline-block;
+			}
+			
+			.starManagerList>.tableDiv>.table>tbody>tr>td>button>i.icon-edit{
+				position: relative;
+				left: -1px;
+			}
+			.starManagerList>.tableDiv>.table>tbody>tr>td>button>i.icon-reorder{
+				position: relative;
+				left: -1px;
+			}
+		</style>
+		<style>
+			.addActor_form{
+				width: 370px;
+				height: auto;
+				position: absolute;
+				top: 60px;
+				left: 0px;
+				right: 0px;
+				margin: 0 auto;
+			}
+			.addActor_form>div{
+				width: 100%;
+				height: 40px;
+				position: relative;
+				margin-top: 10px;
+			}
+			.addActor_form>div>label{
+				position: absolute;
+				width: 20%;
+				height: 100%;
+				left: 0px;
+				font-size: 16px;
+				text-align: right;
+				padding-right: 20px;
+				line-height: 40px;
+			}
+			.addActor_form>div>input,.addActor_form>div>select,.addActor_form>div>button{
+				position: absolute;
+				width: 80%;
+				height: 100%;
+				right: 0px;
+			}
+			.addActor_form>div>input[type='file'],.addActor_form>div>select{
+				cursor: pointer;
+			}
+			.addActor_form>div>input[type='file']:active+button.selectBox{
+				background: -webkit-linear-gradient(top,#D0D0D0,#DCDCDC);
+			}
+			.addActor_form>center{
+				margin-top: 20px;
+			}
+			.addActor_form>center>button{
+				font-size: 20px;
+				padding: 6px 30px 8px 30px;
+			}
+		</style>
+		<style>
+			.actorInfoImgDiv{
+				width: 100%;
+				text-align: center;
+                height: 230px;
+			}
+			.actorInfoImg{
+				width: 200px;
+				height: 200px;
+				margin: 0 auto;
+				margin-top: 20px;
+				margin-bottom: 20px;
+			}
+			.listRadius>li>b{
+				position: absolute;
+				right: 10px;
+				font-size: 16px;
+				color: #333333;
+				line-height: 42px;
+			}
+		</style>
+		<script id="actorInfoHTML" type="text/template">
+			<div class="actorInfoImgDiv">
+				<img class="actorInfoImg" src="img/actorImg.jpg" />
+			</div>
+			<div class="actorInfoDiv">
+				<ul class="listRadius">
+					<li>歌星名称<b>加载中...</b></li>
+					<li>歌星类别<b>加载中...</b></li>
+					<li>歌星简拼<b>加载中...</b></li>
+					<li>歌星全拼<b>加载中...</b></li>
+				</ul>
+			</div>
+		</script>
+		<script id="addActorHTML" type="text/template">
+			<form class="addActor_form">
+				<div>
+					<label>歌手</label>
+					<input required="required" name="actor_name" class="inputBox" type="text" placeholder="请填写歌手名称" />
+				</div>
+				<div>
+					<label>类型</label>
+					<select name="actor_type" class="selectBox">
+					</select>
+				</div>
+				<div>
+					<label>简拼</label>
+					<input required="required" name="actor_jp" class="inputBox" type="text" placeholder="请填写歌手简拼" />
+				</div>
+				<div>
+					<label>全拼</label>
+					<input required="required" name="actor_py" class="inputBox" type="text" placeholder="请填写歌手全拼" />
+				</div>
+				<center>
+					<button type="submit" class="btn green">提交</button>
+				</center>
+			</form>
+		</script>
+		<script id="starManagerListDataTemplate" type="text/template">
+			<tr>
+				<td>{[actor_no]}</td>
+				<td>{[actor_name]}</td>
+				<td>{[actor_type]}</td>
+				<td>
+					<button class="btn green actorsInfo" title="详情" actorno="{[actor_no]}">
+						<i class="icon-reorder"></i>
+					</button>
+					<button class="btn orange updateActor" title="编辑" actorno="{[actor_no]}">
+						<i class="icon-edit"></i>
+					</button>
+				</td>
+			</tr>
+		</script>
+		<div class="starManagerList">
+			<div class="starManagerList_actorsForm">
+				<input class="inputBox starManagerList_search" type="text" placeholder="检索请输入编号、姓名或类型" />
+				<button type="button" title="检索" class="btn yellow starManagerList_formSearch">
+					<i class="icon-search"></i>
+				</button>
+				<button type="button" title="新增" class="btn sky starManagerList_addActors">
+					<i class="icon-plus"></i>
+				</button>
+			</div>
+			<div class="tableDiv div_load">
+				<table class="table scroll">
+					<thead>
+						<tr>
+							<th>编号</th>
+							<th>姓名</th>
+							<th>类型</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+
+					</tbody>
+				</table>
+			</div>
+			<footer class="listPageNum">
+			</footer>
+		</div>
+		<script>
+			$(function(){
+				$.tap(".starManagerList_addActors",function(){
+					$.data_checkedActorInfo="";
+					toPopPanelAddActor("添加歌星");
+				});
+				function toPopPanelAddActor(title){
+					_.popPanel(title,document.getElementById("addActorHTML").innerHTML,"400px","369px");
+					sendSelectActorType(function(json){
+						var html="";
+						if(!!json&&!!json.data&&!!json.data.matches){
+							for(var i in json.data.matches){
+								if(json.data.matches.hasOwnProperty(i)){
+									var obj=json.data.matches[i];
+								html+="<option value=\""+obj.actortype_name+"\">"+obj.actortype_name+"</option>";
+								}
+							}
+						}
+						$(".addActor_form>div>select.selectBox").html(html);
+						if(!!$.data_checkedActorInfo){
+							$(".addActor_pageTitle").html("歌手编辑");
+							$(".addActor_form>div>input[name='actor_name']").val($.data_checkedActorInfo.actor_name);
+							$(".addActor_form>div>select[name='actor_type']").val($.data_checkedActorInfo.actor_type);
+							$(".addActor_form>div>input[name='actor_jp']").val($.data_checkedActorInfo.actor_jp);
+							$(".addActor_form>div>input[name='actor_py']").val($.data_checkedActorInfo.actor_py);
+						}
+					});
+					$(".inputBox[name='actor_name']").off("input").on("input",function(){
+						var name=$(this).val();
+						$(".inputBox[name='actor_jp']").val($.pinyin.getCamelChars(name));
+						$(".inputBox[name='actor_py']").val($.pinyin.getFullChars(name));
+					});
+					$(".addActor_form").off("submit").on("submit",function(){
+						event.preventDefault();
+						var obj={};
+						obj.actor_name=$(".inputBox[name='actor_name']").val();
+						obj.actor_type=$(".selectBox[name='actor_type']").val();
+						obj.actor_jp=$(".inputBox[name='actor_jp']").val();
+						obj.actor_py=$(".inputBox[name='actor_py']").val();
+						if(!!$.data_checkedActorInfo){
+							obj.markName=$.data_checkedActorInfo.actor_name;
+							obj.actor_no=$.data_checkedActorInfo.actor_no;
+						}
+						if(!obj.actor_name){
+							$.altAuto("歌星名称不能为空");
+							return;
+						}
+						sendAddActor(JSON.stringify(obj),function(json){
+							if(!!json&&json.code=="0"){
+								$.altAuto("提交成功!");
+								loadData();
+								$(".addActor_form")[0].reset();
+								_.popPanelClose();
+                                return
+							}
+							if(!!json&&!!json.msg){
+								$.altAuto(json.msg);
+								return;
+							}
+						});
+					});
+				}
+				$.tap(".starManagerList>.tableDiv>.table>tbody>tr>td>button.actorsInfo",function(e){
+					e.stopPropagation();
+					var id=$(this).attr("actorno");
+					for(var i in $.data_selectActorsData){
+						if($.data_selectActorsData.hasOwnProperty(i)){
+							var obj = $.data_selectActorsData[i];
+							if(obj.actor_no==id){
+								$.data_checkedActorInfo=obj;
+								break;
+							}
+						}
+					}
+					$.data_checkedActorInfo.actor_type=$(this).parent().prev().html();
+					_.popPanel("歌星信息",document.getElementById("actorInfoHTML").innerHTML,"400px","449px");
+					$(".actorInfoImg").attr("src", "http://" + $.baseIp + "/actorpic/" + $.data_checkedActorInfo.actor_no + ".jpg");
+					$(".actorInfoImg").attr("alt", "没有该歌星的图片（150x150,jpg)");
+					$(".actorInfoImg").attr("height", "200px");
+					$(".actorInfoImg").attr("width", "200px");
+					$(".actorInfoDiv>ul.listRadius>li:eq(0)>b").html($.data_checkedActorInfo.actor_name);
+					$(".actorInfoDiv>ul.listRadius>li:eq(1)>b").html($.data_checkedActorInfo.actor_type);
+					$(".actorInfoDiv>ul.listRadius>li:eq(2)>b").html($.data_checkedActorInfo.actor_jp);
+					$(".actorInfoDiv>ul.listRadius>li:eq(3)>b").html($.data_checkedActorInfo.actor_py);
+				});
+				$.tap(".starManagerList>.tableDiv>.table>tbody>tr>td>button.updateActor",function(e){
+					e.stopPropagation();
+					var id=$(this).attr("actorno");
+					for(var i in $.data_selectActorsData){
+						if($.data_selectActorsData.hasOwnProperty(i)){
+							var obj = $.data_selectActorsData[i];
+							if(obj.actor_no==id){
+								$.data_checkedActorInfo=obj;
+								break;
+							}
+						}
+					}
+					$.data_checkedActorInfo.actor_type=$(this).parent().prev().html();
+					toPopPanelAddActor("编辑歌星");
+				});
+				$(".starManagerList_search").off('keyup').on('keyup', function(event) {
+					if (event.keyCode == "13") {
+						searchData();
+					}
+				});
+				$.tap(".starManagerList_formSearch",function(){
+					searchData();
+				});
+				function searchData(){
+					$.starManagerList_pageNum=1;
+					loadData();
+					sendSelectActorsCount($(".starManagerList_search").val(),function(json){
+						$(".listPageNum").paging(json.data.total,$.starManagerList_pageNum,$.starManagerList_pageSize,function(num){
+							$.starManagerList_pageNum=num;
+							loadData();
+						});
+					});
+				}
+				if(!$.starManagerList_pageNum)
+					$.starManagerList_pageNum=1;
+				if(!$.starManagerList_pageSize)
+					$.starManagerList_pageSize=10;
+				sendSelectActorType(function(json){
+					$.data_starManagerListActorType={};
+					if(!!json){
+						var data=json.data.matches;
+						for(var i in data){
+							if(data.hasOwnProperty(i)){
+								$.data_starManagerListActorType[data[i].actortype_id]=data[i].actortype_name;
+							}
+						}
+					}
+					loadData();
+				});
+				function loadData(){
+					$(".tableDiv").addClass("div_load");
+					sendSelectActors($.starManagerList_pageNum,$.starManagerList_pageSize,$(".starManagerList_search").val(),function(json){
+						if(!json||!json.data||!json.data.matches){
+							$(".starManagerList>.tableDiv>.table>tbody").html("");
+							$.altAuto("暂无数据");
+							$(".tableDiv").removeClass("div_load");
+							return;
+						}
+						typeIdToName(json);
+						$.data_selectActorsData=json.data.matches;
+						if($("#starManagerListDataTemplate").length>0){
+							var html=$.fillData(document.getElementById("starManagerListDataTemplate").innerHTML,$.data_selectActorsData);
+							$(".starManagerList>.tableDiv>.table>tbody").htm(html);
+							$(".tableDiv").removeClass("div_load");
+						}
+					});
+				}
+				sendSelectActorsCount($(".starManagerList_search").val(),function(json){
+					$(".listPageNum").paging(json.data.total,$.starManagerList_pageNum,$.starManagerList_pageSize,function(num){
+						$.starManagerList_pageNum=num;
+						loadData();
+					});
+				});
+				function typeIdToName(json){
+					var arr=json.data.matches;
+					for(var i in arr){
+						if(arr.hasOwnProperty(i)){
+							arr[i].Actor_Type_Name=$.data_starManagerListActorType[arr[i].Actor_Type_ID];
+						}
+					}
+				}
+				function sendSelectActors(page,pSize,text,fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/actors/list?page="+page+"&psize="+pSize+"&text="+text,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendSelectActorsCount(text,fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/actors/count?text="+text,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendSelectActorType(fn){
+					if(!!$.data_selectActorType){
+						if(!!fn)
+							fn($.data_selectActorType);
+					}else{
+						$.ajax({
+							type:"get",
+							url:$.baseUrl+"/actortype/list",
+							dataType:"json",
+							success:function(json){
+								$.data_selectActorType=json;
+								if(!!fn)
+									fn(json);
+							},error:function(){
+								$.altAuto("无法访问或服务器发生异常");
+							}
+						});
+					}
+				}
+				function sendAddActor(data,fn){
+					$.ajax({
+						type:"post",
+						url:$.baseUrl+"/actors/update",
+						data:data,
+						dataType:"json",
+						processData:false,
+		                contentType:false,
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				
+				
+				function sendSelectActorType(fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/actortype/list",
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+			});
+		</script>
+	</body>
+</html>

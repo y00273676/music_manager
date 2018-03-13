@@ -1,0 +1,251 @@
+.btn{
+	box-sizing: border-box;
+    font-size: 16px;
+    outline: none;
+    border-radius: 5px;
+    color: #FFFFFF;
+}
+.btn.green{
+	background-color: #5EBB4D;
+    box-shadow: inset 0px 0px 5px #68B958;
+    border: 1px #4CBD38 solid;
+}
+.btn.green:hover{
+	background-color: #62D44D;
+    box-shadow: inset 0px 0px 5px #62CA4D;
+    border: 1px #5BD845 solid;
+}
+.btn.green:active{
+	background-color: #529E44;
+    box-shadow: inset 0px 0px 5px #479C37;
+    border: 1px #4EA73F solid;
+}
+.btn.sky{
+	background-color: #3CC9CE;
+    box-shadow: inset 0px 0px 5px #52C3C3;
+    border: 1px #4AD1D2 solid;
+}
+.btn.sky:hover{
+	background-color: #48E0CA;
+    box-shadow: inset 0px 0px 5px #4BDCD5;
+    border: 1px #3CD6C9 solid;
+}
+.btn.sky:active{
+	background-color: #3BADAC;
+    box-shadow: inset 0px 0px 5px #3FC1C1;
+    border: 1px #36BFBA solid;
+}
+.btn.red{
+	background-color: #D0465A;
+    box-shadow: inset 0px 0px 5px #D65B5B;
+    border: 1px #C53838 solid;
+}
+.btn.red:hover{
+	background-color: #E65757;
+    box-shadow: inset 0px 0px 5px #DE575E;
+    border: 1px #D63636 solid;
+}
+.btn.red:active{
+	background-color: #BD3B42;
+    box-shadow: inset 0px 0px 5px #BB2B2B;
+    border: 1px #C52E2E solid;
+}
+.btn.violet{
+	background-color: #983CCA;
+    box-shadow: inset 0px 0px 5px #9438B3;
+    border: 1px #9D37D0 solid;
+}
+.btn.violet:hover{
+	background-color: #A448E0;
+    box-shadow: inset 0px 0px 5px #B040D6;
+    border: 1px #B344D6 solid;
+}
+.btn.violet:active{
+	background-color: #8933B7;
+    box-shadow: inset 0px 0px 5px #8327BD;
+    border: 1px #8528BD solid;
+}
+.btn.blue{
+	background-color: #418DCC;
+    box-shadow: inset 0px 0px 5px #4B8DC5;
+    border: 1px #4E87C3 solid;
+}
+.btn.blue:hover{
+	background-color: #699FEC;
+    box-shadow: inset 0px 0px 5px #6399E8;
+    border: 1px #538DE6 solid;
+}
+.btn.blue:active{
+	background-color: #3D75C5;
+    box-shadow: inset 0px 0px 5px #275DBD;
+    border: 1px #2863BD solid;
+}
+.btn.yellow{
+	background-color: #E6E642;
+    box-shadow: inset 0px 0px 5px #E2E43E;
+    border: 1px #EAE636 solid;
+}
+.btn.yellow:hover{
+	background-color: #EAEA44;
+    box-shadow: inset 0px 0px 5px #E8E235;
+    border: 1px #E0DC34 solid;
+}
+.btn.yellow:active{
+	background-color: #CDCE3A;
+    box-shadow: inset 0px 0px 5px #D4D63B;
+    border: 1px #D4D037 solid;
+}
+.btn.orange{
+	background-color: #E49548;
+    box-shadow: inset 0px 0px 5px #DAA93E;
+    border: 1px #DC8941 solid;
+}
+.btn.orange:hover{
+	background-color: #E2AB4C;
+    box-shadow: inset 0px 0px 5px #E6A838;
+    border: 1px #E09D48 solid;
+}
+.btn.orange:active{
+	background-color: #D08720;
+    box-shadow: inset 0px 0px 5px #CE8923;
+    border: 1px #CE761A solid;
+}
+.inputBox{
+	box-sizing: border-box;
+	border: 1px #D0D0D0 solid;
+	font-size: 16px;
+	outline: none;
+	border-radius: 5px;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-right: 10px;
+	box-shadow: inset 0px 0px 5px #BDBDBD;
+	transition: box-shadow 0.25s,border-color 0.25s;
+	-webkit-transition: -webkit-box-shadow 0.25s,border-color 0.25s;
+}
+.inputBox:focus{
+	box-shadow: inset 0px 0px 5px #64A5DC;
+	border: 1px #6FB0D8 solid;
+}
+.titleLabel{
+	width: auto;
+    display: block;
+    font-size: 14px;
+    padding-left: 13px;
+    color: #717171;
+    line-height: 38px;
+    position: relative;
+    text-align: left;
+}
+.selectBox{
+	border: 1px #D0D0D0 solid;
+	box-sizing: border-box;
+	font-size: 16px;
+	outline: none;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-right: 10px;
+	box-shadow: inset 0px 0px 3px #A5A3A3;
+    background: -webkit-linear-gradient(top,#F7F7F7,#D0D0D0);
+    border-radius: 5px;
+}
+.selectBox>option:nth-child(even){
+	background-color: rgba(241, 241, 241, 0.59);
+}
+
+.btn.loadBtn{
+	background-color: #CCCCCC;
+	color: #FFFFFF;
+	position: relative;
+	pointer-events: none;
+    box-shadow: inset 0px 0px 5px rgba(197, 197, 197, 0.65);
+	border: none;
+}
+.btn.loadBtn::after{
+    content: "加载中...";
+    width: 100%;
+    height: 30px;
+    background-color: #CCCCCC;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    border-radius: 10px;
+    text-align: center;
+    font-size: initial;
+    line-height: 30px;
+}
+
+
+input.required{
+	border: 1px #EE5C42 solid;
+	position: relative;
+	transition: 0s none;
+	animation: shake .5s;
+	-webkit-animation: shake .5s;
+	box-shadow: 0px 0px 2px #EE5C42;
+}
+
+@keyframes shake {
+	0% {
+		transform: translateX(0px);
+		-webkit-transform: translateX(0px);
+	}
+	20% {
+		transform: translateX(5px);
+		-webkit-transform: translateX(5px);
+	}
+	40% {
+		transform: translateX(-5px);
+		-webkit-transform: translateX(-5px);
+	}
+	60% {
+		transform: translateX(5px);
+		-webkit-transform: translateX(5px);
+	}
+	80% {
+		transform: translateX(-5px);
+		-webkit-transform: translateX(-5px);
+	}
+	100% {
+		transform: translateX(0px);
+		-webkit-transform: translateX(0px);
+	}
+}
+@-webkit-keyframes shake {
+	0% {
+		transform: translateX(0px);
+		-webkit-transform: translateX(0px);
+	}
+	20% {
+		transform: translateX(5px);
+		-webkit-transform: translateX(5px);
+	}
+	40% {
+		transform: translateX(-5px);
+		-webkit-transform: translateX(-5px);
+	}
+	60% {
+		transform: translateX(5px);
+		-webkit-transform: translateX(5px);
+	}
+	80% {
+		transform: translateX(-5px);
+		-webkit-transform: translateX(-5px);
+	}
+	100% {
+		transform: translateX(0px);
+		-webkit-transform: translateX(0px);
+	}
+}
+
+.requiredMark::after{
+	content: "*";
+    color: #C53838;
+    font-size: 20px;
+    position: absolute;
+    top: 5px;
+    right: -12px;
+}

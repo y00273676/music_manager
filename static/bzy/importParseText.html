@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<style>
+			.importParseText_outA{
+				width: 45px;
+			    height: 35px;
+			    display: inline-block;
+			    font-size: 20px;
+			    line-height: 30px;
+			    text-align: center;
+			    padding: 0px;
+			    text-decoration: none;
+			    color: #FFFFFF;
+			    position: absolute;
+			    top: 20px;
+			    left: 20px;
+			}
+			.importParseText_pageTitle{
+				width: 100%;
+				position: absolute;
+				top: 16px;
+				font-size: 25px;
+				margin: 0;
+				padding: 0;
+				text-align: center;
+				pointer-events: none;
+			}
+			.importParseText{
+				width: 100%;
+				height: 100%;
+			}
+			.importParseText>div>ul>li>.radio{
+				position: absolute;
+			    right: 40px;
+			    top: 30px;
+			}
+			.importParseText>div>center>button{
+    			padding: 10px 30px;
+    			margin-left: 10px;
+    			margin-right: 10px;
+			}
+			.importParseText>.optionArea{
+				width: 560px;
+			    height: 560px;
+			    overflow-y: auto;
+			    box-shadow: 0px 0px 5px #C1C1C1;
+			    border-radius: 5px;
+			    display: inline-block;
+			    position: absolute;
+			    left: 0px;
+			    right: 0px;
+			    margin: 0 auto;
+			    top: 100px;
+			    background-color: #ffffff;
+			}
+			
+			#supplement_fileUpload{
+				width:90%;
+				height:50px;
+				position:relative;
+				background: linear-gradient(to bottom,rgba(255, 255, 255, 0) 0,rgba(255, 255, 255, 0) 100%);
+				left:0px;
+				right:0px;
+				bottom:0px;
+				top:0px;
+				margin:auto;
+				text-align:center;
+				line-height:50px;
+				border-radius:10px;
+				transition:all .5s;
+				transform:scale(0,0);
+				webkit-transform:scale(0,0);
+				opacity:0;
+				z-index:10000;
+			}
+			#supplement_fileUpload>div{
+				width:90%;
+				height:20px;
+				background:linear-gradient(to bottom,#504C4C 0,#7E7D7D 100%);
+				margin:0 auto;
+				line-height:50px;
+				margin-top:15px;
+				padding-left:5px;
+				padding-right:5px;
+				border-radius:10px;
+				position: relative;
+    			top: 15px;
+			}		
+			#supplement_fileUpload>div>div{
+				width:0%;
+				height:10px;
+				background:linear-gradient(to bottom,#83B9FD 0,#4D61A0 100%);
+				position:relative;
+				top:5px;
+				border-radius:10px;
+			}
+			#supplement_fileUpload>div>span{
+				font-family:微软雅黑;
+				position:absolute;
+				left:0px;
+				right:0px;
+				margin:0 auto;
+				color:#ffffff;
+				top: -15px;
+				font-size:14px;
+				font-weight:bold;
+				user-select:none;
+				webkit-user-select:none;
+				cursor:default;
+			}
+			.media_status{
+			    font-size:20px;
+			}
+		</style>
+		<a class="importParseText_outA btn blue">
+			<i class="icon-arrow-left"></i>
+		</a>
+		<h4 class="importParseText_pageTitle">曲库导入</h4>
+		<div class="importParseText">
+			<div class="optionArea">
+				<center>
+					<button type="button" accept=".txt,.TXT" class="btn green importTxt">导入</button>
+		           <div class = 'media_status'>
+                        如果歌曲库文件较大，解析时间会比较长，请耐心等待
+	               </div> 
+				</center>
+			</div>
+		</div>
+		<script>
+			$(function(){
+				$(".importParseText_outA").one("click",function(e){
+					e.stopPropagation();
+					$.toBack($(this).parentU("indexView"));
+				});
+				/*
+				sendLoadFileServer(1,function(json){
+					if(!!json&&!!json.data&&!!json.data.matches&&json.data.matches.length>0){
+						var html=$.fillData("<li>{[FileServer_IpAddress]}<input name=\"fileService\" type=\"radio\" class=\"radio\" /></li>",json.data.matches);
+						$(".importParseText>div>ul:eq(0)").html(html);
+						if($(".importParseText>div>ul:eq(0)>li").length>0)
+							$(".importParseText>div>ul:eq(0)>li>input.radio")[0].checked=true;
+					}
+				});
+				sendLoadFileServer(0,function(json){
+					if(!!json&&!!json.data&&!!json.data.matches&&json.data.matches.length>0){
+						var html=$.fillData("<li>{[FileServer_IpAddress]}<input name=\"otherService\" type=\"radio\" class=\"radio\" /></li>",json.data.matches);
+						$(".importParseText>div>ul:eq(1)").html(html);
+						if($(".importParseText>div>ul:eq(1)>li").length>0)
+							$(".importParseText>div>ul:eq(1)>li>input.radio")[0].checked=true;
+					}
+				});
+				*/
+				$.tap(".importParseText>div>ul>li",function(){
+					$(this).children("input")[0].checked=true;
+				});
+				$(".importTxt").upload($.baseUrl+"/sqlupload",function(xhr,input,fileUpload_Div){
+					var mainIp = $(".importParseText>div>ul>li>input[name='fileService']:checked").parent().text();
+					var otherIp = $(".importParseText>div>ul>li>input[name='otherService']:checked").parent().text();
+					fileUpload_Div.style.transform="scale(1,1)";
+					fileUpload_Div.style.webkitTransform="scale(1,1)";
+					fileUpload_Div.style.opacity="1";
+                    res = $.parseJSON(xhr.responseText);
+                    if (res['code'] != 0){
+                        $.createConfirmBox({"title":"上传出错了","content":"上传过程出错了，请再一次上传并执行加歌操作。","click":function(){
+                        },"cancel":function(){
+                        }});
+                        return;
+                    }
+                    fpath = res['path'];
+
+					var isload = 1;
+                    var isdelete = 0;
+
+                    $.createConfirmBox({"title":"是否清空原有数据?","content":"清空歌曲并重新添加点击确定（或是），更新歌曲请点击取消（或否）","click":function(){
+                        confirm_check_file(fpath, mainIp, otherIp, 1, fileUpload_Div);
+                    },"cancel":function(){
+                        confirm_check_file(fpath, mainIp, otherIp, 0, fileUpload_Div);
+                    }});
+					//confirm('是否清空数据，如果是第一次导入或重新导入数据请点击确定，如果只是更新添加数据请点击取消')?isdelete=1:isdelete=0;
+					//confirm('是否导入空纪录,导入空纪录点击确认，不导入空纪录点击取消')?isload=1:isload=0;
+				},null,null,null,$(".optionArea>center"));
+
+				function get_status(){
+					var time1 = window.setInterval(function(){
+					    $.ajax({
+					         type : "get",
+						     url :$.baseUrl+"/media/get_status",
+						     dataType:"json",
+				             success:function(data){
+						         if(data.status==1){
+							         $('.media_status').html('正在解析歌曲库文件...') 
+							     }
+							     else if(data.status==2){
+							         $('.media_status').html('正在导入歌曲库文件...') 
+							     }
+							     else if(data.status==-1){
+							         $('.media_status').html('歌曲信息导入失败!') 
+							         window.clearInterval(time1) 
+							     }
+							     else if(data.status==0){
+								     $('.media_status').html('歌曲信息导入完成!')
+								     window.clearInterval(time1)
+							     }
+						     }
+					})
+					},1000)
+				}
+                function confirm_check_file(fname, mainIp, otherIp, isdelete, fileUpload_Div){
+                    $.createConfirmBox({"title":"是否导入空纪录?","content":"导入空纪录点击是（或确定），不导入空纪录点击否（或取消）","click":function(){
+                        confirm_import_data(fname, mainIp, otherIp, 1, isdelete, fileUpload_Div);
+						get_status()
+                    },"cancel":function(){
+                        confirm_import_data(fname, mainIp, otherIp, 0, isdelete, fileUpload_Div);
+						get_status()
+                    }});
+                }
+
+                function confirm_import_data(fname,  mainIp, otherIp, isload, isdelete, fileUpload_Div) {
+					sendParseImportTxt(fname, mainIp, otherIp, isload,isdelete,function(json){
+						if(!!json&&json.code=="0"){
+							$.data_mediaAddSuccessPresentation=json.data;
+							fileUpload_Div.style.transform="scale(0,0)";
+							fileUpload_Div.style.webkitTransform="scale(0,0)";
+							fileUpload_Div.style.opacity="0";
+							$(".notClickDiv").css("display","none");
+							$.hrefPage("bzy/mediaAddSuccessPresentation.html",$(".importTxt").parentU("indexView"));
+						}else{
+							alert(json.msg)
+							fileUpload_Div.style.transform="scale(0,0)";
+							fileUpload_Div.style.webkitTransform="scale(0,0)";
+							fileUpload_Div.style.opacity="0";
+							$(".notClickDiv").css("display","none");
+							$.altAuto(json.error);
+						}
+					});
+					$(".notClickDiv").css("display","block");
+                }
+
+				function sendLoadFileServer(isMain,fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/fileservers/list?isMain="+isMain,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendParseImportTxt(data,ip1,ip2,isload,isdelete,fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/sqlimport?fileName="+data+"&ip1="+ip1+"&ip2="+ip2+"&isload="+isload+"&isdelete="+isdelete,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+							$(".notClickDiv").css("display","none");
+						}
+					});
+				}
+			});
+		</script>
+	</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<style>
+			.importParseText_outA{
+				width: 45px;
+			    height: 35px;
+			    display: inline-block;
+			    font-size: 20px;
+			    line-height: 30px;
+			    text-align: center;
+			    padding: 0px;
+			    text-decoration: none;
+			    color: #FFFFFF;
+			    position: absolute;
+			    top: 20px;
+			    left: 20px;
+			}
+			.importParseText_pageTitle{
+				width: 100%;
+				position: absolute;
+				top: 16px;
+				font-size: 25px;
+				margin: 0;
+				padding: 0;
+				text-align: center;
+				pointer-events: none;
+			}
+			.importParseText{
+				width: 100%;
+				height: 100%;
+			}
+			.importParseText>div>ul>li>.radio{
+				position: absolute;
+			    right: 40px;
+			    top: 30px;
+			}
+			.importParseText>div>center>button{
+    			padding: 10px 30px;
+    			margin-left: 10px;
+    			margin-right: 10px;
+			}
+			.importParseText>.optionArea{
+				width: 560px;
+			    height: 560px;
+			    overflow-y: auto;
+			    box-shadow: 0px 0px 5px #C1C1C1;
+			    border-radius: 5px;
+			    display: inline-block;
+			    position: absolute;
+			    left: 0px;
+			    right: 0px;
+			    margin: 0 auto;
+			    top: 100px;
+			    background-color: #ffffff;
+			}
+			
+			#supplement_fileUpload{
+				width:90%;
+				height:50px;
+				position:relative;
+				background: linear-gradient(to bottom,rgba(255, 255, 255, 0) 0,rgba(255, 255, 255, 0) 100%);
+				left:0px;
+				right:0px;
+				bottom:0px;
+				top:0px;
+				margin:auto;
+				text-align:center;
+				line-height:50px;
+				border-radius:10px;
+				transition:all .5s;
+				transform:scale(0,0);
+				webkit-transform:scale(0,0);
+				opacity:0;
+				z-index:10000;
+			}
+			#supplement_fileUpload>div{
+				width:90%;
+				height:20px;
+				background:linear-gradient(to bottom,#504C4C 0,#7E7D7D 100%);
+				margin:0 auto;
+				line-height:50px;
+				margin-top:15px;
+				padding-left:5px;
+				padding-right:5px;
+				border-radius:10px;
+				position: relative;
+    			top: 15px;
+			}		
+			#supplement_fileUpload>div>div{
+				width:0%;
+				height:10px;
+				background:linear-gradient(to bottom,#83B9FD 0,#4D61A0 100%);
+				position:relative;
+				top:5px;
+				border-radius:10px;
+			}
+			#supplement_fileUpload>div>span{
+				font-family:微软雅黑;
+				position:absolute;
+				left:0px;
+				right:0px;
+				margin:0 auto;
+				color:#ffffff;
+				top: -15px;
+				font-size:14px;
+				font-weight:bold;
+				user-select:none;
+				webkit-user-select:none;
+				cursor:default;
+			}
+			.executeDelete{
+				margin-top: 20px;
+			}
+		</style>
+		<a class="importParseText_outA btn blue">
+			<i class="icon-arrow-left"></i>
+		</a>
+		<h4 class="importParseText_pageTitle">整理记录</h4>
+		<div class="importParseText">
+			<div class="optionArea">
+				<label class="titleLabel">主服务器：</label>
+				<ul class="listRadius">
+				</ul>
+				<label class="titleLabel">从服务器：</label>
+				<ul class="listRadius">
+				</ul>
+				<center>
+					<button type="button" class="btn green executeDelete">整理</button>
+				</center>
+			</div>
+		</div>
+		<script>
+			$(function(){
+				$(".importParseText_outA").one("click",function(e){
+					e.stopPropagation();
+					$.toBack($(this).parentU("indexView"));
+				});
+				sendLoadFileServer(1,function(json){
+					if(!!json&&!!json.data&&!!json.data.matches&&json.data.matches.length>0){
+						var html=$.fillData("<li>{[FileServer_IpAddress]}<input name=\"checkService\" type=\"radio\" class=\"radio\" /></li>",json.data.matches);
+						$(".importParseText>div>ul:eq(0)").html(html);
+					}
+				});
+				sendLoadFileServer(0,function(json){
+					if(!!json&&!!json.data&&!!json.data.matches&&json.data.matches.length>0){
+						var html=$.fillData("<li>{[FileServer_IpAddress]}<input name=\"checkService\" type=\"radio\" class=\"radio\" /></li>",json.data.matches);
+						$(".importParseText>div>ul:eq(1)").html(html);
+					}
+				});
+				$.tap(".importParseText>div>ul>li",function(){
+					$(this).children("input")[0].checked=true;
+				});
+				function sendLoadFileServer(isMain,fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/fileservers/list?isMain="+isMain,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				
+			});
+		</script>
+	</body>
+</html>

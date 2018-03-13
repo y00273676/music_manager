@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+		<link rel="stylesheet" href="css/Aimara.css" />
+
+		<style>
+			.addActor_outA_vg {
+				width: 45px;
+				height: 35px;
+				display: inline-block;
+				font-size: 20px;
+				line-height: 30px;
+				text-align: center;
+				padding: 0px;
+				text-decoration: none;
+				color: #FFFFFF;
+				position: absolute;
+				top: 20px;
+				left: 20px;
+			}
+			
+			.actorImgUpload {
+				opacity: 0;
+				z-index: 9;
+			}
+			
+			.thumbnailImg {
+				width: 100px;
+				height: 100px;
+				display: block;
+				margin: 0 auto;
+				position: absolute;
+				top: -60px;
+				right: -100px;
+			}
+			
+			.thumbnailImg.hide {
+				display: none;
+			}
+			
+			.my_dial {
+				width: 31%;
+				/*height: 80px;*/
+				border: 1px solid #CDCDCD;
+				margin: 10px;
+				display: inline-block;
+			}
+			
+			.my_dial_right {
+				/*float: right;*/
+				float: left;
+			}
+			
+			.my_info_css {
+				padding: 2px 0;
+				/*height: 40px;*/
+				line-height: 40px;
+				background: #fff;
+				margin-left: 58px;
+			}
+			
+			.my_label_one {
+				width: 30%;
+				height: 100%;
+				font-size: 16px;
+				line-height: 40px;
+			}
+			
+			.my_label_two {
+				width: 50%;
+				height: 50px;
+				font-size: 8px;
+				line-height: 20px;
+				background: #008000;
+				color: #FFFFFF;
+			}
+			
+			.my_input_one {}
+			
+			.addActor_form_one {
+				width: 400px;
+				height: 150px;
+				top: 60px;
+				left: 0px;
+				right: 0px;
+				margin: 0 auto;
+				background: #FFFFFF;
+			}
+			
+			.text_css {
+				height: 35px;
+				border: 1px solid #CCCCCC;
+				width: 50%;
+			}
+			
+			.my_bt_style {
+				width: 13%;
+			}
+			
+			.my_server_bt_style {
+				width: 47%;
+				margin: 5px 0 0 6px;
+				padding: 5px 0;
+			}
+			
+			.my_server_bt_style_status {
+				width: 20%;
+				margin: 5px 0 0 6px;
+				padding: 5px 0;
+			}
+			
+			.my_server_bt_style input {
+				float: left;
+				margin: 5px 0 0 10px;
+			}
+			
+			.my_but_one {
+				margin-left: 41px;
+			}
+			
+			.progress_one {
+				visibility: hidden;
+			}
+			
+			.progress_one_show {
+				visibility: visible;
+			}
+			
+			.VGsetone_form {
+				width: 100%;
+				height: 250px;
+				position: absolute;
+				top: 45px;
+				margin: 0 auto;
+			}
+			
+			.VGsetone_form>div {
+				width: 80%;
+				height: 40px;
+				position: relative;
+				margin-top: 10px;
+				margin-left: 0px;
+				display: block;
+				left: 51px;
+			}
+			
+			.VGsetone_form>div>label {
+				width: 128px;
+				height: 100%;
+				font-size: 16px;
+				text-align: left;
+				padding-right: 20px;
+				line-height: 40px;
+				display: inline-block;
+			}
+			
+			.VGsetone_form>div>input,
+			.VGsetone_form>div>select {
+				width: 53%;
+				height: 100%;
+			}
+			
+			.btn_bs {
+				margin-top: 12px;
+				width: 100px;
+				height: 40px;
+			}
+			
+			.vg_first_div {
+				padding: 2px 0;
+				text-align: center;
+				height: 40px;
+				line-height: 40px;
+				font-size: 15px;
+				margin-top: 60px;
+			}
+			
+			.my_server_bt_style>input[type='checkbox'] {
+				pointer-events: none;
+			}
+			
+			.span_color {
+				display: inline-block;
+				width: 14px;
+				height: 14px;
+				background: green;
+			}
+			
+			.span_color_red {
+				display: inline-block;
+				width: 14px;
+				height: 14px;
+				background: red;
+			}
+			
+			.labelGreen {
+				position: relative;
+			}
+			
+			.labelGreen::after {
+				content: " ";
+				width: 14px;
+				height: 14px;
+				background: green;
+				position: absolute;
+				left: -15px;
+				top: 3px;
+			}
+			
+			.labelGreenred {
+				position: relative;
+			}
+			
+			.labelGreenred::after {
+				content: " ";
+				width: 14px;
+				height: 14px;
+				background: red;
+				position: absolute;
+				left: -15px;
+				top: 3px;
+			}
+			
+			.labelGray {
+				position: relative;
+			}
+			
+			.labelGray::after {
+				content: " ";
+				width: 14px;
+				height: 14px;
+				background: gray;
+				position: absolute;
+				left: -15px;
+				top: 3px;
+			}
+			
+			.vg_fu_setting {
+				font-size: 16px;
+				font-weight: bold;
+				width: 100%;
+				border-bottom: 1px solid #CDCDCD;
+				padding: 7px 35px;
+				background: #efefef;
+			}
+			
+			.vg_fuzai {
+				height: 50px;
+				font-size: 20px;
+				margin-left: 10px;
+			}
+			
+			.vg_server_info {
+				height: 387px;
+				overflow: auto;
+				font-size: 14px;
+			}
+			
+			.vg_div_tree {
+				height: 400px;
+				font-size: 14px;
+				background: #fff;
+				margin: 15px 0 0 10px;
+			}
+		</style>
+		<a class="addActor_outA_vg btn blue"> <i class="icon-arrow-left"></i>
+		</a>
+		<div class="vg_first_div">
+			<button id="newserver" class="btn green my_bt_style" onclick="addnewtree('4')">新建服务器</button>
+			<button id="upserver" class="btn green my_bt_style" onclick="addnewtree('5')">修改服务器</button>
+			<button id="deservser" class="btn green my_bt_style" onclick="addnewtree('6')">删除服务器</button>
+
+		</div>
+
+		<div class="my_dial my_dial_right">
+			<div class="vg_fu_setting">服务组单个设置</div>
+			<div id="div_tree" class="vg_div_tree"></div>
+		</div>
+
+		<!--div class="my_dial my_dial_right">
+			<div class="vg_fu_setting">服务器负载情况</div>
+			<div>
+				<label class="vg_fuzai" id="serverfuzai">服务器负载：</label>
+			</div>
+
+			<div id="stbserverinfo" class="vg_server_info">
+			</div>
+		</div-->
+
+		<div class="my_dial my_dial_right">
+			<div class="vg_fu_setting">服务</div>
+			<div style="height: 414px;">
+
+				<div style="">
+					<button class="btn green my_server_bt_style" onclick="restartAllServer()">启动</button>
+					<button class="btn green my_server_bt_style" onclick="stopAllServer()">停止</button>
+				</div>
+				<div style="margin-top: 50px;margin-left: 20px;">
+					<label class="labelGray" style="font-size: 16px;">---未连接</label>
+				</div>
+				<div style="margin-left: 20px;">
+					<label class="labelGreen" style="font-size: 16px;">---正在运行</label>
+				</div>
+				<div style="margin-left: 20px;">
+					<label class="labelGreenred" style="font-size: 16px;">---停止运行</label>
+				</div>
+
+				<div style="    margin-top: 29px">
+					<button name="setmiangroup" class="btn  my_server_bt_style" value="dbass"><input class="checkBox_left" type='checkbox'/>KTV数据服务<i class="icon-spinner icon-spin progress_one"></i></button>
+					<button name="setmiangroup" class="btn  my_server_bt_style" value="dhcp"><input type='checkbox'/>DHCP服务<i class="icon-spinner icon-spin progress_one"></i></button>
+				</div>
+				<div style="">
+					<button name="setmiangroup" class="btn  my_server_bt_style" value="record"><input type='checkbox'/>录音服务<i class="icon-spinner icon-spin progress_one"></i></button>
+					<button name="setmiangroup" class="btn  my_server_bt_style" value="broadcast"><input type='checkbox'/>广播服务<i class="icon-spinner icon-spin progress_one"></i></button>
+				</div>
+				<div style="">
+					<button name="setmiangroup" class="btn  my_server_bt_style" value="mainktv"><input type='checkbox'/>加密狗服务<i class="icon-spinner icon-spin progress_one"></i></button>
+					<button name="setmiangroup" class="btn  my_server_bt_style" value="twm"><input type='checkbox'/>数据管理服务<i class="icon-spinner icon-spin progress_one"></i></button>
+				</div>
+				<div style="">
+					<button name="setmiangroup" class="btn  my_server_bt_style" value="transfer_vod"><input type='checkbox'/>微信点歌服务<i class="icon-spinner icon-spin progress_one"></i></button>
+					<button name="setmiangroup" class="btn  my_server_bt_style" value="wx_ngrok"><input type='checkbox'/>微信点歌链接<i class="icon-spinner icon-spin progress_one"></i></button>
+				</div>
+			</div>
+		</div>
+		</div>
+
+		<script type="text/javascript" src="js/Aimara.js"></script>
+		<script id="my_diglog" type="text/template">
+
+			<form class="VGsetone_form">
+				<div id="select_mainname">
+					<label> 组别名称：</label>
+					<select class="selectBox" id="server_text"></select>
+				</div>
+
+				<div>
+					<input id="server_id" type="text" class="inputBox hidden"></input>
+					<label> 服务器名称：</label>
+					<input id="server_name" type="text" class="inputBox"></input>
+				</div>
+				<div>
+					<label> ip地址：</label>
+					<input id="server_ip" type="text" class="inputBox"></input>
+				</div>
+
+				<center>
+					<button type="button" id="btcancel" class="btn green btn_bs" onclick="sure_button_server()">确定</button>
+				</center>
+			</form>
+
+		</script>
+		<script>
+			var lastnode = 1;
+
+			function setsbtinfo(ip, mdata) {
+                return;
+				var btree = createTree('stbserverinfo', 'white');
+				//$("#serverfuzai").html(ip + " 断开连接");
+				$("#serverfuzai").html(ip);
+				if(!mdata["result"]) {
+
+				} else {
+
+					var data = mdata.result;
+					var total = data.total;
+					var serverip = data.serverip;
+
+					$("#serverfuzai").html(ip + "  服务器负载(" + total + ")：");
+					var infolist = data.infolist;
+					var htmlstr = "";
+					$.alldist = [];
+
+					var diskmus = {}
+					for(var i = 0; i < infolist.length; i++) {
+						var stbip = infolist[i].stbip;
+						var vpath = infolist[i].vpath;
+						//获取每个盘下的歌曲
+						var disk = vpath.split('/')[2];
+						if(diskmus[disk] == undefined) {
+							diskmus[disk] = 1;
+						} else {
+							diskmus[disk] = diskmus[disk] + 1;
+						}
+
+					}
+
+					for(var i = 0; i < infolist.length; i++) {
+						var stbip = infolist[i].stbip;
+						var vpath = infolist[i].vpath;
+						setDiskInfo(diskmus, btree, infolist[i]);
+					}
+				}
+				btree.drawTree();
+
+			}
+
+			$(function() {
+				$(".my_server_bt_style").on("click", function(e) {
+					var input_is_select = $(this).children("input");
+					console.info(input_is_select.is(':checked'))
+					if(input_is_select.is(':checked')) {
+						input_is_select.prop("checked", false);
+					} else {
+						input_is_select.prop("checked", true);
+					}
+				})
+			})
+			$.tap(".addActor_outA_vg", function() {
+				clearInterval($.theardid);
+				$.toBack($(this).parentU("indexView"));
+			});
+
+			initdata();
+
+			function setDiskInfo(number, tree, jsondata) {
+				//				var tree = createTree('stbserverinfo', 'white');
+				var stbip = jsondata.stbip;
+				var vpath = jsondata.vpath;
+				//一級盘
+				var disk = vpath.split('/')[2];
+
+				if($.alldist.indexOf(disk) != -1) {
+					//					alert($.alldist.indexOf(disk));
+					//找到相应的节点
+					$.each(tree.childNodes, function(mi, mele) {
+						if(mele.tag == disk) {
+							var mchildnode = mele.createChildNode(stbip + "," + vpath.split('/')[3] + "_" + vpath.split('/')[4], false, 'img/songicon.png', vpath.split('/')[4], null);
+						}
+					});
+
+				} else {
+
+					$.alldist.push(disk);
+					var mparentnode = tree.createNode(disk + "(" + number[disk] + ")", true, 'img/disk.png', null, disk, null);
+					var mchildnode = mparentnode.createChildNode(stbip + "," + vpath.split('/')[3] + "_" + vpath.split('/')[4], false, 'img/songicon.png', vpath.split('/')[4], null);
+				}
+			}
+
+			function hideall() {
+				$("#newserver").hide();
+				$("#upserver").hide();
+				$("#deservser").hide();
+
+			}
+			function findinitdata(fn) {
+				$.ajax({
+					type: 'get',
+					url: $.baseUrl + "/servers/list",
+					dataType: 'json',
+					success: function(str) {
+						if(!!fn)
+							fn(str);
+					}
+				});
+			}
+			function initdata() {
+                var main_grp = {}
+                main_grp.ServerGroup_ID = 1
+                main_grp.ServerGroup_Name = 'Main'
+                var slave_grp = {}
+                slave_grp.ServerGroup_ID = 2
+                slave_grp.ServerGroup_Name = 'Slave'
+                var servergroups = [main_grp, slave_grp];
+				$.serverg = servergroups;
+
+                findinitdata(function(str){
+                    if (str.code == 0){
+                        if (str.result){
+                            $.mjsondata=str.result.matches;
+                        }else{
+                            $.mjsondata=[];
+                        }
+                    } else{
+                        $.mjsondata=[];
+                    }
+                    settreeLevel($.mjsondata);
+                });
+				time_click_action();
+				$("button[name='setmiangroup']").each(
+					function() {
+						changecolor($(this)[0], "gray")
+					}
+				)
+
+			}
+
+			function settreeLevel(mjsondata) {
+                var servergroups = $.serverg ;
+				var tree = createTree('div_tree', 'white');
+                if (mjsondata){
+                    var servers = mjsondata;
+                }else{
+                    var servers = [];
+                }
+				if(servers == undefined) {
+					servers = [];
+				}
+				if(servergroups != null) {
+					//上面是服务器组 下面是单个的服务器
+					//拿到了所有的数据
+
+					if(servers.length == 0) {
+						$.altAuto("当前组别下面没有服务器，添加服务器");
+					}
+					var tempjson = {};
+					for(var i = 0; i < servers.length; i++) {
+						for(var j = 0; j < servergroups.length; j++) {
+							if(servers[i].server_grpid == servergroups[j].ServerGroup_ID) {
+								if(servers[i].server_grpid == 1) {
+									tempjson.ServerGroup_ID = servergroups[j].ServerGroup_ID;
+									break;
+								}
+							}
+						}
+					}
+
+					$.each(servergroups, function(ti, tele) {
+						var zuname = tele.ServerGroup_Name;
+						if(tele.ServerGroup_ID == "1") {
+							$.mianid = tele.ServerGroup_ID;
+
+							$.mainnode = tree.createNode(zuname + "(主服务器组)", true, 'img/leaf.png', null, tele.ServerGroup_ID, null);
+						} else {
+							//$.slavenode = tree.createNode(zuname + "(从服务器组)", true, 'img/star.png', null, tele.ServerGroup_ID, null);
+						}
+					});
+				}
+				if(servers != null) {
+					$.each(servers, function(i, ele) {
+						//先要需要有组才行
+						//找到相应的组
+						$.each(tree.childNodes, function(mi, mele) {
+							if(mele.tag == ele.server_grpid) {
+								mele.createChildNode(ele.server_name + "  " + ele.server_ip, false, 'img/monitor.png', ele.server_ip, ele.server_id);
+							}
+						});
+
+					});
+				}
+
+				tree.drawTree();
+				$.tree = tree;
+				$("#servers_name").hide();
+				$("#server_setting").hide();
+				$("#server_bt").hide();
+				hideall();
+
+			}
+
+			function get_defult_ip() {
+				var ip = $.getRootPath();
+				ip = ip.substring(ip.indexOf("//") + 2, ip.lastIndexOf(".") + 1);
+				return ip;
+			}
+
+			function setmaingroup() {
+
+			}
+
+			function addnewtree(type) {
+				$.servertype = type;
+				if(type == 4) {
+					_.popPanel("服务器设置", document.getElementById("my_diglog").innerHTML, "400px", "303px", false,function(){
+					});
+					servergFn();
+					$("#server_text").show();
+				} else if(type == 5) {
+					_.popPanel("服务器设置", document.getElementById("my_diglog").innerHTML, "400px", "218px", false);
+					servergFn();
+					$("#select_mainname").hide();
+				} else if(type == 6) {
+					$("#servers_name").hide();
+					$("#server_setting").hide();
+					$("#server_bt").hide();
+					delete_one_service();
+				}
+				function servergFn(){
+					for(var i = 0; i < $.serverg.length; i++) {
+						if($.serverg[i].ServerGroup_Name == "Main") {
+							$("#server_text").append("<option value='" + $.serverg[i].ServerGroup_ID + "' class='my_ip_address'>" + "主服务器" + "</option>");
+						} else {
+							$("#server_text").append("<option value='" + $.serverg[i].ServerGroup_ID + "' class='my_ip_address'>" + "从服务器" + "</option>");
+						}
+					}
+					$("#server_text").val(lastnode);
+					$("#server_id").val(last_server_id);
+					$("#servers_name").hide();
+					$("#server_ip").val(get_defult_ip()).focus().off("input").on("input",function(){
+						var ip=$(this).val();
+						if(ip.lastIndexOf(".")>0){
+							ip=ip.substring(ip.lastIndexOf(".")+1,ip.length);
+							$("#server_name").val(ip);
+						}
+					}).off("keyup").on("keyup",function(e){
+						if(e.keyCode==13){
+							$("#btcancel").click();
+						}
+					});
+					$("#server_setting").show();
+					$("#server_bt").show();
+				}
+			}
+
+			function addchildtree() {
+				var tree = $.tree;
+				var select = tree.selectedNode;
+				tree.drawTree();
+			}
+			var lastvideo="";
+
+			function node_onclick(p_node) {
+				// serverdiag(p_node);
+                if (!p_node.tag){
+                    p_node.tag = p_node.text.substring(p_node.text.lastIndexOf(" ") + 1);
+                }
+				if((p_node.tag.toString()).indexOf("disk") != -1 || (p_node.tag.toString()).indexOf("mpg") != -1) {
+					return;
+				}
+				$.select = p_node;
+				hideView();
+				//获取数据
+				setserverstate($.select.tag);
+			}
+			
+			function setserverstate(ip) {
+				if(lastvideo != ip){
+					$("button[name='setmiangroup']").each(
+					function() {
+						$(this).children().first()[0].checked=false;
+					}
+				)
+				}
+				lastvideo=ip;
+				
+				if(String($.select.tag).indexOf(".") == -1 ? true : false) {
+					lastnode = ($.select.tag);
+                    last_server_id = 0;
+				} else {
+                    last_server_id = ($.select.contextMenu);
+					lastnode = ($.select.parent.tag);
+					if($.myallserverinfo[ip] == undefined || $.myallserverinfo[ip] == "") {
+						$("#stbserverinfo").html("");
+						$("#serverfuzai").html(ip + "  努力连接中......");
+						$("button[name='setmiangroup']").each(
+							function() {
+								changecolor($(this)[0], "gray")
+							}
+						)
+					} else {
+						setsbtinfo(ip, ($.myallserverinfo[ip].data).sbtinfo);
+						setallstatu($.myallserverinfo[ip]);
+					}
+				}
+			}
+
+			function changecolor(mbutton, colorstr) {
+				mbutton.style.background = colorstr; //更改为红色
+			}
+			//设置定时器去获取状态
+
+			function time_click_action() {
+				$.timer = -1;
+				$.myallserverinfo = {};
+				if($.timer != -1) {
+					clearInterval($.timer);
+				}
+				var iparr = [];
+				$.ipallarr = iparr;
+				$(function() {
+					$.timer = setInterval("setallAddresstoserver()", 5000);
+				});
+			}
+
+			function hideView() {
+				var node = $.select;
+				var tag = node.tag;
+                return;
+				if(String(tag).indexOf(".") == -1 ? true : false) {
+					$("#newserver").show();
+					$("#upserver").hide();
+					$("#deservser").hide();
+				} else {
+					$("#newserver").show();
+					$("#upserver").show();
+					$("#deservser").show();
+				}
+				// body...
+			}
+
+			function sure_button_server() {
+				var servertype = $.servertype;
+				if(servertype == 4) {
+					new_one_service();
+				} else if(servertype == 5) {
+					update_one_service();
+				} else if(servertype == 6) {
+					delete_one_service();
+				}
+			}
+
+			function serverdiag(p_node) {
+				var str = prompt("设置服务器名称", p_node.text);
+				if(str) {
+					// alert("您刚输入的是："+ str)
+				}
+			}
+
+			function isNull(data) {
+				return(data == "" || data == undefined || data == null) ? true : false;
+			}
+
+			function new_servers() {
+				//新建组
+
+				var name = $("#server_text").val();
+				if(isNull(name)) {
+					mtoast("服务器名称不能为空！");
+					return;
+				}
+				//需要先添加到后台才显示到前端
+				var mjson = {};
+				mjson.ServerGroup_Name = name;
+				mjson.ServerGroup_IsValid = 1;
+
+				sendbuildnewtree(mjson, "addFristLevel");
+
+			}
+
+			function updata_servers() {
+
+				var select = $.select;
+				// body...
+				var name = $("#server_text").val();
+				if(name == "") {
+					mtoast("组服务器名称不能为空");
+				} else {
+					var mjson = {};
+					mjson.ServerGroup_Name = name;
+					mjson.ServerGroup_ID = select.tag;
+					sendbuildnewtree(mjson, "updataFristLevel");
+
+				}
+
+			}
+
+			function deleteOneLevel() {
+				var select = $.select;
+				select.removeNode();
+			}
+
+			function deleteservers() {
+				var select = $.select;
+
+				if(select.childNodes.length > 0) {
+					$.createConfirmBoxOK({
+						"title": "系统提示",
+						"content": "组有服务器，不能删除?",
+						"click": function() {
+
+						}
+					});
+				} else {
+					$.createConfirmBox({
+						"title": "系统提示",
+						"content": "确认是否删除?",
+						"click": function() {
+							var mjson = {};
+							mjson.ServerGroup_ID = select.tag;
+							sendbuildnewtree(mjson, "deleteFristLevel");
+						}
+					});
+
+				}
+
+				// body...
+			}
+
+			function setmiangroup() {
+				var select = $.select;
+				var mjson = {};
+				mjson.ServerGroup_ID = select.tag;
+				sendbuildnewtree(mjson, "setmianlevel");
+			}
+
+			function new_one_service() {
+				var server_name = $("#server_name").val();
+				if(isNull(server_name)) {
+					mtoast("服务器名称不能为空！");
+					return;
+				}
+				var server_ip = $("#server_ip").val();
+				if(!isIP2(server_ip)) {
+					mtoast("ip地址格式不正确");
+					return;
+				}
+				var mjson = {};
+				mjson.server_name = server_name;
+				mjson.server_ip = server_ip;
+				mjson.server_grpid = $("#server_text").val();
+
+				//sendbuildnewtree(mjson, "addSecondLevel");
+                manage_servers(mjson, 'add');
+			}
+
+			function newsecondlevel(argument) {
+				// body...
+				if(argument.server_grpid == "1") {
+					$.mainnode.createChildNode(argument.server_name + "  " + argument.server_ip, false, 'img/monitor.png', argument.ipaddress, null);
+				} else {
+					$.slavenode.createChildNode(argument.server_name + "  " + argument.server_ip, false, 'img/monitor.png', argument.ipaddress, null);
+				}
+
+			}
+
+			function update_one_service() {
+				var select = $.select;
+				var server_name = $("#server_name").val();
+				var server_id = $("#server_id").val();
+
+				if(isNull(server_name)) {
+					mtoast("服务器名称不能为空！");
+					return;
+				}
+				var server_ip = $("#server_ip").val();
+				// select.setText(server_name+"  "+server_ip);
+				if(!isIP2(server_ip)) {
+					mtoast("ip地址格式不正确");
+					return;
+				}
+
+				var mjson = {};
+				mjson.server_id = server_id;
+				mjson.server_name = server_name;
+				mjson.server_ip = server_ip;
+				mjson.server_grpid = select.parent.tag;
+
+				//sendbuildnewtree(mjson, "updataSecondLevel");
+                manage_servers(mjson, 'update');
+
+			}
+
+			function delete_one_service() {
+				//删除子节点
+				$.createConfirmBox({
+					"title": "系统提示",
+					"content": "确认是否删除?",
+					"click": function() {
+                         is_last_one();
+					}
+				});
+
+				// body...
+			}
+			
+			function is_last_one(){
+				var mjson = {};
+				var select = $.select;
+				mjson.ServerGroup_ID = select.parent.tag;
+				manage_servers(mjson,"count")
+			}
+			
+			function delete_check_service() {
+				//删除子节点
+				$.createConfirmBox({
+					"title": "系统提示",
+					"content": "当前为组下最后一台服务器，删除会清空所有服务器歌曲信息，是否删除?",
+					"click": function() {
+						delete_nolastone();
+					}
+				});
+			}
+			
+			function delete_nolastone(){
+					var select = $.select;
+					var mjson = {};
+					mjson.ipaddress = select.tag;
+                    server_id = select.contextMenu
+					//sendbuildnewtree(mjson, "removeSecondLevel");
+                    manage_servers(server_id, 'del');
+			}
+
+			function server_cancel() {
+				$("#servers_name").hide();
+				$("#server_setting").hide();
+				$("#server_bt").hide();
+				$("#server_name").val("");
+				$("#server_ip").val("");
+				$("#server_text").val("");
+
+			}
+
+			function setallAddresstoserver() {
+				if($("#newserver").length == 0) {
+					clearInterval($.theardid);
+					return;
+				}
+				var servers = $.mjsondata
+				if(!servers){
+					return;
+				}
+
+				for(var j = 0; j < servers.length; j++) {
+					var myaddress = servers[j].server_ip;
+					if($.ipallarr.indexOf(myaddress) == -1) {
+						$.ipallarr.push(myaddress);
+					}
+				}
+				getallstatus($.ipallarr);
+			}
+
+			function getallstatus(arr) {
+				for(var j = 0; j < arr.length; j++) {
+					getserverstate(arr[j]);
+				}
+			}
+
+			function getserverstate(myurl) {
+				var argument = {};
+				var turl = "http://"
+				var eurl = ":8888"
+				var updatatype = "ls"
+				var server_ip = myurl;
+				get_service_status(turl + myurl + eurl, server_ip, updatatype, myurl);
+			}
+
+			function stopAllServer() {
+				var argument = {};
+				argument = getallcheck();
+				var updatatype = "servicestop"
+				var turl = "http://"
+				var eurl = ":8888"
+				var myurl = $.select.tag;
+				sendserver(turl + myurl + eurl, argument, updatatype);
+			}
+
+			function restartAllServer() {
+				var argument = {};
+				argument = getallcheck();
+				var updatatype = "servicerestart"
+				var turl = "http://"
+				var eurl = ":8888"
+				var myurl = $.select.tag;
+				sendserver(turl + myurl + eurl, argument, updatatype);
+			}
+
+			function getallcheck() {
+				myserver = [];
+				$("button[name='setmiangroup']").each(
+
+					function() {
+						var check = $(this).children('input')[0];
+						var i = $(this).children('i');
+
+						if(check.checked) {
+							i.removeClass("progress_one");
+							i.addClass("progress_one_show");
+							myserver.push($(this).val());
+						}
+
+					}
+				)
+
+				return myserver;
+
+			}
+
+			function sendserver(baseurl, argument, updatatype) {
+                if (updatatype=='ls'){
+                    var url = baseurl + "/servers/ls";
+                    var http_method = "get";
+                    var http_data = "";
+                } else if (updatatype=='servicerestart'){
+                    var url = baseurl + "/servers/servicerestart";
+                    var http_method = "post";
+                    var http_data = JSON.stringify(argument);
+                } else if (updatatype=='servicestop'){
+                    var url = baseurl + "/servers/servicestop";
+                    var http_method = "post";
+                    var http_data = JSON.stringify(argument);
+                }
+				$(".loading").css("display", "block");
+				$.ajax({
+					type: http_method,
+					url: url,
+					dataType: 'json',
+					data: http_data,
+					success: function(str) {
+						if(str.code == "0") {
+							mtoast(str.msg);
+						} else {
+							mtoast("操作失败");
+						}
+						sethideprogress();
+						$(".loading").css("display", "none");
+					},
+					error: function(msg) {
+						sethideprogress();
+						$(".loading").css("display", "none");
+					}
+				});
+			}
+
+			function sethideprogress() {
+				$("button[name='setmiangroup']").each(
+
+					function() {
+						var check = $(this).children('input')[0];
+						var i = $(this).children('i');
+
+						if(check.checked) {
+							i.removeClass("progress_one_show");
+							i.addClass("progress_one");
+
+						}
+
+					}
+				)
+			}
+
+			function get_service_status(baseurl, server_ip, updatatype, ip) {
+				var url = baseurl + "/servers/ls";
+				$.ajax({
+					type: 'get',
+					url: url,
+					dataType: 'json',
+					data: 'server_ip=' + server_ip,
+					success: function(str) {
+						backinfoset(str, updatatype, ip);
+					},
+					error: function(msg) {
+						disconnet(msg, updatatype, ip);
+					}
+				});
+			}
+
+			function disconnet(str, updata, ip) {
+
+				if(updata == "ls") {
+                    if(!$.select){
+                        return;
+                    }
+					$.myallserverinfo[ip] = "";
+					if($.select.tag == ip) {
+						$("#stbserverinfo").html("");
+						$("#serverfuzai").html(ip + "  服务器断开连接");
+					}
+
+				}
+			}
+
+			function backinfoset(str, updata, ip) {
+				//添加到集合里面
+				if(updata == "ls") {
+                    if(!$.select){
+                        return;
+                    }
+					$.myallserverinfo[ip] = str;
+					if($.select.tag == ip) {
+						setsbtinfo(ip, (str.data).sbtinfo);
+						setallstatu(str);
+					}
+				}
+			}
+
+			function setallstatu(adata) {
+
+				$("button[name='setmiangroup']").each(
+					function() {
+						changecolor($(this)[0], "red")
+					}
+
+				)
+				var data = adata.data.server;
+				for(var i = 0; i < data.length; i++) {
+					var mtname = data[i].pname;
+					var status = data[i].status;
+					$("button[name='setmiangroup']").each(
+						function() {
+							//							alert(mtname);
+							if(mtname == $(this).val() && status == "RUNNING") {
+								changecolor($(this)[0], "green")
+							}
+
+						}
+
+					)
+				}
+			}
+			function manage_servers(argument, op ) {
+                //服务器的增删改:
+				$(".loading").css("display", "block");
+				var url = $.baseUrl + "/servers/" + op;
+                if (op =='add' || op=='update'){
+                    param_type = 'json';
+                    param_string = JSON.stringify(argument);
+					http_method = 'post';
+               }else if (op == 'count'){
+                    param_type = 'json';
+                    param_string = '';
+					http_method = 'get';
+               }else{
+                    param_type = 'json';
+                    param_string = 'server_id=' + argument;
+					http_method = 'post';
+                }
+				$.ajax({
+					type: http_method,
+					url: url,
+					dataType: 'json',
+					data: param_string,
+					success: function(str) {
+						$(".loading").css("display", "none");
+						if(op == "add") {
+							if(str.code == 0) {
+								newsecondlevel(argument);
+								$("#server_name").val("");
+								
+								$.createConfirmBoxOK({"title":"系统提示","content":"操作成功!","click":function(){
+									$("#server_ip").val(get_defult_ip()).focus();
+								}});
+								
+								mtoast(str.msg);
+                                //_.popPanelClose();
+								//需要去调用初始话设置的接口
+								setthunderallip(argument.server_ip);
+								if($.ipallarr.indexOf(argument.server_ip) == -1) {
+									$.ipallarr.push(argument.server_ip);
+								}
+							} else {
+								mtoast("操作失败");
+							}
+						} else if(op == "del") {
+							mtoast(str.msg);
+							var select = $.select;
+							select.removeNode();
+						} else if(op == "update") {
+							mtoast("操作成功");
+							var select = $.select;
+							select.setText(argument.server_name + "  " + argument.server_ip);
+							if($.ipallarr.indexOf(argument.server_ip) == -1) {
+								$.ipallarr.push(argument.server_ip);
+							}
+							_.popPanelClose();
+						}else if(op == "count"){
+							if(str.code == 0){
+								if(str.result == 1){
+									delete_check_service();
+								}else{
+									delete_nolastone();
+								}
+							}
+						}
+					},
+					error: function(msg) {
+						$(".loading").css("display", "none");
+					}
+				});
+			}
+
+			function sendbuildnewtree(argument, updatatype) {
+                //服务器的增删改:
+				$(".loading").css("display", "block");
+				//添加组名
+				var url = $.baseUrl + "/systemset";
+				// alert(JSON.stringify(argument));
+				$.ajax({
+					type: 'post',
+					url: url,
+					dataType: 'json',
+					data: 'mdata=' + JSON.stringify(argument) + '&type=3' + '&updatatype=' + updatatype,
+					success: function(str) {
+						$(".loading").css("display", "none");
+
+						// alert(updatatype);
+						if(updatatype == "addSecondLevel") {
+							if(str.mtype == 0) {
+								newsecondlevel(argument);
+								$("#server_name").val("");
+								
+								$.createConfirmBoxOK({"title":"系统提示","content":"操作成功!","click":function(){
+									$("#server_ip").val(get_defult_ip()).focus();
+								}});
+								
+								mtoast(str.msg);
+//								_.popPanelClose();
+								//需要去调用初始话设置的接口
+								setthunderallip(argument.ipaddress);
+								if($.ipallarr.indexOf(argument.ipaddress) == -1) {
+									$.ipallarr.push(argument.ipaddress);
+								}
+
+							} else {
+								mtoast("操作失败");
+							}
+						} else if(updatatype == "removeSecondLevel") {
+							mtoast(str.result);
+							var select = $.select;
+							select.removeNode();
+						} else if(updatatype == "updataSecondLevel") {
+							//							alert(argument.new_name);
+							mtoast("操作成功");
+							var select = $.select;
+							select.setText(argument.new_name + "  " + argument.new_ipaddress);
+							if($.ipallarr.indexOf(argument.new_ipaddress) == -1) {
+								$.ipallarr.push(argument.new_ipaddress);
+							}
+							_.popPanelClose();
+						} else if(updatatype == "setmianlevel") {
+							if(str.result == 0) {
+								settreeLevel(str);
+								mtoast("操作成功");
+							} else {
+								mtoast("操作失败");
+							}
+
+						}else if(updatatype == "checkisonly"){
+							if(str.result == 0){
+								if(str.count==1){
+									delete_check_service();
+								}else{
+									delete_nolastone();
+								}
+								
+							}
+						}
+
+						// addnewview(str);
+					},
+					error: function(msg) {
+						$(".loading").css("display", "none");
+					}
+				});
+			}
+
+			function setthunderallip(ip) {
+				//获取主要参数
+				var mainip = $.dbhost;
+				if(mainip != ip) {
+					setthunderbyip(ip, mainip);
+				}
+
+			}
+
+			function setthunderbyip(ip, mainip) {
+				var tbaseurl = "http://" + ip + ":8888"
+				var url = tbaseurl + "/isset?DataBaseServerIp=" + mainip;
+				$.ajax({
+					type: 'get',
+					url: url,
+					dataType: 'json',
+					success: function(str) {
+					},
+					error: function(msg) {}
+				});
+
+			}
+
+			function addnewonelevel(id) {
+				var tree = $.tree;
+				var node1 = tree.createNode(name, false, 'img/star.png', null, id, null);
+				tree.drawTree();
+				$.tree = tree;
+			}
+
+			function updataonelevel(name) {
+				var select = $.select;
+				select.setText(name);
+			}
+
+			function mtoast(text) {
+                //text = text.replace("\n", "<br>");
+                text = text.replace(/\n/g,"<br>");
+                text = text.replace(/失败/g, "<b>失败</b>");
+				$.createConfirmBoxOK({
+					"title": "系统提示",
+					"content": text,
+					"click": function() {}
+				});
+			}
+
+			function isIP2(ip) {
+				var re = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+				return re.test(ip);
+			}
+		</script>
+	</body>
+
+</html>

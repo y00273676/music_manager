@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+		<style>
+			.pic_style {
+				width: 100%;
+				height: 100%;
+			}
+			
+			.pic_style>div {
+				display: inline-block;
+				width: 25%;
+				height: 280px;
+				position: relative;
+			}
+			
+			.pic_style>div>img {
+				max-width: 280px;
+				max-height: 280px;
+				position: absolute;
+				z-index: 1;
+				right: 0;
+				left: 0;
+				top: 0;
+				bottom: 0;
+				margin: auto;
+			}
+			
+			.pic_style>div:hover>div {
+				display: block;
+			}
+			
+			.pic_style>div>div:hover {
+				display: block;
+			}
+			
+			.pic_style>div>label {
+				position: absolute;
+				font-size: 15px;
+				color: black;
+			}
+			
+			.pic_name {
+				font-size: 15px;
+			}
+			
+			.pic_file_name {
+				margin: 0px;
+				white-space: nowrap;
+				width: 66%;
+				overflow: hidden;
+				-o-text-overflow: ellipsis;
+				text-overflow: ellipsis;
+				float: left;
+				font-size: 20px;
+				color: white;
+			}
+			
+			.pic_file_del {
+				background: url("img/delete_white.png") no-repeat scroll 0 0 transparent;
+				width: 18px;
+				height: 18px;
+				display: inline;
+				-moz-user-select: none;
+				position: absolute;
+				right: 3px;
+				margin-top: 4px;
+			}
+			
+			.pic_title {
+				height: 50px;
+				padding: 5px;
+				display: block;
+				background: black;
+				z-index: 2;
+				position: absolute;
+				width: 100%;
+				display: none;
+			}
+			
+			.pic_title_hover {
+				height: 50px;
+				padding: 5px;
+				display: block;
+				background: black;
+				z-index: 2;
+				position: absolute;
+			}
+			
+			.pic_style_my {
+				width: 280px;
+				height: 280px;
+			}
+		</style>
+		<div>
+			<ul class="listButton">
+				<li class=" system_pic_upload"><i class="icon-plus">&nbsp;</i>上传文件</li>
+			</ul>
+		</div>
+
+		<div class="pic_style">
+
+		</div>
+
+		<script>
+			var lastvalue = "welcomepic"
+			var arrdog = [];
+			arrdog[0] = "welcomepic";
+			var arrDogUrl = $.baseUrl + "/fujia?type=2&value=" + arrdog[0];
+
+			$.tap(".pic_style>div>.pic_title>span.pic_file_del", function(e) {
+				var mykey = $(this).parent().children("p").first().html();
+
+				$.createConfirmBox({
+					"title": "系统提示",
+					"content": "是否确认删除该条目?",
+					"click": function() {
+
+						delectpicFile(lastvalue, mykey);
+					}
+				});
+
+			});
+
+			function comsetting_initcst(key) {
+
+				lastvalue = key;
+				getdata(key);
+			}
+
+			function getdata(appkey) {
+
+				var url = $.baseUrl + "/fujia";
+				var strjson = {}
+
+				$.ajax({
+					type: 'post',
+					url: url,
+					dataType: 'json',
+					data: 'imgurl=' + JSON.stringify(strjson) + '&type=5&value=' + appkey,
+					success: function(str) {
+
+						if(str.code == "0") {
+							addpicdata(str.data[0]);
+							arrdog[0] = str.data[0].key;
+							var format = str.data[0].format;
+							var maccept = "." + format;
+							arrDogUrl = $.baseUrl + "/fujia?type=2&value=" + arrdog[0];
+							$(".system_pic_upload").attr("accept", maccept);
+							$(".system_pic_upload").upload(arrDogUrl, function(xhr, input) {
+								getdata(lastvalue);
+							}, null, function(input) {
+								if(str.ishaserver=="1"){
+									
+									mtoast("必须到系统设置中添加视频服务器才能进行此操作");
+									return false;
+								}
+								
+								if((str.data[0].filename) != "") {
+									
+									if((str.data[0].filename).indexOf(input.files[0].name) == -1) {
+										mtoast("当前的文件名只支持"+str.data[0].filename)
+										return false;
+									}
+									return true;
+								}else{
+									if(str.data[0].name=="火警逃生图"){
+										var tmip=(input.files[0].name).split(".gif")[0]
+										if(!isIP2(tmip)) {
+											mtoast("当前的文件名只支持用房间ip地址命名"+str.data[0].filename)
+										return false;
+										}
+									}
+									
+									return true;
+								}
+							});
+						}
+						//						addnewview(str);
+					},
+					error: function(msg) {
+
+					}
+				});
+				//			
+			}
+
+			function isIP2(ip) {
+				var re = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+				return re.test(ip);
+			}
+
+			function addpicdata(jsondata) {
+
+				var basepic = $.baseUrl.split(':8888')[0];
+				var myishave = []
+
+				var pichtml = "";
+				if(jsondata.name == "火警逃生图") {
+					for(var i = 0; i < jsondata.ishave.length; i++) {
+						var obj = jsondata.ishave[i];
+						var tip = obj.split('.gif');
+						if(isIP2(tip[0])) {
+							myishave.push(obj);
+						}
+					}
+				} else {
+					myishave = jsondata.ishave;
+				}
+
+				for(var i = 0; i < myishave.length; i++) {
+					var secondurl = jsondata.path.split('/opt/thunder/www')[1];
+					pichtml += "<div>";
+					pichtml += "<img  src='" + basepic + secondurl + myishave[i] + "' />";
+					pichtml += "<div class='pic_title'>";
+					pichtml += "<p class='pic_file_name'>" + myishave[i] + "</p>";
+					pichtml += "<span class='pic_file_del' title='删除'>";
+					pichtml += "</span>";
+					pichtml += "</div>";
+					pichtml += "</div>";
+
+				}
+				$(".pic_style").html(pichtml);
+
+			}
+
+			function delectpicFile(appkey, filename) {
+				var url = $.baseUrl + "/fujia";
+				var strjson = {}
+
+				$.ajax({
+					type: 'post',
+					url: url,
+					dataType: 'json',
+					data: 'imgurl=' + JSON.stringify(strjson) + '&type=7&value=' + appkey + '&picname=' + filename,
+					success: function(str) {
+						if(str.code == "0") {
+							mtoast('删除成功');
+							getdata(lastvalue);
+						}
+
+					},
+					error: function(msg) {
+
+					}
+				});
+			}
+
+			function mtoast(text) {
+				$.createConfirmBoxOK({
+					"title": "系统提示",
+					"content": text,
+					"click": function() {}
+				});
+			}
+		</script>
+
+	</body>
+
+</html>

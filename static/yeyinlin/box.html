@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body style="background:#efefef;">
+		<style>
+			.addActor_outA {
+				width: 45px;
+				height: 35px;
+				display: inline-block;
+				font-size: 20px;
+				line-height: 30px;
+				text-align: center;
+				padding: 0px;
+				text-decoration: none;
+				color: #FFFFFF;
+				position: absolute;
+				top: 20px;
+				left: 20px;
+			}
+			
+			.addActor_pageTitle {
+				width: 100%;
+				position: absolute;
+				top: 16px;
+				font-size: 25px;
+				margin: 0;
+				padding: 0;
+				text-align: center;
+				pointer-events: none;
+			}
+			
+			.addActor_form {
+				width: 370px;
+				height: auto;
+				position: absolute;
+				top: 60px;
+				left: 0px;
+				right: 0px;
+				margin: 0 auto;
+			}
+			
+			.addActor_form>div {
+				width: 100%;
+				height: 40px;
+				position: relative;
+				margin-top: 10px;
+			}
+			
+			.addActor_form>div>label {
+				position: absolute;
+				width: 30%;
+				height: 100%;
+				left: 0px;
+				font-size: 16px;
+				text-align: right;
+				padding-right: 20px;
+				line-height: 40px;
+			}
+			
+			.addActor_form>div>input,
+			.addActor_form>div>select,
+			.addActor_form>div>button {
+				position: absolute;
+				width: 70%;
+				height: 100%;
+				right: 0px;
+			}
+			
+			.addActor_form>div>input[type='file'],
+			.addActor_form>div>select {
+				cursor: pointer;
+			}
+			
+			.addActor_form>div>input[type='file']:active+button.selectBox {
+				background: -webkit-linear-gradient(top, #D0D0D0, #DCDCDC);
+			}
+			
+			.addActor_form>center {
+				margin-top: 20px;
+			}
+			
+			.addActor_form>center>button {
+				font-size: 20px;
+				padding: 6px 30px 8px 30px;
+			}
+			
+			.actorImgUpload {
+				opacity: 0;
+				z-index: 9;
+			}
+			
+			.thumbnailImg {
+				width: 100px;
+				height: 100px;
+				display: block;
+				margin: 0 auto;
+				position: absolute;
+				top: -60px;
+				right: -100px;
+			}
+			
+			.thumbnailImg.hide {
+				display: none;
+			}
+			
+			.font-sizee- {
+				font-size: 12px;
+			}
+			
+			.mbox {
+				padding: 5px;
+				margin: 10px;
+				width: 12%;
+			}
+			
+			.mbox>i {
+				display: block;
+				font-size: 40px;
+			}
+			
+			.red {
+				color: #f36c60;
+			}
+			
+			.green {
+				color: green;
+			}
+			
+			.yellow {
+				color: #ff9800;
+			}
+			
+			.button_style {
+				width: 10%;
+				background: #009688;
+				font-size: 18px;
+				color: #ffffff;
+				-moz-border-radius: 5px;      /* Gecko browsers */
+   				-webkit-border-radius: 5px;   /* Webkit browsers */
+ 				 border-radius:5px;            /* W3C syntax */
+			}
+			
+			.title_style_one {
+				width: 98%;
+				height: 15%;
+				border: 1px solid #cdcdcd;
+				margin: 10px;
+				display: inline-block;
+			}
+			
+			.title_style_two {
+				font-size: 16px;
+				font-weight: bold;
+				width: 100%;
+				border-bottom: 1px solid #cdcdcd;
+				padding: 7px 35px;
+				background: #cdcdcd;
+				color: #000000;
+			}
+			.title_style_three{
+				height:80%;border:1px solid #cdcdcd;    margin: 10px;    display: block;
+			}
+		</style>
+
+		<div class="font-sizee- title_style_one" style="">
+			<div class="title_style_two" style="    ">机顶盒快速设置</div>
+
+			<div>
+				<button class=" sky button_style" className="aaa" id="editbutton" onclick="editshow()">编辑</button>
+				<p id="editcontent">
+					<button class="sky button_style" id="allselect" onclick="selectCheck() ">全选</button>
+					<button class=" sky button_style" id="delete" onclick="disp_alert('delete')">删除</button>
+					<button class=" sky button_style" id="allsetting" onclick="allsetting()">组控件设置</button>
+					<button class=" sky button_style" id="cancel" onclick="cancel()">取消</button>
+				</p>
+				<button class=" sky button_style" id="config" onclick="config()">config设置</button>
+				<button type="button" class=" sky button_style" onclick="synchron()">同步机顶盒</button>
+			</div>
+		</div>
+
+		<div class="font-sizee- title_style_three" style=" ">
+			<div style="" class="title_style_two " style="    ">机顶盒设置</div>
+			<div style="padding:2px 0; height:400px;line-height:40px;background:#fff;">
+				<div id="boxscontent">
+				</div>
+			</div>
+		</div>
+
+		<script>
+			findinitdata();
+
+			function findinitdata() {
+				var url = $.baseUrl + "/boxs";
+				var strjson = {}
+
+				$.ajax({
+					type: 'post',
+					url: url,
+					dataType: 'json',
+					data: 'imgurl=' + JSON.stringify(strjson) + '&type=2',
+					success: function(str) {
+//						mtoast(JSON.stringify(str));
+						addnewview(str);
+					},
+					error: function(msg) {}
+				});
+			}
+			//同步的问题
+			function synchron(){
+				var url = $.baseUrl + "/boxs";
+				var strjson = {}
+
+				$.ajax({
+					type: 'post',
+					url: url,
+					dataType: 'json',
+					data: 'imgurl=' + JSON.stringify(strjson) + '&type=3',
+					success: function(str) {
+						mtoast(JSON.stringify(str));
+//						addnewview(str);
+					},
+					error: function(msg) {}
+				});
+			}
+
+			function disp_alert(changetype) {
+				var url = $.baseUrl + "/boxs";
+
+				var strjson = getselectname();
+				//				mtoast(JSON.stringify(strjson));
+
+				var user = {
+					imgurl: strjson,
+				};
+
+				$.ajax({
+
+					type: 'post',
+					url: url,
+					dataType: 'html',
+					data: 'mdata=' + JSON.stringify(strjson) + '&type=1' + '&changetype=' + changetype,
+					// data:'imgurl='+strjson+'&type=1',
+					success: function(str) {
+						if (changetype == "delete") {
+							if ($.parseJSON(str).code == "0") {
+								//删除成功
+							}
+						}
+						mtoast(str);
+					},
+					error: function(msg) {}
+				});
+
+			}
+
+			function config() {
+				$.hrefPage("yeyinlin/config.html", $("#config").parentU("indexView"));
+			}
+
+			function addnewview(jsondata) {
+
+				$.allcheck = true;
+				$.alledit = true;
+				// body...
+				var boxscontent = document.getElementById("boxscontent");
+
+				var btnstr = "";
+				//重新排序
+				$.serverbox=jsondata.server;
+				
+				
+				var boxdata=jsondata.box;
+				
+				var mtboxdata=[];
+				for(var i=0;i<boxdata.length;i++){
+					if(boxdata[i].Name==""){
+						mtboxdata.unshift(boxdata[i]);
+					}else{
+						mtboxdata.push(boxdata[i]);
+					}
+				}
+				
+				$.fangtaibox=jsondata.fangtai;
+				$.each(mtboxdata, function(i, ele) {
+					var name = ele.filename;
+					if (ele.Name != "") {
+						name = ele.Name;
+					}
+
+					if (ele.isuse == "0") {
+						btnstr += "<button class='mbox  red'  value='" + ele.filename + "'><i class=\"icon-desktop\"></i>" + name + "<input type='checkbox' class=\"mybox\"></input></button>";
+					} else {
+						if (ele.Stbtype == '0') {
+							btnstr += "<button class='mbox  green' value='" + ele.filename + "' ><i class=\"icon-desktop\"></i>" + name + "<input type='checkbox' class=\"mybox\"></input></button>";
+						} else {
+							btnstr += "<button class='mbox  yellow'  value='" + ele.filename + "'><i class=\"icon-desktop\"></i>" + name + "<input type='checkbox' class=\"mybox\"></input></button>";
+						}
+
+					}
+
+				});
+				boxscontent.innerHTML = btnstr;
+
+				$(".mbox").click(function() {
+					if (!$.alledit) {
+						var jsonobj = {};
+						$.boxtempid = "0";
+						$.boxtempele = $(this).val();
+						$.hrefPage("yeyinlin/boxsetting.html", $(this).parentU("indexView"));
+
+					} else {
+						var obj = $(this).find(".mybox");
+						obj[0].checked = !obj[0].checked;
+					}
+
+					// alert( this.innerHTML);
+
+				});
+
+				$(".mybox").click(function() {
+					var obj = $(this).parent();
+
+				});
+
+				cancel();
+
+			}
+
+			function selectCheck() {
+
+				setAllCheckBox($.allcheck);
+				$.allcheck = !$.allcheck;
+			}
+
+			function setAllCheckBox(boxflag) {
+
+				if (boxflag) {
+					$('input:checkbox').each(function() {
+						$(this)[0].checked = true;
+						$("#allselect").html("全不选");
+
+					});
+				} else {
+					$('input:checkbox').each(function() {
+						$(this)[0].checked = false;
+						$("#allselect").html("全选");
+					});
+				}
+
+				// body...
+			}
+
+			function editshow() {
+				edit($.alledit);
+				$.alledit = !$.alledit;
+			}
+
+			function edit(editflag) {
+				if (!editflag) {
+					$("#editcontent").show();
+					$('input:checkbox').each(function() {
+						$(this).show();
+						$("#editbutton").hide();
+					});
+				} else {
+					$("#editcontent").hide();
+					$('input:checkbox').each(function() {
+						$(this).hide();
+					});
+				}
+
+			}
+
+			function cancel() {
+				$("#editbutton").show();
+				$("#editcontent").hide();
+				$('input:checkbox').each(function() {
+					$(this).hide();
+				});
+				$.alledit = !$.alledit;
+				// body...
+			}
+
+			function getselectname() {
+				jsondata = {}
+				jsonarr = [];
+
+				$('input:checkbox').each(function() {
+
+					if ($(this)[0].checked) {
+						//						var val = $(this).parent().text();
+						var val = $(this).parent().val();
+						jsonarr.push(val);
+					}
+
+				});
+				jsondata.filename = jsonarr;
+
+				return jsondata;
+				// body...
+			}
+
+			function allsetting() {
+				var val = getselectname();
+
+				var data = JSON.stringify(val);
+
+				if (val.filename.length == 0) {
+					$.createConfirmBoxOK({
+						"title": "系统提示",
+						"content": " 请选择需要设置的机顶盒",
+						"click": function() {}
+					});
+				} else {
+					$.boxtempid = "1";
+					$.mfilename = data;
+					$.hrefPage("yeyinlin/boxsetting.html", $("#allsetting").parentU("indexView"));
+				}
+
+				// sessionStorage.setItem("filename",data);
+				// sessionStorage.setItem("id","1");
+				// window.location.href="http://10.0.3.111:8080/boxsetting";
+				// body...
+			}
+
+			function mtoast(text) {
+				$.createConfirmBoxOK({
+					"title": "系统提示",
+					"content": text,
+					"click": function() {}
+				});
+			}
+		</script>
+	</body>
+
+</html>

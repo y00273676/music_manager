@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+		<style>
+			.addActor_outA_one {
+				width: 45px;
+				height: 35px;
+				display: inline-block;
+				font-size: 20px;
+				line-height: 30px;
+				text-align: center;
+				padding: 0px;
+				text-decoration: none;
+				color: #FFFFFF;
+				position: absolute;
+				 top: 12px; 
+				/*left: 10px;*/
+				/*position: fixed;
+				bottom: 3px;
+				 top: 0; 
+				z-index: 2;*/
+			}
+			
+			.addActor_pageTitle {
+				width: 100%;
+				position: absolute;
+				top: 16px;
+				font-size: 25px;
+				margin: 0;
+				padding: 0;
+				text-align: center;
+				pointer-events: none;
+			}
+			
+			.addActor_form_one {
+				width: 370px;
+				height: auto;
+				position: absolute;
+				top: 60px;
+				left: 0px;
+				right: 0px;
+				margin: 0 auto;
+			}
+			
+			.addActor_form_one>div {
+				width: 100%;
+				height: 40px;
+				position: relative;
+				margin-top: 10px;
+			}
+			
+			.addActor_form_one>div>label {
+				position: absolute;
+				width: 30%;
+				height: 100%;
+				left: 0px;
+				font-size: 16px;
+				text-align: right;
+				padding-right: 20px;
+				line-height: 40px;
+			}
+			
+			.addActor_form_one>div>input,
+			.addActor_form_one>div>select,
+			.addActor_form_one>div>button {
+				position: absolute;
+				width: 70%;
+				height: 100%;
+				right: 0px;
+			}
+			
+			.addActor_form_one>div>input[type='file'],
+			.addActor_form_one>div>select {
+				cursor: pointer;
+			}
+			
+			.addActor_form_one>div>input[type='file']:active+button.selectBox {
+				background: -webkit-linear-gradient(top, #D0D0D0, #DCDCDC);
+			}
+			
+			.addActor_form_one>center {
+				margin-top: 20px;
+			}
+			
+			.addActor_form_one>center>button {
+				font-size: 20px;
+				padding: 6px 30px 8px 30px;
+			}
+			
+			.actorImgUpload {
+				opacity: 0;
+				z-index: 9;
+			}
+			
+			.thumbnailImg {
+				width: 100px;
+				height: 100px;
+				display: block;
+				margin: 0 auto;
+				position: absolute;
+				top: -60px;
+				right: -100px;
+			}
+			
+			.thumbnailImg.hide {
+				display: none;
+			}
+			
+			.tempvalue {
+				height: 30px;
+			}
+			
+			.title_style {
+				font-size: 16px;
+				font-weight: bold;
+				width: 100%;
+				border-bottom: 1px solid #CDCDCD;
+				padding: 7px 35px;
+				background: #efefef;
+			}
+			
+			.title_style_one_base {
+				padding: 2px 0;
+				text-align: right;
+				height: 40px;
+				line-height: 40px;
+				background: #fff;
+			}
+			
+			.title_style_lable {
+				margin-right: 45px;
+				font-size: 16px;
+				width: 10%;
+			}
+			
+			.input_style_one {
+				width: 50%;
+				height: 34px;
+				border-radius: 5px;
+				border: 1px solid rgb(180, 180, 180);
+				text-align: center;
+			}
+			
+			.btn_my {
+				position: fixed;
+				bottom: 0;
+				/* right: 0; */
+				background: #d0d9ff;
+				width: 100%;
+				/* left: 50%; */
+				padding-left: 44%;
+				height: 40px;
+				/* line-height: 40px; */
+			/*	padding-top: 8px;*/
+			}
+			.btn_one{
+				background: #c51162;
+				height: 40px;
+				width: 20%;
+				font-size: 20px;
+				color: #FFFFFF;
+			}
+			.my_tiao_mu{
+				background: #008000;
+			}
+		</style>
+		<a class="addActor_outA_one btn blue"> <i class="icon-arrow-left"></i>
+		</a>
+
+		<div class="starManagerList_actorsForm_one btn_my">
+
+			<button type=" button" class="btn_one " onclick="showdialog()" id="surebt">确定</button>
+			<button type="button" class="btn_one " onclick="mcancel()">取消</button>
+
+		</div>
+		<div class="font-sizee-one" style="width:48%; height:200px;border:1px solid #CDCDCD;    margin: 10px;    display: inline-block;">
+			<div style="" class="title_style">机顶盒ip地址</div>
+			<div style="" class="title_style_one_base">
+				<label style="" class="title_style_lable">
+                机顶盒名称：
+                <input id="stbname" type="text" class="input_style_one" name="textuinput"></label>
+			</div>
+
+			<div style="" class="title_style_one_base">
+				<label style="" class="title_style_lable">
+                机顶盒ip地址：
+                <input id="ipaddress" type="text"  class="input_style_one" name="textuinput"></label>
+			</div>
+			<div style="" class="title_style_one_base">
+				<label style="" class="title_style_lable">
+                子网掩码：
+                <input id="subnetmask" type="text"  class="input_style_one" name="textuinput"></label>
+			</div>
+			<div style="" class="title_style_one_base">
+				<label style="" class="title_style_lable">
+                服务器ip地址：
+                <input id="serviceip" type="text"  class="input_style_one" name="textuinput"></label>
+			</div>
+		</div>
+
+		<div class="font-sizee-one" style="width:48%; height:200px;border:1px solid #CDCDCD;    margin: 10px;    display: inline-block; float:right;">
+			<div style="" class="title_style">终端配置</div>
+			<div style="" class="title_style_one_base">
+				<label style="" class="title_style_lable">
+                终端类型：
+                <select id="devicetype" class="input_style_one">
+                  
+                </select>
+            </label>
+			</div>
+			<div style="" class="title_style_one_base">
+				<label style="margin-right: 45px; font-size: 16px">
+                显卡型号：
+                 <select id="devicegraphics" class="input_style_one">
+                    <option>高级</option>
+                    <option selected="selected">中级</option>
+                    <option >低级</option>
+                </select></label>
+			</div>
+			<div style="" class="title_style_one_base">
+				<label style="margin-right: 45px; font-size: 16px">
+                录音服务器：
+                <input id="iprecond" type="text"  class="input_style_one" name="textuinput"></label>
+			</div>
+		</div>
+
+		<div class="font-sizee-one" style=" border:1px solid #cdcdcd;    margin: 10px;    display: block;">
+			<div style="  " class="title_style">功能选项</div>
+			<div style="padding:2px 0;     height: 402px;  overflow: auto;line-height:40px;">
+				<table border="1px" id="table_option" style=" font-size: 16px">
+					<tr>
+						<td style="width: 50%; ">功能选项</td>
+						<td>辅助信息</td>
+					</tr>
+
+				</table>
+			</div>
+		</div>
+
+		<script>
+			$.tap(".addActor_outA_one", function() {
+				$.toBack($(this).parentU("indexView"));
+			});
+			findinitdata();
+
+			function findinitdata() {
+
+				var isfiles = 0;
+				var mtype = 2;
+				var url = $.baseUrl + "/boxsetting";
+				var strjson = {}
+				var mid = $.boxtempid;
+				if (mid == "0") {
+					isfiles = 1;
+					arrname = [];
+					var mele = $.boxtempele;
+					strjson.name = mele;
+					arrname.push(mele);
+					$.filename = arrname;
+				} else {
+					var mfiles = $.mfilename;
+					var filenamse = $.parseJSON(mfiles);
+					strjson.name = mfiles;
+					mtype = 3;
+					$.filename = filenamse.filename;
+				}
+
+				// alert(JSON.stringify(strjson));
+				$.ajax({
+					type: 'post',
+					url: url,
+					dataType: 'html',
+					data: 'imgurl=' + JSON.stringify(strjson) + '&type=' + mtype + '&isfiles=' + isfiles,
+					success: function(str) {
+						//                 alert(str);
+						addallview($.parseJSON(str));
+						setalldata($.parseJSON(str));
+
+					},
+					error: function(msg) {}
+				});
+			}
+
+			function mcancel() {
+				$.toBack($("#surebt").parentU("indexView"));
+			}
+			
+			function showdialog(){
+				$.createConfirmBox({
+					"title": "系统提示",
+					"content": "确认是否提交修改?",
+					"click": function() {
+						disp_alert();
+					}
+				});
+			}
+			function disp_alert() {
+
+				var url = $.baseUrl + "/boxsetting";
+
+				var strjson = getallinfo();
+				//  alert(JSON.stringify(strjson))
+				strjson.name = $.filename;
+				var user = {
+					imgurl: strjson,
+				};
+
+				// alert(JSON.stringify(strjson));
+
+				$.ajax({
+
+					type: 'post',
+					url: url,
+					dataType: 'html',
+					data: 'imgurl=' + JSON.stringify(strjson) + '&type=1',
+					success: function(str) {
+						mtoast(str);
+
+						if ($.parseJSON(str)['code'] == "0") {
+							$.toBack($("#surebt").parentU("indexView"));
+						}
+						mtoast(str);
+					},
+					error: function(msg) {}
+				});
+
+			}
+
+			function addallview(jsondata) {
+
+				$.alldata = jsondata;
+				var tab = document.getElementById("table_option");
+				$.each(jsondata['option'], function(i, ele) {
+					var singleview = addnewview(jsondata, ele);
+					tab.appendChild(singleview);
+				});
+				$(".tempcb").click(function() {
+					var obj = $(this).parent().parent().next().find(".tempvalue");
+					if (this.checked == true) {
+						$(obj).show();
+					} else {
+						$(obj).hide();
+
+					}
+				});
+
+			}
+
+			function setalldata(jsondata) {
+
+				var ipaddress = document.getElementById("ipaddress");
+				var subnetmask = document.getElementById("subnetmask");
+				var serviceip = document.getElementById("serviceip");
+				var devicetype = document.getElementById("devicetype");
+				var devicegraphics = document.getElementById("devicegraphics");
+				var iprecond = document.getElementById("iprecond");
+
+				var boxip = jsondata.boxip.box;
+
+				ipaddress.value = isempty(boxip.IP);
+				subnetmask.value = isempty(boxip.NMASK);
+				serviceip.value = isempty(boxip.SERVER);
+				$("#stbname").val(boxip.Name)
+
+				var myselect = jsondata.boxtype.boxname;
+				var arr = myselect.split("/");
+				for (var i = 0; i < arr.length; i++) {
+					$("#devicetype").append("<option value='" + arr[i] + "'>" + arr[i] + "</option>");
+				}
+				var myva = jsondata.boxtype.boxvalue;
+				var arrva = myva.split("/");
+				if (boxip.STBType == arrva[0]) {
+					devicetype.value = "包房机顶盒"
+				} else if (boxip.STBType == arrva[1]) {
+					devicetype.value = "门牌机"
+				}
+				iprecond.value = isempty(boxip.RecordSvr);
+
+				// body...
+			}
+
+			function isempty(str) {
+				if ((str == null) || (str == undefined)) {
+					return "";
+				} else {
+					return str;
+				}
+			}
+
+			function getallinfo() {
+				var ipaddress = document.getElementById("ipaddress");
+				var subnetmask = document.getElementById("subnetmask");
+				var serviceip = document.getElementById("serviceip");
+				var devicetype = document.getElementById("devicetype");
+				var devicegraphics = document.getElementById("devicegraphics");
+				var iprecond = document.getElementById("iprecond");
+
+				var boxip = {};
+
+				boxip.ipaddress = ipaddress.value;
+
+				boxip.subnetmask = subnetmask.value;
+				boxip.serviceip = serviceip.value;
+				boxip.name = $("#stbname").val();
+
+				//      boxip.devicetype=devicetype.value;
+
+				if (devicetype.value == "包房机顶盒") {
+					boxip.devicetype = "0";
+				} else if (devicetype.value == "门牌机") {
+					boxip.devicetype = "1";
+				}
+
+				boxip.devicegraphics = devicegraphics.value;
+				boxip.iprecond = iprecond.value;
+
+				var jsondata = {};
+				jsondata.boxip = boxip;
+				jsondata.option = getlistjson();
+				return jsondata;
+			}
+
+			function getlistjson() {
+				//获取所有checkbox 和 value
+				var checkmap = $(".tempcb");
+				var jsonall = [];
+
+				$.each(checkmap, function(i, ele) {
+					if (ele.checked == true) {
+						var jsonval = {};
+						// var val=  ele.val();
+						var value = ele.value;
+						var obj = $(this).parent().parent().next().find(".tempvalue");
+						jsonval.appvalue = value;
+						if (obj.length == 1) {
+							jsonval.optionvalue = isempty(obj.val());
+						} else {
+							jsonval.optionvalue = 1;
+						}
+
+						jsonall.push(jsonval);
+					};
+				});
+
+				return jsonall;
+
+			}
+
+			function addnewview(alldata, jsondata) {
+
+				var appvalue = jsondata.AppValue;
+				var jsonoption = jsondata.ShowName;
+				var resulttype = jsondata.result;
+				var isstring = jsondata.IsString;
+				var optionname = jsondata.select;
+				var optionvalue;
+
+				var mtr = document.createElement("tr");
+				var mrd = document.createElement("td");
+				var mform = document.createElement("form");
+				
+
+				var minput = document.createElement("input");
+				//				minput.addClass("input_style_one");
+				minput.type = "checkbox";
+				minput.className = "tempcb";
+				minput.value = appvalue;
+				
+
+				$.each(alldata.boxip.option, function(i, ele) {
+					if (appvalue == i) {
+						optionvalue = ele;
+						minput.checked = true;
+					}
+				});
+
+				//minput.innerHTML="njfidajojfo";
+
+				mform.appendChild(minput);
+				$(mform).append(jsonoption);
+				mrd.appendChild(mform);
+				var monerd = document.createElement("td");
+				var moneform = document.createElement("form");
+				var mycolor=getcolorarr();
+				mform.style.background=mycolor;
+				monerd.style.width='300px';
+				var myonecolor="#FFFFFF";
+				monerd.style.background=myonecolor;
+				if (isstring == 0) {
+
+				} else {
+					if (resulttype == 0) {
+						var input = document.createElement("input");
+						//						input.addClass("input_style_one");
+						input.type = "text";
+						input.className = "tempvalue";
+						input.value = isempty(optionvalue);
+						moneform.appendChild(input);
+						if (minput.checked == true) {
+							$(input).show();
+						} else {
+							$(input).hide();
+						}
+					} else if (resulttype == 1) {
+						var select = optionname.split("\\");
+						var mselect = document.createElement("select");
+						mselect.className = "tempvalue";
+						for (var i = 0; i < select.length; i++) {
+							var moption = document.createElement("option");
+							moption.id = "option";
+							moption.innerHTML = select[i];
+
+							if (select[i] == optionvalue) {
+
+								moption.selected = "selected";
+
+							}
+							mselect.appendChild(moption);
+
+							if (minput.checked == true) {
+								$(mselect).show();
+							} else {
+								$(mselect).hide();
+							}
+						}
+
+						moneform.appendChild(mselect);
+
+					}
+				}
+
+				monerd.appendChild(moneform);
+				mtr.appendChild(mrd);
+				mtr.appendChild(monerd);
+
+				return mtr;
+
+			}
+//			e51c23 e91e63 9c27b0 673ab7 3f51b5 5677fc 03a9f4 00bcd4 009688 259b24 8bc34a cddc39 ffeb3b ffc107 ff9800
+			function getcolorarr(){
+				var colora="e51c23:e91e63:9c27b0:673ab7:3f51b5:5677fc:03a9f4:00bcd4:009688:259b24:8bc34a:cddc39:ffeb3b:ffc107:ff9800"
+//				var colora=['e51c23'];
+				
+				return "#ffffff";
+			}
+			
+			function GetRandomNum(Min,Max)
+					{   
+					var Range = Max - Min;   
+					var Rand = Math.random();   
+					return(Min + Math.round(Rand * Range));   
+					}  
+
+			function newoption(json) {
+				for (var i = 0; i < car.length; i++) {
+					var moption = document.createElement("option");
+					moption.value = "one";
+					moption.innerHTML = "one";
+				}
+			}
+
+			function jumplast(jsondata) {
+
+				// body...
+			}
+
+			function canceljump() {
+				if (jsondata['code'] == "0") {
+					window.location.href = $.baseUrl + "/boxs";
+				}
+				// body...
+			}
+
+			function mtoast(text) {
+				$.createConfirmBoxOK({
+					"title": "系统提示",
+					"content": text,
+					"click": function() {}
+				});
+			}
+		</script>
+	</body>
+
+</html>

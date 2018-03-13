@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<style>
+			.notFindFileListShow{
+				width: 100%;
+				height: 100%;
+			}
+			.notFindFileListShow>.tableDiv{
+				width: 100%;
+				height: calc( 100% - 100px);
+				overflow: auto;
+				position: relative;
+				box-shadow: 0px -3px 3px #E0E0E0;
+			}
+			.notFindFileListShow_musicForm{
+				width: 100%;
+				height: 50px;
+				padding: 5px 10px 5px 10px;
+				text-align: right;
+			}
+			.notFindFileListShow_musicForm>input{
+				width: calc( 100% - 240px);
+				height: 40px;
+			}
+			.notFindFileListShow_musicForm>button{
+				width: 100px;
+			    height: 40px;
+			    outline: none;
+			    margin-right: 10px;
+			}
+			.notFindFileListShow_addMusic{
+				font-size: 18px;
+			}
+			.notFindFileListShow>.tableDiv>.table>tbody>tr>td>button{
+				width: 26px;
+				height: 26px;
+				display: inline-block;
+			}
+			
+			.notFindFileListShow>.tableDiv>.table>tbody>tr>td>button>i.icon-edit{
+				position: relative;
+				left: -1px;
+			}
+			.notFindFileListShow>.tableDiv>.table>tbody>tr>td>button>i.icon-reorder{
+				position: relative;
+				left: -1px;
+			}
+		</style>
+		<style>
+			.list{
+				width: calc( 100% - 4px );
+				height: auto;
+				overflow-y: auto;
+				margin: 0 auto;
+			}
+			.list>li{
+				width: 100%;
+			}
+			.list>li>b{
+				position: absolute;
+				right: 10px;
+				font-size: 16px;
+				color: #333333;
+				line-height: 42px;
+			}
+		</style>
+		<script id="notFindFileListShowDataTemplate" type="text/template">
+			<tr>
+				<td>{[serialno]}</td>
+				<td>{[iname]}</td>
+				<td>{[sname1]}</td>
+				<td>{[type1]}</td>
+				<td>{[lname]}</td>
+			</tr>
+		</script>
+		<div class="notFindFileListShow">
+			<div class="notFindFileListShow_musicForm">
+				<input class="inputBox notFindFileListShow_search" type="text" placeholder="检索请输入编号、名称、歌手、类型或语种" />
+				<button type="button" class="btn yellow notFindFileListShow_formSearch">
+					<i class="icon-search"></i>
+				</button>
+				<button type="button" class="btn sky notFindFileListShow_export">
+					<i class="icon-external-link"></i>
+				</button>
+			</div>
+			<div class="tableDiv div_load">
+				<table class="table scroll">
+					<thead>
+						<tr>
+							<th>序号</th>
+							<th>名称</th>
+							<th>歌手</th>
+							<th>类型</th>
+							<th>语种</th>
+						</tr>
+					</thead>
+					<tbody>
+
+					</tbody>
+				</table>
+			</div>
+			<footer class="listPageNum">
+			</footer>
+		</div>
+		<script>
+			$(function(){
+				if(!$.notFindFileListShow_pageNum)
+					$.notFindFileListShow_pageNum=1;
+				if(!$.notFindFileListShow_pageSize)
+					$.notFindFileListShow_pageSize=10;
+				var pageDataList=$.sliceArrListData($.notFindFileListHTMLNeedData,$.notFindFileListShow_pageSize);
+				$(".notFindFileListShow_search").off('keyup').on('keyup', function(event) {
+					if (event.keyCode == "13") {
+						searchData();
+					}
+				});
+				$.tap(".notFindFileListShow_formSearch",function(){
+					searchData();
+				});
+				$.tap(".notFindFileListShow_export",function(){
+					var text="雷石KTV41.6";
+					text+="\r\n\r\n";
+					for(var i in $.notFindFileListHTMLNeedData){
+						if($.notFindFileListHTMLNeedData.hasOwnProperty(i)){
+							var obj = $.notFindFileListHTMLNeedData[i];
+							text+=obj.serialno+"|"+obj.iname;
+							text+="\r\n";
+						}
+					}
+					sendExportloseFile(text,function(json){
+						if(!!json&&!!json.msg){
+							$.createConfirmBoxOK({"title":"系统提示","content":json.msg});
+							return;
+						}
+						if(!!json&&!!json.data){
+							var a = document.createElement("a");
+							a.href=$.baseUrl+"/"+json.data;
+							$(a).attr("download","loseFile.txt");
+							a.style.width="0px";
+							$("body").append($(a));
+							a.click();
+						}
+					});
+				});
+				function searchData(){
+					loadData();
+				}
+				function loadData(){
+					$(".tableDiv").addClass("div_load");
+					var count = 0;
+					if(!!$(".notFindFileListShow_search").val()){
+						var colList=["serialno","iname","sname1","type1","lname"];
+						var searchArr = $.searchArrListData($.notFindFileListHTMLNeedData,$(".notFindFileListShow_search").val(),colList);
+						pageDataList=$.sliceArrListData(searchArr,$.notFindFileListShow_pageSize);
+						count=searchArr.length;
+					}else{
+						pageDataList=$.sliceArrListData($.notFindFileListHTMLNeedData,$.notFindFileListShow_pageSize);
+						count=$.notFindFileListHTMLNeedData.length;
+					}
+					$.data_currentPageMusic=pageDataList[$.notFindFileListShow_pageNum];
+					var html=$.fillData(document.getElementById("notFindFileListShowDataTemplate").innerHTML,$.data_currentPageMusic,function(key,val){
+						if(key=="serialno")
+							return val.substring(0,val.indexOf("."));	
+					});
+					$(".notFindFileListShow>.tableDiv>.table>tbody").htm(html);
+					$(".listPageNum").paging(count,$.notFindFileListShow_pageNum,$.notFindFileListShow_pageSize,function(num){
+						$.notFindFileListShow_pageNum=num;
+						$.data_currentPageMusic=pageDataList[$.notFindFileListShow_pageNum];
+						var html=$.fillData(document.getElementById("notFindFileListShowDataTemplate").innerHTML,$.data_currentPageMusic,function(key,val){
+							if(key=="serialno")
+								return val.substring(0,val.indexOf("."));	
+						});
+						$(".notFindFileListShow>.tableDiv>.table>tbody").htm(html);
+					});
+					$(".tableDiv").removeClass("div_load");
+				}
+				loadData();
+				function sendExportloseFile(data,fn){
+					$.ajax({
+						type:"post",
+						url:$.baseUrl+"/sql/notFindFileExport",
+						dataType:"json",
+						data:data,
+						processData:false,
+		                contentType:false,
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+			});
+		</script>
+	</body>
+</html>

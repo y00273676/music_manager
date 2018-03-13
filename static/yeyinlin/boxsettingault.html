@@ -1,0 +1,571 @@
+<body>
+
+	<style type="text/css">
+		.Boxsetone_form {
+			width: 50%;
+			height: 250px;
+			position: absolute;
+			top: 60px;
+			margin: 0 auto;
+		}
+		
+		.Boxsetone_form>div {
+			width: 508px;
+			height: 40px;
+			position: relative;
+			margin-top: 10px;
+			/* margin-left: 50px; */
+			display: block;
+			left: 93px;
+		}
+		
+		.Boxsetone_form>div>label {
+			width: 150px;
+			height: 100%;
+			font-size: 16px;
+			text-align: left;
+			padding-right: 20px;
+			line-height: 40px;
+			display: inline-block;
+		}
+		
+		.Boxsetone_form>div>input,
+		.Boxsetone_form>div>select {
+			width: 70%;
+			height: 100%;
+		}
+		
+		.Boxsetone_form>div>input.inputBox {
+			width: 240px;
+		}
+		
+		.Boxsetone_form>div>select.selectBox {
+			width: 240px;
+		}
+		
+		.addActor_outA_bs {
+			width: 45px;
+			height: 35px;
+			display: inline-block;
+			font-size: 20px;
+			line-height: 30px;
+			text-align: center;
+			padding: 0px;
+			text-decoration: none;
+			color: #FFFFFF;
+			position: absolute;
+			top: 20px;
+			left: 20px;
+		}
+		
+		.Boxsettwo_form {
+			width: 500px;
+			height: 90%;
+			position: absolute;
+			top: 50px;
+			margin: 0 auto;
+			overflow: auto;
+			border: 1px #333333 solid;
+			right: 112px;
+		}
+		
+		.Boxsetthree_form {
+			width: 50%;
+			height: auto;
+			position: absolute;
+			top: 250px;
+			/*left: 0px;
+				right: 0px;*/
+			margin: 0 auto;
+			float: right;
+		}
+		
+		.Boxsettwo_form>div {
+			width: 80%;
+			height: 40px;
+			position: relative;
+			margin-top: 10px;
+			margin-left: 50px;
+			display: inline-block;
+		}
+		
+		.Boxsettwo_form>div>label {
+			width: 220px;
+			height: 100%;
+			font-size: 16px;
+			text-align: right;
+			padding-right: 20px;
+			line-height: 40px;
+			display: inline-block;
+		}
+		
+		.Boxsettwo_form>div>input,
+		.Boxsettwo_form>div>select {
+			height: 100%;
+		}
+		
+		.Boxsettwo_form>div>input.inputBox {
+			width: 150px;
+		}
+		
+		.Boxsettwo_form>div>select.selectBox {
+			width: 150px;
+		}
+		
+		.check_my {
+			position: absolute;
+			margin-top: 15px;
+		}
+		
+		.btn_bs {
+			margin-top: 50px;
+			width: 100px;
+			height: 40px;
+		}
+		
+		.requiredMark::after {
+			right: 95px;
+		}
+	</style>
+
+	<a class="addActor_outA_bs btn blue"> <i class="icon-arrow-left"></i>
+	</a>
+
+	<form class="Boxsetone_form">
+
+		<div class="requiredMark">
+			<label>序号开始：</label>
+			<input id="stbstart" name="iname" class="inputBox" type="number" />
+		</div>
+		<div >
+			<label>机顶盒ip地址：</label>
+			<!--<input id="ipaddress" name="iname" class="inputBox" type="text" placeholder="请填写机顶盒ip地址" />-->
+			<input class="inputBox" id="ipaddress" disabled="true"></select>
+		</div>
+
+		<div class="requiredMark">
+			<label>子网掩码：</label>
+			<!--<input id="subnetmask" name="iname" class="inputBox" type="text" placeholder="" />-->
+				<select class=" selectBox" id="subnetmask">
+				<option value="255.255.255.0">255.255.255.0</option>
+				<option value="255.255.0.0">255.255.0.0</option>
+			</select>
+		</div>
+
+		<div class="requiredMark">
+			<label>服务器ip地址：</label>
+			<!--<input id="serviceip" required="required" name="iname" class="inputBox" type="text" placeholder="请填写服务器ip地址" />-->
+			<select class="selectBox" id="serviceip" ></select>
+		</div>
+
+		<div class="requiredMark">
+			<label>终端类型：</label>
+			<select class="selectBox" id="devicetype"></select>
+		</div>
+		<div >
+			<label>录音服务器：</label>
+			<input id="iprecond"  name="iname" class="inputBox" type="text" placeholder="请填写录音服务器" />
+		</div>
+
+		<div class="requiredMark">
+			<label>点歌方式</label>
+			<select class=" selectBox" id="fangtait_order_type">
+				<option value="鼠标">鼠标</option>
+				<option value="键盘">键盘</option>
+
+			</select>
+		</div>
+		<div class="requiredMark">
+			<label>主题皮肤</label>
+			<select class="selectThemeBox selectBox " id="fangtait_theme"></select>
+		</div>
+		<div>
+			<label>麦克频道</label>
+			<input name="actor_name" class="inputBox" type="number" placeholder="" id="fangtait_mic" />
+		</div>
+
+		<center>
+			<button type="button" class="btn green btn_bs" onclick="showdialog()">提交</button>
+		</center>
+	</form>
+
+	<form class="Boxsettwo_form" id="configset">
+
+	</form>
+
+	<script>
+		function addallconfig(jsondata) {
+
+		}
+
+		function addselect(jsondata) {
+			var htmltext = ""
+			$.alldata = jsondata;
+
+			$.each(jsondata['option'], function(j, eletwo) {
+
+				var myhtml = "";
+				myhtml += "<div><input type='checkbox' class='switch check_my' value='" + eletwo.AppValue + "' tag='" + eletwo.IsString + "'>";
+				myhtml += "<label>" + eletwo.ShowName + "</label>";
+				if(eletwo.result == 0) {
+					if(eletwo.IsString == 0) {
+						myhtml += "<input class='inputBox' disabled='true' type='text' />";
+					} else {
+						myhtml += "<input class='inputBox'  disabled='true' type='text' />";
+					}
+
+				} else {
+					var moption = "";
+					var mselect = (eletwo.select).split("\\");
+
+					for(var k = 0; k < mselect.length; k++) {
+						if(mselect[k] != '') {
+							moption += "<option value='" + mselect[k] + "'>" + mselect[k] + "</option>";
+						}
+
+					}
+
+					myhtml += "<select class='selectBox' id='devicetype' disabled='true'> " + moption + "</select>";
+				}
+
+				myhtml += "</div>";
+				$("#configset").append(myhtml);
+
+			});
+			$(".check_my").each(function() {
+				var mtdata = jsondata.boxip.option;
+				for(var i in mtdata) {
+					if(mtdata.hasOwnProperty(i)) {
+						var obj = mtdata[i];
+						if(i == $(this).attr("value")) {
+							$(this)[0].checked = true;
+							if($(this).attr("tag") == "1") {
+								$(this).next().next().attr("disabled", false);
+								if(obj == "1") {
+									$(this).next().next().val("");
+								} else {
+									$(this).next().next().val(obj);
+								}
+
+							}
+
+						}
+					}
+				}
+			});
+
+			$(".check_my").click(function() {
+				if($(this)[0].checked == true) {
+					if($(this).attr("tag") == "1") {
+						$(this).next().next().attr("disabled", false);
+					}
+				} else {
+					$(this).next().next().attr("disabled", true);
+				}
+
+			});
+
+			//					$.each(jsondata.boxip.option, function(i, eleone) {
+			//						if($(".check_my").attr("value")==i){
+			//							$(".check_my")[0].checked=true;
+			//						}
+			//					});
+
+		}
+//		$.tap(".addActor_outA_bs", function() {
+//			$.toBack($(this).parentU("indexView"));
+//		});
+		
+		$(".addActor_outA_bs").one("click",function(e){
+			$.toBack($(this).parentU("indexView"));
+		});
+
+		findinitdata();
+
+		function findinitdata() {
+
+			var isfiles = 0;
+			var mtype = 3;
+			var url = $.baseUrl + "/boxsetting";
+			var strjson = {}
+			var mid = $.boxtempid;
+			if(mid == "4") {
+				isfiles = 1;
+				arrname = [];
+				var mele = $.boxtempele;
+				strjson.name = mele;
+				arrname.push(mele);
+				$.filename = arrname;
+			} else {
+				var mfiles = $.mfilename;
+				var filenamse = $.parseJSON(mfiles);
+				strjson.name = mfiles;
+				mtype = 3;
+				$.filename = filenamse.filename;
+			}
+
+			// alert(JSON.stringify(strjson));
+			$.ajax({
+				type: 'post',
+				url: url,
+				dataType: 'json',
+				data: 'imgurl=' + JSON.stringify(strjson) + '&type=' + mtype + '&isfiles=' + isfiles,
+				success: function(str) {
+					//                 alert(str);
+					//						addallview($.parseJSON(str));
+					setalldata(str);
+					addselect(str);
+
+				},
+				error: function(msg) {}
+			});
+		}
+
+		$(document).ready(function() {
+			$('#ipaddress').change(function() {
+				//			alert($(this).children('option:selected').val());
+				var aaa = $(this).children('option:selected').val();
+				var bbb = aaa.split(".").pop();
+				$("#stbname").val(bbb);
+			})
+		});
+
+		function setalldata(jsondata) {
+			var boxip = jsondata.boxip.box;
+			var fangtaibox = $.fangtaibox;
+			//			$("#ipaddress").val(boxip.IP);
+			var configures = $.data_fangtai.configures[0];
+
+			$.serverbox = $.data_fangtai.server;
+			if($.serverbox == null) {
+				$.serverbox = [];
+			}
+
+			for(var i = 0; i < $.serverbox.length; i++) {
+				$("#serviceip").append("<option value='" + $.serverbox[i].FileServer_IpAddress + "'>" + $.serverbox[i].FileServer_IpAddress + "</option>");
+			}
+
+			var myselect = jsondata.boxtype.boxname;
+			var arr = myselect.split("/");
+			for(var i = 0; i < arr.length; i++) {
+				$("#devicetype").append("<option value='" + arr[i] + "'>" + arr[i] + "</option>");
+			}
+			var myva = jsondata.boxtype.boxvalue;
+			var arrva = myva.split("/");
+
+			if(boxip.STBType == arrva[0]) {
+				devicetype.value = "包房机顶盒"
+			} else if(boxip.STBType == arrva[1]) {
+				devicetype.value = "门牌机"
+			}
+
+			var html = "";
+			for(var i = 0; i < ($.data_fangtai.theme).length; i++) {
+				//                  for(var i in $.data_fangtai.theme){
+				var obj = $.data_fangtai.theme[i];
+				html += "<option value=\"" + obj.theme_name + "\">" + obj.theme_name + "</option>";
+			}
+
+			$(".Boxsetone_form>div>select.selectThemeBox").html(html);
+
+			//			alert(JSON.stringify(ele));
+
+			if(boxip.SERVER == "") {
+				boxip.SERVER = configures.Configure_Set60;
+			}
+
+			//			if(boxip.IP==""){
+			//				boxip.IP=configures.Configure_Set51;
+			//			}
+
+			$("#ipaddress").val(configures.Configure_Set51);
+
+			$("#serviceip").val(configures.Configure_Set60);
+
+			$("#subnetmask").val(configures.Configure_Set59);
+
+			$("#iprecond").val(configures.Configure_Set58);
+
+			if(configures.Configure_Set17 == "1") {
+
+				$("#fangtait_order_type").val("鼠标");
+			} else {
+				$("#fangtait_order_type").val("键盘");
+			}
+
+			$("#fangtait_theme").val(configures.Configure_Set52);
+
+		}
+
+		function showdialog() {
+			$.createConfirmBox({
+				"title": "系统提示",
+				"content": "确认是否提交修改?",
+				"click": function() {
+					disp_alert();
+				}
+			});
+		}
+
+		function disp_alert() {
+
+			var url = $.baseUrl + "/boxsetting";
+			
+			if(!$("#stbstart").val()){
+				mtoast("开始序号不能为空");
+				return;
+			}
+			
+			if(!isNumber($("#stbstart").val())){
+				mtoast("开始序号格式不对");
+				return;
+			}
+			
+//			if(!$("#iprecond").val()){
+//				$("#iprecond").val()='';
+//			}else{
+//				if(!isIP2($("#iprecond").val())){
+//					mtoast("录音服务器格式不对");
+//					return;
+//				}
+//			}
+			var strjson = getallinfo();
+			
+//			  alert(JSON.stringify(strjson));
+			boxarr=$.boxarr
+			strjson.name = "defult";
+			var user = {
+				imgurl: strjson,
+//				filename:boxarr,
+			};
+			$(".loading").css("display", "block");
+			// alert(JSON.stringify(strjson));
+
+			$.ajax({
+
+				type: 'post',
+				url: url,
+				dataType: 'json',
+				data: 'imgurl=' + JSON.stringify(strjson) + '&type=9'+'&filename='+JSON.stringify(boxarr),
+				success: function(str) {
+					mtoast(str);
+
+					if(str.code == "0") {
+						$.toBack($("#iprecond").parentU("indexView"));
+						mtoast(str.msg);
+					}else{
+						mtoast(str.msg);
+					}
+					$(".loading").css("display", "none");
+
+				},
+				error: function(msg) {
+					mtoast("操作失败");
+					$(".loading").css("display", "none");
+				}
+			});
+		}
+
+		function isIP2(ip) {
+			var re = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+			return re.test(ip);
+		}
+
+		function getallinfo() {
+
+			var boxip = {};
+
+			boxip.ipaddress = $("#ipaddress").val();
+			boxip.stbstart = $("#stbstart").val();
+			boxip.subnetmask = $("#subnetmask").val();
+			boxip.serviceip = $("#serviceip").val();
+
+			//      boxip.devicetype=devicetype.value;
+
+			if($("#devicetype").val() == "包房机顶盒") {
+				boxip.devicetype = "0";
+			} else if($("#devicetype").val() == "门牌机") {
+				boxip.devicetype = "1";
+			}
+			
+			
+			
+			
+
+			boxip.iprecond = $("#iprecond").val();
+			boxip.skin_name = $("#fangtait_theme").val();
+			boxip.Room_MAC1 = $("#fangtait_mic").val();
+
+			//			var ele = $.fangtai_sign;
+			//			boxip.Room_ID=ele.Room_ID;
+			//			boxip.Room_Old_IpAddress = ele.Room_IpAddress;
+			//			boxip.Room_Old_SerialNo = ele.Room_SerialNo;
+
+			if($("#fangtait_order_type").val() == "鼠标") {
+				boxip.Room_OrderType = 1;
+			} else {
+				boxip.Room_OrderType = 0;
+			}
+
+			for(var i in $.data_fangtai.theme) {
+				if($.data_fangtai.theme[i].theme_name == $("#fangtait_theme").val()) {
+					boxip.skin_theme_id = $.data_fangtai.theme[i].theme_id;
+					break;
+				}
+			}
+
+			var jsondata = {};
+			jsondata.boxip = boxip;
+			jsondata.option = getlistjson();
+			return jsondata;
+		}
+
+		function getlistjson() {
+			//获取所有checkbox 和 value
+			var checkmap = $(".check_my");
+			var jsonall = [];
+
+			$.each(checkmap, function(i, ele) {
+				if(ele.checked == true) {
+					var jsonval = {};
+					// var val=  ele.val();
+					var value = $(this).attr("value");
+					var obj = $(this).next().next();
+					jsonval.appvalue = value;
+					if(obj.length == 1) {
+						jsonval.optionvalue = isempty(obj.val());
+					} else {
+						jsonval.optionvalue = 1;
+					}
+
+					jsonall.push(jsonval);
+				};
+			});
+
+			return jsonall;
+
+		}
+
+		function isempty(str) {
+			if((str == null) || (str == undefined)) {
+				return "";
+			} else {
+				return str;
+			}
+		}
+		
+		function isNumber(num) {
+			var re = /^[0-9]*[1-9][0-9]*$/　
+			return re.test(num);
+		}
+
+		function mtoast(text) {
+			$.createConfirmBoxOK({
+				"title": "系统提示",
+				"content": text,
+				"click": function() {}
+			});
+		}
+	</script>
+
+</body>

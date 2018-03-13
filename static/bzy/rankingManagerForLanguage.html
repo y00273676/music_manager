@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<style>
+			.rankingManagerForLanguage{
+				width: 100%;
+				height: 100%;
+			}
+			.rankingManagerForLanguage>.tableDiv{
+				width: 100%;
+				height: calc(100% - 100px);
+				overflow: auto;
+				position: relative;
+				box-shadow: 0px -3px 3px #E0E0E0;
+			}
+			.rankingManagerForLanguage>.tableDiv>.table>tbody>tr>td>button{
+				width: 26px;
+				height: 26px;
+				display: inline-block;
+			}
+			
+			.rankingManagerForLanguage>.tableDiv>.table>tbody>tr>td>button>i.icon-arrow-up{
+				position: relative;
+				left: -1px;
+			}
+			.rankingManagerForLanguage>.tableDiv>.table>tbody>tr>td>button>i.icon-arrow-down{
+				position: relative;
+				left: -1px;
+			}
+			.rankingManagerForLanguage>.listButton>li.active{
+				color: #FFFFFF;
+				background-color: #337AB7;
+			}
+			.languageManagerHTMLDiv{
+				width: 100%;
+				height: 100%;
+			}
+			
+			.languageManagerHTMLDiv>ul{
+				width: calc( 100% - 4px );
+				height: 100%;
+				overflow-y: auto;
+				margin: 0 auto;
+			}
+			.languageManagerHTMLDiv>ul>li{
+				width: 100%;
+			}
+			.languageManagerHTMLDiv>ul>li>i{
+				position: absolute;
+				right: 15px;
+				font-size: 24px;
+				color: #999999;
+				line-height: 42px;
+			}
+			.languageManagerHTMLDiv>ul>li>i:hover{
+				color: #333333;
+			}
+			
+		</style>
+		<script id="rankingManagerForLanguageDataTemplate" type="text/template">
+			<tr>
+				<td>{[media_no]}</td>
+				<td>{[media_name]}</td>
+				<td>{[media_actname1]} {[media_actname2]} {[media_actname3]} {[media_actname4]}</td>
+				<td>{[media_click]}</td>
+				<td>
+					<button class="btn orange updateOrderCount" title="编辑" mediano="{[media_no]}">
+						<i class="icon-edit"></i>
+					</button>
+				</td>
+			</tr>
+		</script>
+		<script id="languageManagerHTML" type="text/template">
+			<div class="languageManagerHTMLDiv">
+				<ul class="list">
+					<li></li>
+				</ul>
+			</div>
+		</script>
+		<div class="rankingManagerForLanguage">
+			<ul class="listButton">
+			</ul>
+			<div class="tableDiv">
+				
+				<table class="table scroll">
+					<thead>
+						<tr>
+							<th>编号</th>
+							<th>名称</th>
+							<th>歌手</th>
+							<th>点播量</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						
+					</tbody>
+				</table>
+			</div>
+			<footer class="listPageNum">
+			</footer>
+		</div>
+		<script>
+			$(function(){
+				$.tap(".rankingManagerForLanguage>.listButton>li:not(.languageManager,.addLanguage)",function(){
+					$(".rankingManagerForLanguage>.listButton>li.active").removeClass("active");
+					$(this).addClass("active");
+					var id = $(this).attr("languageName");
+					loadDataCreatePaging(id);
+				});
+				$.tap(".languageManager",function(){
+					_.popPanel("语种管理",document.getElementById("languageManagerHTML").innerHTML,"400px","342px");
+					sendSelectLanguages(function(json){
+						var html="";
+						if(!!json&&!!json.data&&!!json.data.matches){
+							for(var i in json.data.matches){
+								if(json.data.matches.hasOwnProperty(i)){
+									var obj=json.data.matches[i];
+									languageIdArr.push(obj.lang_name);
+									html+="<li languageName=\"" + obj.lang_name+ "\" languageId=\""+obj.lang_id+"\">"+obj.lang_name+"<i class=\"languageUpdate icon-edit\" title=\"编辑\"></i></li>";
+								}
+							}
+						}
+						$(".languageManagerHTMLDiv>ul").html(html);
+						$(".languageUpdate").off("click").on("click",languageUpdateClick);
+					});
+				});
+				function languageUpdateClick(){
+					var li=$(this).parent();
+					var id=li.attr("languageId");
+					var lname=li.attr("languageName");
+					var name=li.text();
+					$.createConfirmBoxInput({"title":"语种编辑","content":"请输入语种名称","inputVal":name,"placeholder":"语种名称","click":function(){
+						var val=$(".confirmBoxInput>div>input").val();
+						var obj={};
+						obj.lang_id=id;
+						obj.lang_name=lname;
+						if(!$.regTestChinese(val)){
+							$(".confirmBoxInput>div>input").val("");
+							$.altAuto("请输入正确的语种名称");
+							return;
+						}
+						if(val.length>8){
+							$(".confirmBoxInput>div>input").val("");
+							$.altAuto("语种名称过长最大为8个字");
+							return;
+						}
+						obj.lang_name=val;
+						obj.lang_des=val;
+						sendUpdateLanguages($.createObjDataOnlyKey(obj),function(json){
+							if(!!json&&json.code=="0"){
+								$.altAuto(json.msg);
+								li.html(val+"<i class=\"languageUpdate icon-edit\"></i>");
+								$(".rankingManagerForLanguage>ul>li[languageid='"+id+"']").text(val);
+								$(".languageUpdate").off("click").on("click",languageUpdateClick);
+							}
+						});
+					}});
+				}
+				var languageIdArr=[]; 
+				$.tap(".addLanguage",function(){
+					var _this=$(this);
+					$.createConfirmBoxInput({"title":"语种添加","content":"请输入语种名称","placeholder":"语种名称","click":function(){
+						var val=$(".confirmBoxInput>div>input").val();
+						var obj={};
+						obj.Language_ID=Math.max.apply(Math, languageIdArr)+1;
+						if(!$.regTestChinese(val)){
+							$(".confirmBoxInput>div>input").val("");
+							$.altAuto("请输入正确的语种名称");
+							$(".confirmBoxInput").addClass("show");
+							return;
+						}
+						if(val.length>8){
+							$(".confirmBoxInput>div>input").val("");
+							$.altAuto("语种名称过长最大为8个字");
+							$(".confirmBoxInput").addClass("show");
+							return;
+						}
+						obj.lang_name=val;
+						obj.lang_des=val;
+						sendAddLanguages($.createObjDataOnlyKey(obj),function(json){
+							if(!!json&&json.code=="0"){
+								$.altAuto(json.msg);
+								_this.before("<li languageName=\"" + obj.lang_name+ "\" languageId=\""+obj.lang_id+"\">"+obj.lang_name+"</li>")
+								languageIdArr.push(obj.Language_ID);
+							}
+						});
+					}});
+				});
+				$.tap(".updateOrderCount",function(e){
+					e.stopPropagation();
+					var _this = $(this);
+					var num = _this.parent().prev().html();
+					var id = _this.attr("mediano");
+					$.createConfirmBoxInput({"title":"点播编辑","content":"请输入要修改的点播量","inputVal":num,"placeholder":"点播量","click":function(){
+						var val=$(".confirmBoxInput>div>input").val();
+						if(!$.regTestNumber(val)){
+							$(".confirmBoxInput>div>input").val("");
+							$.altAuto("点播量只能为数字");
+							$(".confirmBoxInput").addClass("show");
+							return;
+						}
+						if((val+"").length>8){
+							$(".confirmBoxInput>div>input").val("");
+							$.altAuto("点播量最大为8位数字");
+							$(".confirmBoxInput").addClass("show");
+							return;
+						}
+						var obj={};
+						//obj.Language_ID=$(".rankingManagerForLanguage>.listButton>li.active").attr("languageId");
+						lang_name=$(".rankingManagerForLanguage>.listButton>li.active").attr("languageName");
+						obj.media_no=id;
+						obj.media_click=val;
+						sendUpdateOrderCount(JSON.stringify(obj),function(json){
+							if(!!json&&json.code=="0"){
+								$.altAuto("修改成功!");
+								loadDataCreatePaging(lang_name);
+							}
+						});
+					}});
+				});
+				sendSelectLanguages(function(json){
+					var html="";
+					if(!!json&&!!json.data&&!!json.data.matches){
+						for(var i in json.data.matches){
+							if(json.data.matches.hasOwnProperty(i)){
+								var obj=json.data.matches[i];
+								languageIdArr.push(obj.lang_name);
+								html+="<li languageName=\"" + obj.lang_name+ "\" languageId=\""+obj.lang_id+"\">"+obj.lang_name+"</li>";
+							}
+						}
+					}
+					$(".rankingManagerForLanguage>ul").html(html);
+					$(".rankingManagerForLanguage>.listButton>li:first").click();
+				});
+				function loadDataCreatePaging(id){
+					$.rankingManagerForLanguage_pageNum=1;
+					$.rankingManagerForLanguage_pageSize=10;
+					initLoadSequence(id);
+                    return;
+					sendSelectMediasSequenceCount(id,function(json){
+						if(!!json&&!!json.msg){
+							$.altAuto(json.msg+",暂时无法显示该页数据");
+							return;
+						}
+						$(".listPageNum").paging(json.data,$.rankingManagerForLanguage_pageNum,$.rankingManagerForLanguage_pageSize,function(num){
+							$.rankingManagerForLanguage_pageNum=num;
+							initLoadSequence(id);
+						});
+					});
+				}
+				function initLoadSequence(id){
+					sendSelectMediasSequence(id,$.rankingManagerForLanguage_pageNum,$.rankingManagerForLanguage_pageSize,function(json){
+                        if(!!json&&!!json.msg&&json.code!=0){
+							$.altAuto(json.msg+",暂时无法显示该页数据");
+							return;
+						}
+						if(!json||!json.result.matches){
+							$(".rankingManagerForLanguage>.tableDiv>.table>tbody").html("");
+							$.altAuto("暂无数据");
+							$(".tableDiv").removeClass("div_load");
+							return;
+						}
+						if($("#rankingManagerForLanguageDataTemplate").length>0){
+							var html=$.fillData(document.getElementById("rankingManagerForLanguageDataTemplate").innerHTML,json.result.matches);
+							$(".rankingManagerForLanguage>.tableDiv>.table>tbody").html(html);
+							$(".tableDiv").removeClass("div_load");
+						}
+						$(".listPageNum").paging(json.result.total,$.rankingManagerForLanguage_pageNum,$.rankingManagerForLanguage_pageSize,function(num){
+							$.rankingManagerForLanguage_pageNum=num;
+							initLoadSequence(id);
+						});
+					});
+				}
+				function sendSelectMediasSequence(id,page,psize,fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/medias/bylang?page="+page+"&psize="+psize+"&lang="+id,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendSelectMediasSequenceCount(id,fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/sql/selectMediasSequenceCount?Language_ID="+id,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendSelectLanguages(fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/languages/list",
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendUpdateOrderCount(data,fn){
+					$.ajax({
+						type:"post",
+						url:$.baseUrl+"/medias/click",
+						data:data,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendAddLanguages(data,fn){
+					$.ajax({
+						type:"post",
+						url:$.baseUrl+"/languages/add",
+						data: data,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendUpdateLanguages(data,fn){
+					$.ajax({
+						type:"post",
+						url:$.baseUrl+"/languages/update",
+						data: data,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+			});
+		</script>
+	</body>
+</html>

@@ -1,0 +1,425 @@
+<body style="background:#efefef;">
+	<style>
+        .hidden { 
+            display: none; 
+        }
+
+		.Systemset_form {
+			width: 760px;
+			height: 400px;
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			margin: auto;
+			/* padding: 10px; */
+			box-sizing: border-box;
+			/* border: 1px solid #CDCDCD; */
+		}
+		
+		.Systemset_form>div {
+			width: 370px;
+			height: 40px;
+			position: relative;
+			margin-top: 10px;
+			/* margin-left: 50px; */
+			display: inline-block;
+		}
+		
+		.Systemset_form>div>label {
+			width: 180px;
+			height: 100%;
+			font-size: 16px;
+			text-align: right;
+			padding-right: 20px;
+			line-height: 40px;
+			display: inline-block;
+		}
+		
+		.Systemset_form>div>input,
+		.Systemset_form>div>select {
+			width: 70%;
+			height: 100%;
+		}
+        .Systemset_form>div>input[type='checkbox'] {
+            width: 0;
+            height: 0;
+            position: relative;
+            top: 8px;
+        }
+
+		
+		.Systemset_form>div>input.inputBox {
+			width: 190px
+		}
+		
+		.btn_ss {
+			margin-top: 50px;
+			width: 100px;
+			height: 40px;
+		}
+		
+		.button_style_one {
+			width: 10%;
+			background: #009688;
+			font-size: 18px;
+			color: #ffffff;
+		}
+		
+		.inputBox {
+			margin-right: 0px;
+		}
+	</style>
+
+	<div class="">
+		<!--<button type="button" class=" sky button_style_one" onclick="checkThunder()">thunder检查</button>-->
+		<ul class="listButton">
+			<li class="system_video" multiple="multiple"><i class="icon-plus">&nbsp;</i>视频服务器组</li>
+			<!--li class="updateDataBase"><i class="icon-hdd">&nbsp;</i>数据库设置</li>
+			<li class="synInidata"><i class="icon-hdd">&nbsp;</i>数据同步</li-->
+		</ul>
+	</div>
+	<form class="Systemset_form">
+		<div class=" ">
+			<label>ERP服务器名称：</label>
+			<input id="erpsvr_name" name="iname" class="inputBox" type="text" placeholder="请填写ERP服务器名称" />
+		</div>
+
+		<div class="requiredMark ">
+			<label>ERP服务器ip：</label>
+			<input id="erpsvr_ip" required="required" name="iname" class="inputBox" type="text" placeholder="请填写ERP服务器ip" />
+		</div>
+		<div class=" ">
+			<label>ERP数据库用户名：</label>
+			<input id="erpdb_name" required="required" name="iname" class="inputBox" type="text" placeholder="请填写ERP数据库用户名" />
+		</div>
+		<div class=" ">
+			<label>ERP数据库密码：</label>
+			<input id="erpdb_passwd" name="iname" class="inputBox" type="text" placeholder="" />
+		</div>
+
+		<div>
+			<label>karaok版本号：</label>
+			<input id="karaok_ver" disabled="true" name="iname" class="inputBox" type="text" />
+		</div>
+		<div>
+			<label>分屏版开台滚动字幕：</label>
+			<input id="ktv_salutatoty" name="iname" class="inputBox" type="text" placeholder="请填写分屏版开台滚动字幕" />
+		</div>
+
+		<div>
+			<label>分屏版字幕停留时间：</label>
+			<input id="ktv_statime" name="iname" class="inputBox" type="text" placeholder="请填写分屏版字幕停留时间" />
+		</div>
+
+		<div class="requiredMark hidden">
+			<label>中转服务器内网ip：</label>
+			<input id="transfer_ip" name="iname" class="inputBox" type="text" placeholder="请填写中转服务器内网ip" />
+		</div>
+
+		<div class="requiredMark hidden">
+			<label>中转服务器外网ip：</label>
+			<input id="transfer_ip_ex" name="iname" class="inputBox" type="text" vlaue='127.0.0.1' placeholder="请填写中转服务器外网ip" />
+		</div>
+
+		<div class="hidden">
+			<label>本地域名：</label>
+			<input id="localname" name="iname" class="inputBox" type="text" placeholder="请填写本地域名" />
+		</div>
+
+		<div class="hidden">
+			<label>本地ssid：</label>
+			<input id="SSID" name="iname" class="inputBox" type="text" placeholder="请填写本地ssid" />
+		</div>
+
+		<div class="hidden">
+			<label>密码：</label>
+			<input id="SSID_Pwd" name="iname" class="inputBox" type="text" placeholder="请填写ssid密码" />
+		</div>
+
+		<div>
+			<label>云端登陆账号：</label>
+			<input id="CloudMusic_uname" name="iname" class="inputBox" type="text" placeholder="请填写登陆账号" />
+		</div>
+
+		<div>
+			<label>云端登陆密码：</label>
+			<input id="CloudMusic_passwd" name="iname" class="inputBox" type="password" placeholder="******" />
+		</div>
+
+        <div>
+            <label>是否启用实时下载：</label>
+            <input id='CloudMusic_realdown' name='iname' type="checkbox" class="switch" style="">
+        </div>
+        <div>
+            <label>模板立即更新：</label>
+            <input id='theme_update' name='iname' type="checkbox" class="switch" style="">
+        </div>
+
+		<center>
+			<button type="button" class="btn green btn_ss" onclick="submitdata('sure')">提交</button>
+		</center>
+
+	</form>
+
+	<script>
+		$.tap(".updateDataBase",function(){
+			_.popPanel("数据库设置",document.getElementById("setingHTML").innerHTML,"400px","300px",false);
+			$(".initSeting>div>input[name='DataBaseServerIp']").val($.data_DataBaseServerIp);
+			$(".initSeting").formImgSubmit({url:$.baseUrl+"/isset",success:function(text){
+				if(!!text){
+					var json=$.parseJSON(text);
+					if(json.code=="0"){
+						$.altAuto(json.result);
+						_.popPanelClose();
+					}else if(json.code=="1"){
+						$.altAuto(json.result);
+					}
+				}
+			}});
+		});
+		
+		$.tap(".synInidata",function(){
+			synAllData();
+		});
+	
+		findinitdata();
+
+		function findinitdata() {
+			var url = $.baseUrl + "/config/list";
+			var strjson = {}
+
+			$.ajax({
+				type: 'get',
+				url: url,
+				dataType: 'json',
+				//data: 'mdata=' + JSON.stringify(strjson) + '&type=2',
+				success: function(str) {
+                    if (str.code == 0){
+                        $.dbhost = str.dbhost;
+                        addalldata(str.result);
+                    } else{
+                        $.dbhost = '';
+                        mtoast('获取系统设置信息失败,请检查服务器连接!');
+                    }
+				},
+				error: function(msg) {
+
+				}
+			});
+		}
+
+		function addalldata(jsondata) {
+            if (!jsondata){
+                mtoast('无法加载系统设置信息!');
+                return;
+            }
+			var misc = jsondata;
+			$("#ktv_salutatoty").val(misc.ktv_salutatoty.config_value);
+			$("#ktv_statime").val(misc.ktv_statime.config_value);
+			$("#erpsvr_ip").val(misc.erpsvr_ip.config_value);
+			$("#erpsvr_name").val(misc.erpsvr_name.config_value);
+			$("#erpdb_name").val(misc.erpdb_name.config_value);
+			$("#erpdb_passwd").val(misc.erpdb_passwd.config_value);
+			$("#karaok_ver").val(misc.karaok_ver.config_value);
+			$("#transfer_ip").val(misc.transfer_ip.config_value);
+			$("#transfer_ip_ex").val(misc.transfer_ip_ex.config_value);
+			$("#SSID").val(misc.SSID.config_value);
+			$("#SSID_Pwd").val(misc.SSID_Pwd.config_value);
+			$("#CloudMusic_uname").val(misc.CloudMusic_uname.config_value);
+			$("#CloudMusic_realdown")[0].checked = (misc.CloudMusic_realdown.config_value == 1 ? true : false);
+			$("#theme_update")[0].checked = (misc.theme_update.config_value == 1 ? true : false);
+		}
+
+		function submitdata(argument) {
+			$.createConfirmBox({
+				"title": "系统提示",
+				"content": "确认是否提交修改?",
+				"click": function() {
+					save_config(argument);
+				}
+			});
+		}
+
+		function checkThunder() {
+			//检查是否是最新
+			var url = $.baseUrl + "/systemset";
+			var strjson = {}
+
+			$.ajax({
+				type: 'post',
+				url: url,
+				dataType: 'json',
+				data: 'mdata=' + JSON.stringify(strjson) + '&type=6',
+				success: function(str) {
+					//						alert(JSON.stringify(str));
+
+					if(str.code == 3) {
+						mtoast("本机就是主服务器");
+					} else if(str.code == 2) {
+						mtoast("还没有设置主服务器");
+					} else if(str.code == 1) {
+						mtoast("当前配置文件是最新");
+					} else {
+						mtoast("同步成功");
+					}
+					// addnewview(str);
+				},
+				error: function(msg) {}
+			});
+
+		}
+
+		function isIP2(ip) {
+			var re = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+			return re.test(ip);
+		}
+
+		$.tap(".system_video", function() {
+			$.hrefPage("yeyinlin/videogroups.html", $(this).parentU("indexView"));
+		});
+
+		function save_config(changetype) {
+
+			var strjson = getalldata();
+			if(strjson == 1) {
+				return;
+			}
+
+			var user = {
+				imgurl: strjson,
+			};
+			$.ajax({
+				type: 'post',
+				url: $.baseUrl + "/config/update",
+				dataType: 'json',
+				data: JSON.stringify(strjson),
+				success: function(str) {
+					if(str['code'] == "0") {
+						$.createConfirmBoxOK({
+							"title": "系统提示",
+							"content": str['msg'],
+							"click": function() { }
+						});
+					} else {
+						$.createConfirmBoxOK({
+							"title": "系统提示",
+							"content": str.msg,
+							"click": function() {}
+						});
+					}
+				},
+				error: function(msg) {}
+			});
+
+		}
+
+		function getalldata() {
+			var misc = {};
+			misc.ktv_salutatoty = $("#ktv_salutatoty").val();
+			misc.ktv_statime = $("#ktv_statime").val();
+			misc.erpsvr_ip = $("#erpsvr_ip").val();
+			var tmpip = $("#erpsvr_ip").val();
+			if(!isIP2(tmpip)) {
+				mtoast("ERP的ip地址格式不正确");
+				return 1;
+			}
+			misc.erpdb_name = $("#erpdb_name").val();
+			misc.erpsvr_name = $("#erpsvr_name").val();
+			misc.erpdb_passwd = $("#erpdb_passwd").val();
+			misc.transfer_ip = $("#transfer_ip").val();
+			var mone = setRequest($("#transfer_ip").val());
+			if(mone == 1) {
+				mtoast("中转服务器内网ip地址未填写");
+				return 1;
+			}
+			var mone = setRequest($("#transfer_ip_ex").val());
+			if(mone == 1) {
+				mtoast("中转服务器外网ip地址未填写");
+				return 1;
+			}
+			misc.transfer_ip_ex = $("#transfer_ip_ex").val();
+			misc.SSID= $("#SSID").val();
+			misc.ssidpw = $("#ssidpw").val();
+			misc.CloudMusic_uname = $("#CloudMusic_uname").val();
+			misc.CloudMusic_passwd = $("#CloudMusic_passwd").val();
+            misc.CloudMusic_realdown = ($("#CloudMusic_realdown")[0].checked) ? "1" : "0";
+            misc.theme_update = ($("#theme_update")[0].checked) ? "1" : "0";
+			return misc;
+		}
+
+		function setRequest(val) {
+			if(!val) {
+				return 1;
+			}
+			return 0;
+		}
+
+		function mtoast(text) {
+			$.createConfirmBoxOK({
+				"title": "系统提示",
+				"content": text,
+				"click": function() {}
+			});
+		}
+		
+	function synAllData() {
+		$(".loading").css("display", "block");
+			//检查是否是最新
+			var url = $.baseUrl + "/systemset";
+			var strjson = {}
+
+			$.ajax({
+				type: 'post',
+				url: url,
+				dataType: 'json',
+				data: 'mdata=' + JSON.stringify(strjson) + '&type=7',
+				success: function(str) {
+					$(".loading").css("display", "none");
+					if(str.code == 0) {
+						mtoast(str.msg);
+					}else{
+						mtoast("同步失败");
+					}
+				},
+				error: function(msg) {
+					$(".loading").css("display", "none");
+					mtoast("服务器异常");
+				}
+			});
+
+		}
+		
+
+		function checkThunder() {
+			//检查是否是最新
+			var url = $.baseUrl + "/systemset";
+			var strjson = {}
+
+			$.ajax({
+				type: 'post',
+				url: url,
+				dataType: 'json',
+				data: 'mdata=' + JSON.stringify(strjson) + '&type=6',
+				success: function(str) {
+					//						alert(JSON.stringify(str));
+
+					if(str.code == 3) {
+						mtoast("本机就是主服务器");
+					} else if(str.code == 2) {
+						mtoast("还没有设置主服务器");
+					} else if(str.code == 1) {
+						mtoast("当前配置文件是最新");
+					} else {
+						mtoast("同步成功");
+					}
+					// addnewview(str);
+				},
+				error: function(msg) {}
+			});
+
+		}
+	</script>
+
+</body>

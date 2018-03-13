@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<style>
+			.diskStatistics{
+				width: 100%;
+				height: 100%;
+			}
+			.diskStatistics>.tableDiv{
+				width: 100%;
+				height: 500px;
+				position: relative;
+				box-shadow: 0px -3px 3px #E0E0E0;
+			}
+			.diskStatistics>.tableDiv>.table>tbody>tr>td>button{
+				width: 52px;
+				height: 26px;
+				display: inline-block;
+			}
+			
+			.diskStatistics>.tableDiv>.table>tbody>tr>td>button>i.icon-arrow-up{
+				position: relative;
+				left: -1px;
+			}
+			.diskStatistics>.tableDiv>.table>tbody>tr>td>button>i.icon-arrow-down{
+				position: relative;
+				left: -1px;
+			}
+			.setPublicTypeHTMLDiv{
+				width: 100%;
+				text-align: center;
+			}
+			.setPublicTypeHTMLSelect{
+				width: 90%;
+			    height: 38px;
+			    line-height: 38px;
+			    margin: 0 auto;
+			}
+			.setPublicTypeHTMLInput{
+				width: 90%;
+			    height: 38px;
+			    line-height: 38px;
+			    margin: 0 auto;
+			}
+			.setPublicTypeHTMLSubmitBtn{
+				width: 30%;
+			    height: 38px;
+			    margin-top: 10px;
+			}
+			.diskStatistics>.tableDiv>.table>tbody>tr>td>i{
+				color: #CECECE;
+			}
+			.diskStatistics>.tableDiv>.table>tbody>tr.act>td>i{
+				color: #333333;
+			}
+			.diskStatistics>.tableDiv>.table>tbody>tr>td>button{
+				width: 26px;
+				height: 26px;
+				display: inline-block;
+			}
+			.diskStatistics>.tableDiv>.table>tbody>tr>td:nth-of-type(6),
+			.diskStatistics>.tableDiv>.table>tbody>tr>td:nth-of-type(7){
+				text-decoration: underline;
+    			color: #1F49EA;
+			}
+			.fileCountAndData{
+				height: 100%;
+			}
+			.fileCountAndData>.list{
+				padding: 0px 3px;
+				height: calc( 100% - 63px );
+			}
+			.fileCountAndData>.list>li{
+				width: 100%;
+				transition: transform 0.5s cubic-bezier(0.205, -0.565, 0.550, 0.345);
+				-webkit-transition: -webkit-transform 0.5s cubic-bezier(0.205, -0.565, 0.550, 0.345);
+			}
+			.fileCountAndData>.list>li>b{
+				position: absolute;
+				right: 50px;
+				font-size: 16px;
+				color: #333333;
+				line-height: 42px;
+			}  
+			.fileCountAndData>.list>li>button{
+				width: 26px;
+				height: 26px;
+				display: inline-block;
+				position: absolute;
+    			top: 8px;
+    			right: 10px;
+			}
+			.fileCountAndData>.list>li>button>i{
+			    position: relative;
+    			top: -10px;
+			}
+			.fileCountAndData>.listButton{
+				text-align: right;
+			}
+			.fileCountAndData>.list>li.del{
+				transform: translateX(100%);
+				-webkit-transform: translateX(100%);
+			}
+		</style>
+		<script id="diskStatisticsDataTemplate" type="text/template">
+			<tr>
+				<td><i class="icon-ok"></i></td>
+				<td>{[server_svrgroup]}</td>
+				<td>{[server_ip]}</td>
+				<td></td>
+				<td></td>
+                <!--
+				<td class="lostFile"></td>
+				<td class="otherFile"></td>
+                -->
+				<td>
+					<button class="btn green serverInfo" title="详情" ip="{[server_ip]}">
+						<i class="icon-reorder"></i>
+					</button>
+				</td>
+			</tr>
+		</script>
+		<script id="fileCountAndDataTemplate" type="text/template">
+			<div class="fileCountAndData">
+				<ul class="listButton">
+					
+				</ul>
+				<ul class="list">
+					
+				</ul>
+			</div>
+		</script>
+		<div class="diskStatistics">
+			<!--ul class="listButton">
+				<li class="fileSynchronization"><i class="icon-exchange">&nbsp;</i>磁盘文件同步</li>
+			</ul-->
+			<div class="tableDiv div_load">
+				<table class="table scroll">
+					<thead>
+						<tr>
+							<th>选择</th>
+							<th>类型</th>
+							<th>地址</th>
+							<th>文件数</th>
+							<th>库数据</th>
+							<!--th>缺失</th>
+							<th>冗余</th-->
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<script>
+			$.tap(".serverInfo",function(e){
+				e.stopPropagation();
+				$.data_diskManagerIp = $(this).attr("ip");
+				$.hrefPage("bzy/diskManager.html",$(this).parentU("indexView"));
+			});
+			sendLoadIpList(function(json){
+				if(!!json){
+					for(var i in json.result.matches){
+						if(json.result.matches[i].server_grpid==1){
+							json.result.matches[i].server_svrgroup="主组";
+						}else if(json.result.matches[i].server_grpid==2){
+							json.result.matches[i].server_svrgroup="从组";
+						}
+					}
+					var html=$.fillData(document.getElementById("diskStatisticsDataTemplate").innerHTML,json.result.matches);
+					$(".diskStatistics>.tableDiv>.table>tbody").htm(html);
+					$(".tableDiv").removeClass("div_load");
+					loadFileCountFromIp();
+				}
+			});
+			$.tap(".diskStatistics>.tableDiv>.table>tbody>tr",function(){
+				if($(this).hasClass("act"))
+					$(this).removeClass("act")
+				else
+					$(this).addClass("act")
+			});
+			$.tap(".fileSynchronization",function(){
+				var act=$(".diskStatistics>.tableDiv>.table>tbody>tr.act");
+				if(act.length==0||act.length==1){
+					$.altAuto("请选择两个服务器");
+					return;
+				}
+				var ac1=act.eq(0);
+				var ac2=act.eq(1);
+				if(ac1.children("td").eq(1).html()!=ac2.children("td").eq(1).html()){
+					$.altAuto("请选择两个同类型服务器");
+					return;
+				}
+				var ip1=ac1.children("td").eq(2).html();
+				var ip2=ac2.children("td").eq(2).html();
+				$.createConfirmBox({"title":"系统提示","content":"是否确认同步"+ip1+"和"+ip2+"的文件?","click":function(){
+					sendMatchingDisk(ip1,ip2,function(json){
+						var ip1=json.ip1;
+						var ip1List=json.ip1ResultDataHave;
+						var ip2=json.ip2;
+						var ip2List=json.ip2ResultDataHave;
+						var ip1ListKey=[];
+						for(var i in ip1List){
+							if(ip1List.hasOwnProperty(i)){
+								ip1ListKey.push(i);
+							}
+						}
+						var ip2ListKey=[];
+						for(var i in ip2List){
+							if(ip2List.hasOwnProperty(i)){
+								ip2ListKey.push(i);
+							}
+						}
+						if(ip1ListKey.length>0){
+							var index=0;
+							moveFile(ip1,ip2,index,ip1List,ip1ListKey,function(idx){
+								var jd = parseFloat(idx/ip1ListKey.length*100).toFixed(2)+"%";
+								console.log("1:"+idx+"-"+jd);
+								ac2.children("td").eq(7).html(jd);
+							});
+						}
+						if(ip2ListKey.length>0){
+							var index=0;
+							moveFile(ip2,ip1,index,ip2List,ip2ListKey,function(idx){
+								var jd = parseFloat(idx/ip2ListKey.length*100).toFixed(2)+"%";
+								console.log("2:"+idx+"-"+jd);
+								ac1.children("td").eq(7).html(jd);
+							});
+						}	
+					});
+				}});
+			});
+			function fileCountAndDataListLiClickDownload(_this){
+				$.altAuto("该功能暂未开放");
+			}
+			$.fileCountAndDataListLiClickDeleteAllKG=false;
+			function fileCountAndDataListLiClickDelete(_this,fn){
+				var li = $(_this).parent();
+				var path = $.trim(li.children("b").html());
+				var tr = $(".activeTr");
+				var ip = $.trim(tr.children("td").eq(2).html());
+				if(!!$.fileCountAndDataListLiClickDeleteAllKG){
+					excuteDeleteListLi(li,path,tr,ip,fn);
+				}else{
+					$.createConfirmBox({"title":"系统提示","content":"是否确认删除该文件?","click":function(){
+						excuteDeleteListLi(li,path,tr,ip);
+					}});
+				}
+			}
+			function excuteDeleteListLi(li,path,tr,ip,fn){
+				sendDeleteDiskFile(ip,path,function(json){
+					if(!!json&&json.code=="0"){
+						if(!!$.fileCountAndDataListLiClickDeleteAllKG){
+							li.remove();
+							var num = $(".activeTr").children("td").eq(6).html();
+							if(num>0) num--;
+							$(".activeTr").children("td").eq(6).html(num);
+							if(!!fn){
+								fn();
+							}	
+						}else{
+							li.addClass("del");
+							li.off("transitionend").on("transitionend",function(){
+								$(this).remove();
+								var num = $(".activeTr").children("td").eq(6).html();
+								if(num>0) num--;
+								$(".activeTr").children("td").eq(6).html(num);
+								if(!!fn){
+									fn();
+								}	
+							});
+						}
+					}
+				});
+			}
+			$.tap(".lostFile",function(e){
+				$(".activeTr").removeClass("activeTr");
+				$(this).parent().addClass("activeTr");
+				e.stopPropagation();
+				_.popPanel("缺失文件",document.getElementById("fileCountAndDataTemplate").innerHTML,"600px","669px");
+				$(".fileCountAndData>.listButton").html("<li onclick=\"fileCountAndDataListLiClickDownload(this)\">下载全部缺失文件</li>");
+				var tr=$(this).parent();
+				var json=tr.data("data_sendGetLostFileList");
+				var lst=$.sliceArrListData(json,20);
+				$(".fileCountAndData>.list").scrollLoad(lst,function(arr){
+					if(!!arr)
+						return $.fillData("<li no=\"{[no]}\">{[no]}<b>{[name]}</b><button class=\"btn green\" title=\"下载\" onclick=\"fileCountAndDataListLiClickDownload(this)\"><i class=\"icon-cloud-download\" style=\"left:-2px;\"></i></button></li>",arr);
+					else
+						return "";
+				});
+			});
+			$.tap(".otherFile",function(e){
+				$(".activeTr").removeClass("activeTr");
+				var ip = $.trim($(this).parent().children("td").eq(2).html());
+				$(this).parent().addClass("activeTr");
+				e.stopPropagation();
+				_.popPanel("冗余文件",document.getElementById("fileCountAndDataTemplate").innerHTML,"600px","669px");
+				$(".fileCountAndData>.listButton").html("<li class=\"deleteAllOtherFileList\">删除全部冗余文件</li>");
+				var tr=$(this).parent();
+				var json=tr.data("data_sendGetOtherFileList");
+				if(json.length==0){
+					$(".fileCountAndData>.list").html("");
+					return;
+				}	
+				var lst=$.sliceArrListData(json,20);
+				var scrollLoadQZFN=$(".fileCountAndData>.list").scrollLoad(lst,function(arr){
+					if(!!arr)
+						return $.fillData("<li no=\"{[no]}\">{[no]}<b>{[path]}</b><button class=\"btn violet\" title=\"删除\" onclick=\"fileCountAndDataListLiClickDelete(this)\"><i class=\"icon-trash\"></i></button></li>",arr);
+					else
+						return "";
+				});
+				$(".fileCountAndData>.listButton>li.deleteAllOtherFileList").off("click").on("click",function(){
+					$.createConfirmBox({"title":"系统提示","content":"是否删除所有冗余文件?","click":function(){
+						$.fileCountAndDataListLiClickDeleteAllKG=true;
+						function fileCountAndDataListLiClickDeleteFN(){
+							if($(".fileCountAndData>.list>li").length>0){
+								fileCountAndDataListLiClickDelete($(".fileCountAndData>.list>li:eq(0)>button")[0],function(){
+									if($(".fileCountAndData>.list>li").length<15)
+										scrollLoadQZFN();
+									fileCountAndDataListLiClickDeleteFN();
+								});
+							}else{
+								tr.data("data_sendGetOtherFileList",[]);
+								$.fileCountAndDataListLiClickDeleteAllKG=false;
+							}
+						}
+						fileCountAndDataListLiClickDeleteFN();
+					}});
+				});
+			});
+			function moveFile(ipL,ipR,index,list,arr,fn){
+				if(arr.length>index){
+					var key = arr[index];
+					sendScpFile(ipL,ipR,list[key],function(json){
+						if(!!json&&json.code=='0'){
+							if(json.data=="success"){
+								index++;
+								if(!!fn)
+									fn(index);
+								moveFile(ipL,ipR,index,list,arr,fn);
+							}
+						}
+					});
+				}
+			}
+			function loadFileCountFromIp(){
+				$(".diskStatistics>.tableDiv>.table>tbody>tr").each(function(){
+					var _this=$(this);
+					var ip = _this.children("td").eq(2).html();
+					$.when(sendLoadFileCount(ip),sendLoadDataCount(ip)/*,sendGetLostFileList(ip),sendGetOtherFileList(ip)*/).done(function(str1,str2/*,str3,str4*/){
+						var json1=str1[0];
+						var json2=str2[0];
+						//var json3=str3[0];
+						//var json4=str4[0];
+						if(!!json1&&!!json1.msg){
+							$.altAuto(json1.msg);
+							return;
+						}
+						//_this.data("data_sendGetLostFileList",json3.data);
+						//_this.data("data_sendGetOtherFileList",json4.data);
+						_this.children("td").eq(3).html(json1.data);
+						_this.children("td").eq(4).html(json2.data.total);
+						//_this.children("td").eq(5).html(json3.size);
+						//_this.children("td").eq(6).html(json4.size);
+					})
+				});
+			}
+			function getTDValue(){
+				$(".diskStatistics>.tableDiv>.table>tbody>tr").each(function(){
+					var _this=$(this);
+					var fileCount = _this.children("td").eq(2).html();
+					var dataCount = _this.children("td").eq(3).html();
+				});
+			}
+			function sendLoadFileCount(ip){
+				return $.ajax({
+					type:"get",
+					url:"http://"+ip+":"+$.protNo+"/servers/filecount",
+					dataType:"json"
+				});
+			}
+			function sendLoadDataCount(ip){
+				return $.ajax({
+					type:"get",
+					url:"http://"+ip+":"+$.protNo+"/medias/count",
+					dataType:"json"
+				});
+			}
+			function sendLoadIpList(fn){
+				$.ajax({
+					type:"get",
+					url:$.baseUrl+"/servers/list",
+					dataType:"json",
+					success:function(json){
+						if(!!fn)
+							fn(json);
+					},error:function(){
+						$.altAuto("无法访问或服务器发生异常");
+					}
+				});
+			}
+			function sendMatchingDisk(ip1,ip2,fn){
+				$.ajax({
+					type:"get",
+					url:$.baseUrl+"/sql/matchingDisk?ip1="+ip1+"&ip2="+ip2,
+					dataType:"json",
+					success:function(json){
+						if(!!fn)
+							fn(json);
+					},error:function(){
+						$.altAuto("无法访问或服务器发生异常");
+					}
+				});
+			}
+			function sendScpFile(fromIp,toIp,filePath,fn){
+				$.ajax({
+					type:"get",
+					url:"http://"+fromIp+":"+$.protNo+"/sql/scpFile?ip="+toIp+"&filePath="+filePath,
+					dataType:"json",
+					success:function(json){
+						if(!!fn)
+							fn(json);
+					},error:function(){
+						$.altAuto("无法访问或服务器发生异常");
+					}
+				});
+			}
+			function sendGetLostFileList(fromIp,fn){
+				return $.ajax({
+					type:"get",
+					url:"http://"+fromIp+":"+$.protNo+"/medias/lostfiles",
+					dataType:"json"
+				});
+			}
+			function sendGetOtherFileList(fromIp,fn){
+				return $.ajax({
+					type:"get",
+					url:"http://"+fromIp+":"+$.protNo+"/medias/uselessfiles",
+					dataType:"json"
+				});
+			}
+			function sendDeleteDiskFile(ip,path,fn){	
+				$.ajax({
+					type:"get",
+					url:"http://"+ip+":"+$.protNo+"/sql/deleteDiskFile?path="+path,
+					dataType:"json",
+					success:function(json){
+						if(!!fn)
+							fn(json);
+					},error:function(){
+						$.altAuto("无法访问或服务器发生异常");
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

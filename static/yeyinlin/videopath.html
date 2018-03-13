@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <style>
+            .addActor_outA{
+                width: 45px;
+                height: 35px;
+                display: inline-block;
+                font-size: 20px;
+                line-height: 30px;
+                text-align: center;
+                padding: 0px;
+                text-decoration: none;
+                color: #FFFFFF;
+                position: absolute;
+                top: 20px;
+                left: 20px;
+            }
+            .addActor_pageTitle{
+                width: 100%;
+                position: absolute;
+                top: 16px;
+                font-size: 25px;
+                margin: 0;
+                padding: 0;
+                text-align: center;
+                pointer-events: none;
+            }
+            .addActor_form{
+                width: 400px;
+                height: auto;
+                position: absolute;
+                top: 60px;
+                left: 0px;
+                right: 0px;
+                margin: 0 auto;
+            }
+            .addActor_form>div{
+                width: 100%;
+                height: 40px;
+                position: relative;
+                margin-top: 10px;
+            }
+            .addActor_form>div>label{
+                position: absolute;
+                width: 30%;
+                height: 100%;
+                left: 0px;
+                font-size: 16px;
+                text-align: left;
+                padding-right: 20px;
+                line-height: 40px;
+            }
+
+            .addActor_form>.musicManager>.tableDiv{
+                width: 100%;
+                height: calc( 100% - 100px);
+                overflow: auto;
+                position: relative;
+                box-shadow: 0px -3px 3px #E0E0E0;
+            }
+            .addActor_form>div>input,.addActor_form>div>select,.addActor_form>div>button{
+                position: absolute;
+                width: 70%;
+                height: 100%;
+                right: 0px;
+            }
+            .addActor_form>div>input[type='file'],.addActor_form>div>select{
+                cursor: pointer;
+            }
+            .addActor_form>div>input[type='file']:active+button.selectBox{
+                background: -webkit-linear-gradient(top,#D0D0D0,#DCDCDC);
+            }
+            .addActor_form>center{
+                margin-top: 20px;
+            }
+            .addActor_form>center>button{
+                font-size: 20px;
+                padding: 6px 30px 8px 30px;
+            }
+            .actorImgUpload{
+                opacity: 0;
+                z-index: 9;
+            }
+            .thumbnailImg{
+                width: 100px;
+                height: 100px;
+                display: block;
+                margin: 0 auto;
+                position: absolute;
+                top: -60px;
+                right: -100px;
+            }
+            .thumbnailImg.hide{
+                display: none;
+            }
+        </style>
+
+         <script id="videoPathTemplate" type="text/template">
+            <tr>
+                <td>{[video_path]}</td>
+
+                <td>
+                    <button class="btn violet homeDelete" type="button">
+                        <i class="icon-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        </script>
+
+    <a class="addActor_outA btn blue"> <i class="icon-arrow-left"></i>
+    </a>
+    <h4 class="addActor_pageTitle">视频服务配置</h4>
+    <form class="addActor_form">
+        <div>
+            <label >视频服务器:</label>
+            <input name="actor_name" class="inputBox" type="text" placeholder="" />
+        </div>
+        <center>
+            <button  type="button" class="btn green"  >添加</button>
+        </center>
+        <div  class="tableDiv">
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>本机歌曲视频存放路径</th>
+
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+
+        </table>
+
+    </div>
+
+    </form>
+    <script>
+            $.tap(".addActor_outA",function(){
+                $.toBack($(this).parentU("indexView"));
+            });
+
+            addform();
+            function addform () {
+                var  jsondata=[];
+                for (var i=0;i<3;i++){
+                        var data={};
+                        data.video_path="c://huksiiod";
+                        jsondata.push(data);
+                }
+                // alert(JSON.stringify(jsondata));
+                var html=$.fillData(document.getElementById("videoPathTemplate").innerHTML,jsondata);
+
+                $(".addActor_form>.tableDiv>.table>tbody").html(html);
+
+}
+
+
+        </script>
+</body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+
+		<style>
+			.upload_base {
+				width: 40px;
+				height: 40px;
+				line-height: 40px;
+				position: absolute;
+				right: 400px;
+			}
+			
+			.ComSettingList {
+				width: 100%;
+				height: 100%;
+			}
+			
+			.ComSettingList>.tableDiv {
+				width: 100%;
+				height: calc( 100% - 100px);
+				overflow: auto;
+				position: relative;
+				box-shadow: 0px -3px 3px #E0E0E0;
+			}
+			
+			.ComSettingList>.tableDiv>.table>tbody>tr>td>button {
+				width: 26px;
+				height: 26px;
+				display: inline-block;
+			}
+		</style>
+
+		
+		<div class="ComSettingList">
+
+			<div class="tableDiv">
+				<table class="table">
+					<thead>
+						<tr>
+
+							<th>类型</th>
+							<th>唯一名称</th>
+							<th>名字</th>
+							<th>路径</th>
+							<th>文件名称</th>
+							<th>本地已上传</th>
+							<th>操作</th>
+
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+
+		</div>
+		<script>
+		
+		var lastvalue="houselight"
+			function addform(jsondata) {
+				$(".ComSettingList>.tableDiv>.table>tbody").html("");
+				var html = $.fillData(`
+				<tr>
+				<td>{[type]}</td>
+				<td>{[key]}</td>
+				<td>{[name]}</td>
+				<td>{[path]}</td>
+				<td>{[filename]}</td>
+				<td>{[ishave]}</td>
+
+				<td>
+
+					<button class="btn orange homeupdata"> <i class="icon-edit"></i>
+                    </button>
+					<button class="btn violet homeDelete">
+                        <i class="icon-trash"></i>
+                    </button>
+				</td>
+			</tr>	
+				`, jsondata);
+				$(".ComSettingList>.tableDiv>.table>tbody").html(html);
+				
+				var format=jsondata[0].format;
+//				alert(format);
+				var maccept="."+format;
+				$(".ComSettingList>.tableDiv>.table>tbody>tr>td>button.homeupdata").attr("accept", maccept);
+
+				
+				$(".ComSettingList>.tableDiv>.table>tbody>tr>td>button.homeupdata").upload(arrdog[0], function(xhr, input) {
+								getdata(lastvalue);
+							}, function(xhr,error){
+								error.style.transform="scale(0,0)";
+								error.style.webkitTransform="scale(0,0)";
+								error.style.opacity="0";
+								mtoast('同步失败！');
+								
+							}, function(input) {
+								if($.ishasserver=="1"){
+									mtoast("必须到系统设置中添加视频服务器才能进行此操作");
+									return false;
+								}
+								
+								if((jsondata[0].filename) != "") {
+									
+									if((jsondata[0].filename).indexOf(input.files[0].name) == -1) {
+										mtoast("当前的文件名只支持"+jsondata[0].filename);
+										return false;
+									}
+									return true;
+								}else{
+									return true;
+								}
+							});
+			}
+			var arrdog = [$.baseUrl + "/fujia?type=1&value=" + "houselight"];
+
+			function comsetting_initcst(key) {
+				lastvalue=key;
+				getdata(key);
+			}
+
+
+//			com_initdata();
+
+			function com_initdata() {
+				
+				getdata("houselight");
+			}
+
+
+			
+			function getdata(appkey) {
+					var url = $.baseUrl + "/fujia";
+				var strjson = {}
+
+				$.ajax({
+					type: 'post',
+					url: url,
+					dataType: 'json',
+					data: 'imgurl=' + JSON.stringify(strjson) + '&type=5&value=' + appkey,
+					success: function(str) {
+						
+
+						if(str.code == "0") {
+							$.ishasserver=str.ishaserver;
+							arrdog=[$.baseUrl + "/fujia?type=1&value=" + str.data[0].key];
+							addform(str.data);
+							
+							
+//							alert(arrdog[0]);
+						}
+						//						addnewview(str);
+					},
+					error: function(msg) {
+
+					}
+				});
+			}
+
+			$.tap(".ComSettingList>.tableDiv>.table>tbody>tr>td>button.homeDelete", function(e) {
+				var mykey=$(this).parent().parent().children("td").first().next().html();
+				
+				$.createConfirmBox({
+					"title": "系统提示",
+					"content": "是否确认删除该条目?",
+					"click": function() {
+						delectFile(mykey);
+					}
+				});
+				
+				
+			});
+			
+			function delectFile(appkey){
+				var url = $.baseUrl + "/fujia";
+				var strjson = {}
+
+				$.ajax({
+					type: 'post',
+					url: url,
+					dataType: 'json',
+					data: 'imgurl=' + JSON.stringify(strjson) + '&type=6&value=' + appkey,
+					success: function(str) {
+					if(str.code == "0") {
+								mtoast('删除成功');
+								getdata(lastvalue);
+						}
+						
+						//						addnewview(str);
+					},
+					error: function(msg) {
+
+					}
+				});
+			}
+
+//			$.baseUrl + "/fujia?type=1&value="+$.mycomkey;
+			
+			
+//			$.tap(".ComSettingList>.tableDiv>.table>tbody>tr>td>button.homeupdata", function(e) {
+//				
+//				
+//			});
+			
+			
+			
+			
+			
+			function mtoast(text) {
+			$.createConfirmBoxOK({
+				"title": "系统提示",
+				"content": text,
+				"click": function() {}
+			});
+		}
+		</script>
+
+	</body>
+
+</html>

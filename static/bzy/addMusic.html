@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<style>
+			.addMusic_outA{
+				width: 45px;
+			    height: 35px;
+			    display: inline-block;
+			    font-size: 20px;
+			    line-height: 30px;
+			    text-align: center;
+			    padding: 0px;
+			    text-decoration: none;
+			    color: #FFFFFF;
+			    position: absolute;
+			    top: 20px;
+			    left: 20px;
+			}
+			.addMusic_pageTitle{
+				width: 100%;
+				position: absolute;
+				top: 16px;
+				font-size: 25px;
+				margin: 0;
+				padding: 0;
+				text-align: center;
+				pointer-events: none;
+			}
+			.addMusic_form{
+				width: 700px;
+				height: auto;
+				position: absolute;
+				top: 60px;
+				margin: 0 auto;
+			}
+			.addMusic_form>div{
+				width: 350px;
+				height: 40px;
+				position: relative;
+				margin-top: 10px;
+				display: inline-block;
+			}
+			.addMusic_form>div>label{
+				width: 100px;
+				height: 100%;
+				font-size: 16px;
+				text-align: right;
+				padding-right: 20px;
+				line-height: 40px;
+				display: inline-block;
+			}
+			.addMusic_form>div>input,.addMusic_form>div>select{
+				width: 70%;
+				height: 100%;
+			}
+			.addMusic_form>div>input.inputBox{
+				width: 240px;
+			}
+			.addMusic_form>div>select.selectBox{
+				width: 240px;
+			}
+			.addMusic_form>center{
+				width: calc( 100% + 300px );
+				margin-top: 20px;
+			}
+			.addMusic_form>center>button{
+				font-size: 20px;
+				padding: 6px 30px 8px 30px;
+			}
+			.addMusic_form>div>input.switch{
+				width: 0px;
+				height: 0px;
+				top: 8px;
+			}
+			.addMusic_form>div>input.switch::after{
+				background-color: #949393;
+			}
+			.addMusic_form>div>input.switch:checked:after{
+				background-color: #4CAE4C;
+			}
+			.addMusic_form>.lrcText{
+				width: 300px;
+				position: absolute;
+				left: 700px;
+    			top: 0px;
+			}
+			.addMusic_form>.lrcText>label{
+				width: 100%;
+				text-align: center;
+			}
+			.addMusic_form>.lrcText>textarea{
+				width: 100%;
+				height: 400px;
+				display: inline-block;
+				box-sizing: border-box;
+				border: 1px #D0D0D0 solid;
+				font-size: 16px;
+				outline: none;
+				border-radius: 5px;
+				box-shadow: inset 0px 0px 5px #BDBDBD;
+				transition: box-shadow 0.25s,border-color 0.25s;
+				-webkit-transition: -webkit-box-shadow 0.25s,border-color 0.25s;
+			}
+			.addMusic_form>.lrcText>textarea:focus{
+				box-shadow: inset 0px 0px 5px #64A5DC;
+				border: 1px #6FB0D8 solid;
+			}
+			.addMusicCenter{
+				width: 1000px;
+			    height: 100%;
+			    left: 0;
+			    right: 0;
+			    margin: auto;
+			}
+			.musicTypeListDiv>.listButton>li{
+				padding: 2px 5px;
+			    background-color: #FFFFFF;
+			    font-size: 15px;
+			    margin: 6px 6px;
+			    color: #999999;
+			    box-shadow: 0px 2px 2px rgba(51, 51, 51, 0.29);
+			    border-radius: 1px;
+			    cursor: pointer;
+			    display: inline-block;
+			}
+			.musicTypeListDiv>.listButton>li:hover{
+				color: #333333;
+			}
+			.musicTypeListDiv>.listButton>li.active{
+				color: #FFFFFF;
+				background-color: #337AB7;
+			}
+			.listMark.readonly{
+				pointer-events: none;
+			}
+		</style>
+		<a class="addMusic_outA btn blue">
+			<i class="icon-arrow-left"></i>
+		</a>
+		<h4 class="addMusic_pageTitle">添加</h4>
+		<div class="addMusicCenter">
+			<form class="addMusic_form">
+				<div>
+					<label>歌曲名称</label>
+					<input required="required" oninvalid="setCustomValidity('请填写此项!');" oninput="setCustomValidity('');" title="请填写此项" name="iname" class="inputBox" type="text" placeholder="请填写歌曲名称(必填)" />
+				</div>
+				<div>
+					<label>歌曲语种</label>
+					<select name="ltype" class="selectBox languageSelect"></select>
+					<input type="hidden" name="lname" />
+				</div>
+				<div>
+					<label>歌曲类型</label>
+					<input class="musicTypeText inputBox" readonly="readonly" type="text" placeholder="请选择歌曲类型(必填)" />
+					<input name="type1" type="hidden" />
+					<input name="type2" type="hidden" />
+				</div>
+				<div>
+					<label>歌曲简拼</label>
+					<input name="jianpin" class="inputBox" type="text" placeholder="请填写歌曲简拼(必填)" />
+				</div>
+				<div>
+					<label>歌曲全拼</label>
+					<input name="pinyin" class="inputBox" type="text" placeholder="请填写歌曲全拼(必填)" />
+				</div>
+				<div>
+					<label>歌星名称</label>
+					<input autocomplete="off" oninvalid="setCustomValidity('请填写此项!');" oninput="setCustomValidity('');" name="sname1" class="inputBox listMark" type="text" placeholder="歌星名称(类别为歌曲时必填)" />
+				</div>
+				<div>
+					<label>歌星名称</label>
+					<input name="sname2" autocomplete="off" class="inputBox listMark" type="text" placeholder="请填写歌星名称" />
+				</div>
+				<div>
+					<label>歌星名称</label>
+					<input name="sname3" autocomplete="off" class="inputBox listMark" type="text" placeholder="请填写歌星名称" />
+				</div>
+				<div>
+					<label>歌星名称</label>
+					<input name="sname4" autocomplete="off" class="inputBox listMark" type="text" placeholder="请填写歌星名称" />
+				</div>
+				<div>
+					<label>歌曲音量</label>
+					<input name="volume" class="inputBox" type="number" placeholder="请填写音量" value="5" />
+				</div>
+				<div>
+					<label>笔画数</label>
+					<input name="stroke" class="inputBox" type="number" placeholder="请填写歌曲首字母的笔画数" />
+				</div>
+				<div>
+					<label>笔划数</label>
+					<input name="bihua" class="inputBox" type="number" placeholder="请填写歌曲名称的笔划数" />
+				</div>
+				<div>
+					<label>载体类型</label>
+					<select name="videoformat" class="selectBox carrierType">
+						
+					</select>
+				</div>
+				<div>
+					<label>音频类型</label>
+					<select name="audioformat" class="selectBox audioType">
+						
+					</select>
+				</div>
+				<div>
+					<label>视频类型</label>
+					<select name="videotype" class="selectBox videoType">
+						<option value="0">流水影</option>
+						<option value="1">MV</option>
+						<option value="2">演唱会</option>
+					</select>
+				</div>
+				<div>
+					<label>左声道</label>
+					<input name="ztrack" class="inputBox" type="number" placeholder="请填写左声道" />
+				</div>
+				<div>
+					<label>右声道</label>
+					<input name="ytrack" class="inputBox" type="number" placeholder="请填写右声道" />
+				</div>
+				<div>
+					<label>类别</label>
+					<select class="selectBox mkaType">
+						<option value="1">歌曲</option>
+						<option value="2">视频</option>
+						<option value="3">广告</option>
+					</select>
+				</div>
+				<div>
+					<label>灯光设定</label>
+					<select class="selectBox mliType">
+						<option value="0">默认</option>
+						<option value="78">灯光1(0x20)</option>
+						<option value="72">灯光2(0x21)</option>
+						<option value="74">灯光3(0x22)</option>
+						<option value="76">灯光4(0x23)</option>
+						<option value="80">灯光5(0x24)</option>
+                        <option value="71">灯光6(0x25)</option>
+						<option value="73">灯光7(0x26)</option>
+						<option value="75">灯光8(0x27)</option>
+					</select>
+				</div>
+				<div>
+					<label>点播量</label>
+					<input name="ordercount" class="inputBox" type="number" placeholder="歌曲点播次数" />
+				</div>
+				<div>
+					<label>是否新歌</label>
+					<input name="isnew" type="checkbox" class="switch" onclick="this.value=this.checked?1:0" value="0" />
+				</div>
+				<div class="lrcText">
+					<label>歌词</label>
+					<textarea rows="10"></textarea>
+				</div>
+				<center>
+					<button type="submit" class="btn green loadBtn">提交</button>
+				</center>
+			</form>
+		</div>
+		<script id="musicTypeListHTML" type="text/template">
+			<div class="musicTypeListDiv">
+				<ul class="listButton">
+					<li></li>
+				</ul>
+			</div>
+		</script>
+		<script>
+			var numberCode=["L","Y","E","S","S","W","L","Q","B","J"];
+			$(".inputBox[name='iname']").on("input",function(){
+				var name=$(this).val();
+				for(var i in numberCode)
+					if(numberCode.hasOwnProperty(i))
+						name=name.replace(i,numberCode[i]);
+				$(".inputBox[name='jianpin']").val($.pinyin.getCamelChars(name));
+				$(".inputBox[name='pinyin']").val($.pinyin.getFullChars(name));
+			});
+			$.data_executeDataSuccess="添加成功!";
+			$.fn.formImgSubmitJSON=function(option){
+				var _this=$(this);
+				var url=option.url || _this.attr("action");
+				_this.off("submit").on("submit",function(e){
+					if (e && e.preventDefault) 
+						e.preventDefault(); 
+					if(event)
+						event.preventDefault();
+					if(! - [1,]){
+						event.returnValue = false;
+					}
+					var formdata = {};
+					formdata.append=function(name,val){
+						formdata[name]=val;
+					}	
+					if(!!option.befor)
+						option.befor(formdata);
+					var xhr = new XMLHttpRequest();
+					xhr.open('POST', url , true);
+					xhr.onload = function (e){
+						if (xhr.readyState==4 && xhr.status==200){
+							if(!!option.success)
+								option.success(xhr.responseText);
+						}
+						if(xhr.status==500){
+							console.error("表单提交错误");
+						}
+					};
+					xhr.upload.onprogress = function(e){
+						var num=e.loaded/e.totalSize;
+						var numval=parseInt(num*100);
+						if(!!option.progress)
+							option.progress(numval);
+					};
+					xhr.send(JSON.stringify(formdata));
+				});
+			}
+		
+		
+			function getCheckedMusic(){
+				for(var i in $.data_uploadAndAddMusicListArr){
+					if($.data_uploadAndAddMusicListArr.hasOwnProperty(i)){
+						var obj=$.data_uploadAndAddMusicListArr[i];
+						if(obj.AddMedia_ID==$.data_uploadAndAddMusicCheckId){
+							return obj;
+						}
+					}
+				}
+			}
+			$(".addMusic_form").off("keydown").on("keydown",function(e){
+				if(e.keyCode==13){
+					if (e && e.preventDefault) 
+						e.preventDefault(); 
+					if(event)
+						event.preventDefault();
+					if(! - [1,]){
+						event.returnValue = false;
+					}
+				}else{
+					event.returnValue = true;
+				}
+			});
+			$(".lrcText>textarea").off("keydown").on("keydown",function(e){
+				e.stopPropagation();
+			});
+			$(".mkaType").change(changeState);
+			changeState();
+			function changeState(){
+				if($(".mkaType option:selected").val() == 1){
+					$(".addMusic_form>div>input[name='sname1']").attr("required",true);
+				}else{
+					$(".addMusic_form>div>input[name='sname1']").attr("required",false);
+				}
+			}
+			$(".addMusic_form").formImgSubmitJSON({
+				url:$.baseUrl+"/mediaupdate",
+				befor:function(data){
+					/*
+					var tg=false;
+					$(".addMusic_form>div>input[name='sname1'],.addMusic_form>div>input[name='sname2'],.addMusic_form>div>input[name='sname3'],.addMusic_form>div>input[name='sname4']").each(function(){
+						var name=$(this).val();
+						if(!name)
+							return;
+						var arr=$.searchArrListData($.data_actorsList,name,"Actor_Name");
+						if(arr.length==0){
+							$.altAuto("歌星"+name+"未找到,请先添加歌星");
+							tg=true;
+						}
+					});
+					if(tg)
+						return;
+					*/
+					$(".loading").css("display","block");
+					var lyric=$(".lrcText>textarea").val();
+					var textList=lyric.split("\r\n");
+					for(var i in textList){
+						var t = textList[i];
+						var textAr=[];
+						while(t.length>12){
+							var text=t.substring(0,12);
+							textAr.push(text);
+							t=t.substring(12,t.length-1);
+						}
+						if(t!="")
+							textAr.push(t);
+						textList[i]=textAr.join("\r\n");
+					}
+					lyric=textList.join("\r\n");
+					data.append("lyric",lyric);
+					
+					var type=$(".mkaType").val();
+					if(type=="1"){
+						data.append("IsKaraok",1);
+						data.append("IsMovie",0);
+						data.append("IsAds",0);
+					}
+					if(type=="2"){
+						data.append("IsKaraok",0);
+						data.append("IsMovie",1);
+						data.append("IsAds",0);
+					}
+					if(type=="3"){
+						data.append("IsKaraok",0);
+						data.append("IsMovie",0);
+						data.append("IsAds",1);
+					}
+					
+					
+                    data.append("lights", $(".mliType").val());
+					$(".addMusic_form input[name]").each(function(){
+						data.append($(this).attr("name"),$(this).val());
+					});
+					$(".addMusic_form select[name]").each(function(){
+						data.append($(this).attr("name"),$(this).val());
+					});
+					data.append($(".addMusic_form textarea[name]").attr("name"),$(".addMusic_form textarea[name]").val());
+					//var obj=getCheckedMusic();
+					data.append("groupid","1");
+					//if(!!obj)
+					//	data.append("filename",obj.AddMedia_Path);
+				},
+				success:function(str){
+					if(!!str){
+						str=$.parseJSON(str);
+						if(!!str.msg){
+							$(".loading").css("display","none");
+							$.altAuto(str.msg);
+							return;
+						}
+						if(str.code=="0"){
+							if(!$.data_updateMusicSerialno)
+								sendaddmediaToFiles(str.no);
+							$(".loading").css("display","none");
+							$.createConfirmBoxOK({"title":"系统提示","content":"操作成功!","click":function(){
+//								$.toBack($(".addMusic_form").parentU("indexView"));
+							}});
+						}
+					}
+				},
+				progress:function(){
+					
+				}
+			});
+			$.tap(".musicTypeText",function(){
+				_.popPanel("歌曲类别选择",document.getElementById("musicTypeListHTML").innerHTML,"600px","669px");
+				var _this=$(this);
+				if(!!$.data_addMusicSelectMusicType){
+					var html="";
+					for(var i in $.data_addMusicSelectMusicType){
+						if($.data_addMusicSelectMusicType.hasOwnProperty(i)){
+							var obj=$.data_addMusicSelectMusicType[i];
+							html+="<li val=\""+obj.MediaType_ID+"\">"+obj.MediaType_Name+"</li>";
+						}
+					}
+					$(".musicTypeListDiv>ul").html(html);
+					var valText=_this.val();
+					var arr=null;
+					if(!!valText)
+						arr=valText.split(",");
+					else
+						arr=[];
+					for(var i in arr){
+						if(arr.hasOwnProperty(i)){
+							$(".musicTypeListDiv>ul>li:contains('"+arr[i]+"')").addClass("active");
+						}
+					}
+					$(".musicTypeListDiv>ul>li").off("click").on("click",function(){
+						if($(this).hasClass("active")){
+							$(this).removeClass("active");
+							for(var i in arr){
+								if(arr.hasOwnProperty(i)){
+									if(arr[i]==$(this).html()){
+										arr.remove(i);
+										_this.val(arr.join(","));
+										musicTypeTextToInput();
+										return;
+									}
+								}
+							}
+						}else{
+							if($(".musicTypeListDiv>ul>li.active").length==2)
+								$.altAuto("歌曲类别最多可选2个");
+							else{
+								$(this).addClass("active");
+								arr.push($(this).html());
+								_this.val(arr.join(","));
+								musicTypeTextToInput();
+							}	
+						}	
+					});
+				}
+			});
+			function musicTypeTextToInput(){
+				var val = $(".musicTypeText").val();
+				var input1=$(".musicTypeText").next();
+				var input2=$(".musicTypeText").next().next();
+				if(!!val){
+					var arr=val.split(",");
+					if(arr.length==1)
+						input1.val(arr[0]);
+					if(arr.length==2)
+						input2.val(arr[1]);
+				}else{
+					input1.val("");
+					input2.val("");
+				}
+			}
+			$(".addMusic_outA").one("click",function(e){
+				e.stopPropagation();
+				$.toBack($(this).parentU("indexView"));
+			});
+			
+			function sendSelectLanguages(){
+				return $.ajax({
+					type:"get",
+					url:$.baseUrl+"/languages/list",
+					dataType:"json"
+				});
+			}
+			function sendSelectmusicType(){
+				return $.ajax({
+					type:"get",
+					url:$.baseUrl+"/mediatype/list",
+					dataType:"json"
+				});
+			}
+			function sendSelectActors(page,pSize,text){
+				return true;
+			}
+			function sendSelectAudiosType(){
+				return $.ajax({
+					type:"get",
+					url:$.baseUrl+"/audios/list",
+					dataType:"json"
+				});
+			}
+			function sendSelectCarriersType(){
+				return $.ajax({
+					type:"get",
+					url:$.baseUrl+"/carriers/list",
+					dataType:"json"
+				});
+			}
+			
+			function load_update(){
+			if(!!$.data_updateMusicSerialno){
+				$(".addMusic_pageTitle").html("编辑");
+				$(".loading").css("display","block");
+				sendGetMusicInfo($.data_updateMusicSerialno,function(json){
+					if(!!json.msg){
+						$(".loading").css("display","none");
+						$.createConfirmBoxOK({"title":"系统提示","content":json.msg,"click":function(){
+							$.toBack($(".addMusic_outA").parentU("indexView"));
+						}});
+						return;
+					}
+					if(!!json&&!!json.data){
+						var obj = json.data;
+						$(".addMusic_form>div>input[name='iname']").val(obj.Media_Name);
+						$(".addMusic_form>div>select[name='ltype']").val(obj.Language_ID);
+						var arr=[];
+						obj.MediaType1.name = !!obj.MediaType1.name ? obj.MediaType1.name : ''
+						obj.MediaType2.name = !!obj.MediaType2.name ? obj.MediaType2.name : ''
+						$(".addMusic_form>div>input[name='type1']").val(obj.MediaType1.name);
+						arr.push(obj.MediaType1.name);
+
+						$(".addMusic_form>div>input[name='type2']").val(obj.MediaType2.name);
+						arr.push(obj.MediaType2.name);
+						if(arr.length>0 && arr[0])
+							$(".musicTypeText").val(arr.join(","));
+						$(".addMusic_form>div>input[name='jianpin']").val(obj.Media_HeaderSoundSequence);
+						$(".addMusic_form>div>input[name='pinyin']").val(obj.Media_AllSoundSequence);
+						if(!!obj.Actor1)
+							$(".addMusic_form>div>input[name='sname1']").val(obj.Actor1.Actor_Name);
+						if(!!obj.Actor2)
+							$(".addMusic_form>div>input[name='sname2']").val(obj.Actor2.Actor_Name);
+						if(!!obj.Actor3)
+							$(".addMusic_form>div>input[name='sname3']").val(obj.Actor3.Actor_Name);
+						if(!!obj.Actor4)
+							$(".addMusic_form>div>input[name='sname4']").val(obj.Actor4.Actor_Name);
+						$(".addMusic_form>div>input[name='volume']").val(obj.Media_IsReserved2);
+						$(".addMusic_form>div>input[name='stroke']").val(obj.Media_HeadStroke);
+						$(".addMusic_form>div>input[name='bihua']").val(obj.Media_StrokeNum);
+						$(".addMusic_form>div>select[name='videoformat']").val(obj.Carrier_Name);
+						$(".addMusic_form>div>select[name='audioformat']").val(obj.Audio_Name);
+						$(".addMusic_form>div>select[name='videotype']").val(obj.Media_IsReserved3);
+						$(".addMusic_form>div>input[name='ztrack']").val(obj.MediaManage_OriginalTrack);
+						$(".addMusic_form>div>input[name='ytrack']").val(obj.MediaManage_AccompanyTrack);
+						$(".addMusic_form>div>input[name='ordercount']").val(obj.MediaManage_OrderCount);
+						
+						if(obj.Media_IsMovie=="1"){
+							$(".mkaType").val(2);
+						}else if(obj.Media_IsKaraok=="1"){
+							$(".mkaType").val(1);
+						}else if(obj.Media_IsAds=="1"){
+							$(".mkaType").val(3);
+						}
+
+						if(obj.Lights=="0"){
+							$(".mliType").val(0);
+						}else if(obj.Lights=="78"){
+							$(".mliType").val(78);
+						}else if(obj.Lights=="72"){
+							$(".mliType").val(72);
+						}else if(obj.Lights=="74"){
+							$(".mliType").val(74);
+						}else if(obj.Lights=="76"){
+							$(".mliType").val(76);
+						}else if(obj.Lights=="80"){
+							$(".mliType").val(80);
+						}else if(obj.Lights=="71"){
+							$(".mliType").val(71);
+						}else if(obj.Lights=="73"){
+							$(".mliType").val(73);
+						}else if(obj.Lights=="75"){
+							$(".mliType").val(75);
+						}
+						 
+
+						if(obj.isNewSong=="1")
+                        {
+							$(".addMusic_form>div>input[name='isnew']")[0].checked=true;
+							$(".addMusic_form>div>input[name='isnew']").val(1);
+                        }
+						else
+                        {
+							$(".addMusic_form>div>input[name='isnew']")[0].checked=false;
+							$(".addMusic_form>div>input[name='isnew']").val(0);
+                        }
+						$(".lrcText>textarea").val(obj.Media_Lyric);
+						$(".loading").css("display","none");
+						$.data_uploadAndAddMusicCheckId="";
+						$(".addMusic_form").append($("<input type=\"hidden\" name=\"filename\" value=\""+obj.MediaFile_Name+"\" />"));
+						$(".addMusic_form").append($("<input type=\"hidden\" name=\"serialno\" value=\""+obj.Media_no+"\" />"));
+					}else{
+						$.createConfirmBoxOK({"title":"系统提示","content":"未找到该文件信息","click":function(){
+							$.toBack($(".addMusic_outA").parentU("indexView"));
+						}});
+						$(".loading").css("display","none");
+					}
+				});
+				function sendGetMusicInfo(no,fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/getMediasInfo?media_no="+no,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+			}
+			}
+			function selectLanguagesFn(json){
+				var html="";
+				if(!!json&&!!json.data&&!!json.data.matches){
+					for(var i in json.data.matches){
+						if(json.data.matches.hasOwnProperty(i)){
+							var obj=json.data.matches[i];
+							html+="<option value=\""+obj.lang_id+"\">"+obj.lang_name+"</option>";
+						}
+					}
+				}
+				$(".languageSelect").html(html);
+				$(".languageSelect").next().val($(".languageSelect>option:eq(0)").html());
+				$(".languageSelect").off("change").on("change",function(){
+					var val=$(this).val();
+					var text=$(this).children("option[value='"+val+"']").html();
+					$(this).next().val(text);
+				});
+			}
+			function selectmusicTypeFn(json){
+				if(!!json&&!!json.data&&!!json.data.matches){
+					$.data_addMusicSelectMusicType=json.data.matches;
+				}
+			}
+			function selectAudiosTypeFn(json){
+				var html="";
+				if(!!json&&!!json.data&&!!json.data.matches){
+					for(var i in json.data.matches){
+						if(json.data.matches.hasOwnProperty(i)){
+							var obj=json.data.matches[i];
+							html+="<option value=\""+obj.Audio_Name+"\">"+obj.Audio_Name+"</option>";
+						}
+					}
+				}
+				$(".audioType").html(html);
+			}
+			function selectCarriersTypeFn(json){
+				var html="";
+				if(!!json&&!!json.data&&!!json.data.matches){
+					for(var i in json.data.matches){
+						if(json.data.matches.hasOwnProperty(i)){
+							var obj=json.data.matches[i];
+							html+="<option value=\""+obj.carrier_id+"\">"+obj.carrier_name+"</option>";
+						}
+					}
+				}
+				$(".carrierType").html(html);
+			}
+			/*function selectActorsFn(json){
+				if(!!json&&!!json.data&&!!json.data.matches){
+					$.data_actorsList=json.data.matches;
+					$(".listMark").each(function(){
+						$(this).inputList(function(text){
+							var html="";
+							var arr=$.searchArrListDataLike($.data_actorsList,text,["Actor_HeaderSoundSequence","Actor_Name"]);
+							for(var i in arr){
+								if(arr.hasOwnProperty(i)){
+									html+="<li>"+arr[i].Actor_Name+"</li>";
+								}
+							}
+							$(".inputList").htm(html);
+						},240,5);
+					});
+				}
+			}*/
+			function loadInitInfo(){   
+				$.when(sendSelectLanguages(),sendSelectmusicType(),sendSelectAudiosType(),sendSelectCarriersType()).done(function(json1,json2,json3,json4){
+					var json1=json1[0];
+					var json2=json2[0];
+					var json3=json3[0];
+					var json4=json4[0];
+					selectLanguagesFn(json1);
+					selectmusicTypeFn(json2);
+					selectAudiosTypeFn(json3);
+					selectCarriersTypeFn(json4);
+					$(".addMusic_form>center>.btn").removeClass("loadBtn");
+					$.when(sendSelectActors(1,0,"")).done(function(json5){
+						/*if(!!json5)
+							selectActorsFn(json5);*/
+					});
+					
+				load_update();
+				});
+			}
+			loadInitInfo();
+
+			function sendaddmediaToFiles(no,fn){
+				$.ajax({
+					type:"get",
+					url:$.baseUrl+"/sql/addmediaToFiles?no="+no,
+					dataType:"json",
+					success:function(json){
+						if(!!fn)
+							fn(json);
+					},error:function(){
+						$.altAuto("无法访问或服务器发生异常");
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

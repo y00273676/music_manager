@@ -1,0 +1,486 @@
+.confirmBox{
+	width: 100vw;
+	height: 100vh;
+	position: fixed;
+	top: -3000px;
+	margin: 0;
+	padding: 0;
+	background-color: rgba(0,0,0,0.3);
+	transition: top 0s 0.125s;
+	-webkit-transition: top 0s 0.125s;
+	z-index: 999;
+}
+.confirmBox>div{
+	position: absolute;
+	width: 260px;
+	height: auto;
+	top: 35%;
+	left: 50%;
+	margin: -10vh 0 0 -130px;
+	background-color: #FFFFFF;
+	border-radius: 10px;
+	opacity: 0;
+	-webkit-transform: scale(1.15,1.15);
+	transition: opacity 0.125s,-webkit-transform 0.125s;
+	-webkit-transition: opacity 0.125s,-webkit-transform 0.125s;
+}
+.confirmBox>div>span:nth-of-type(1){
+	display: block;
+	text-align: center;
+	line-height: 30px;
+	font-size: 16px;
+	font-weight: bold;
+	margin-top: 5px;
+	color:#000000;
+}
+.confirmBox>div>span:nth-of-type(2){
+	display: block;
+	text-align: center;
+	line-height: 22px;
+	padding-left: 40px;
+	padding-right: 40px;
+	margin-bottom: 10px;
+	font-size: 13px;
+	color: #333333;
+}
+.confirmBox>div>div{
+	width: 100%;
+	height: 40px;
+	border-top: 1px rgba(115, 115, 115, 0.38) solid;
+	cursor: pointer;
+	position: relative;
+	outline: none;
+}
+.confirmBox>div>div>span:nth-of-type(1){
+	width: 50%;
+	height: 40px;
+	display: inline-block;
+	font-size: 15px;
+	line-height: 40px;
+	text-align: center;
+	border-bottom-left-radius: 10px;
+	box-sizing: border-box;
+	font-weight: 400;
+	border-right: 1px rgba(115, 115, 115, 0.38) solid;
+	background-color: #FFFFFF;
+	color:#2E6BB3;
+	position: absolute;
+}
+.confirmBox>div>div>span:nth-of-type(2){
+	width: 50%;
+	height: 40px;
+	display: inline-block;
+	font-size: 15px;
+	line-height: 40px;
+	text-align: center;
+	border-bottom-right-radius: 10px;
+	box-sizing: border-box;
+	font-weight: 400;
+	border-left: 1px rgba(0,0,0,0) solid;
+	background-color: #FFFFFF;
+	color:#2E6BB3;
+	position: absolute;
+    left: 50%;
+}
+.confirmBox>div>div>span:nth-of-type(1):active{
+	background-color: rgb(240, 240, 240);
+}
+.confirmBox>div>div>span:nth-of-type(2):active{
+	background-color: rgb(240, 240, 240);
+}
+
+.confirmBox.show{
+	top: 0px;
+	transition: none;
+	-webkit-transition: none;
+}
+.confirmBox.show>div{
+	opacity: 1;
+	-webkit-transform: scale(1,1);
+}
+
+
+.confirmBoxInput{
+	width: 100vw;
+	height: 100vh;
+	position: fixed;
+	top: -3000px;
+	margin: 0;
+	padding: 0;
+	background-color: rgba(0,0,0,0.3);
+	transition: top 0s 0.125s;
+	-webkit-transition: top 0s 0.125s;
+	z-index: 999;
+}
+.confirmBoxInput>div{
+	position: absolute;
+	width: 260px;
+	height: auto;
+	top: 35%;
+	left: 50%;
+	margin: -10vh 0 0 -130px;
+	background-color: #FFFFFF;
+	border-radius: 10px;
+	opacity: 0;
+	-webkit-transform: scale(1.15,1.15);
+	transition: opacity 0.125s,-webkit-transform 0.125s;
+	-webkit-transition: opacity 0.125s,-webkit-transform 0.125s;
+}
+.confirmBoxInput>div>span:nth-of-type(1){
+	display: block;
+	text-align: center;
+	line-height: 30px;
+	font-size: 16px;
+	font-weight: bold;
+	margin-top: 5px;
+	color:#000000;
+}
+.confirmBoxInput>div>span:nth-of-type(2){
+	display: block;
+	text-align: center;
+	line-height: 22px;
+	padding-left: 40px;
+	padding-right: 40px;
+	margin-bottom: 10px;
+	font-size: 13px;
+	color: #333333;
+}
+.confirmBoxInput>div>input{
+	width: 90%;
+	height: 25px;
+	font-size: 14px;
+	border: 1px rgba(0,0,0,0.2) solid;
+	margin: 0 auto;
+	outline: none;
+	display: block;
+	margin-bottom: 10px;
+	color: #337AB7;
+	-webkit-text-fill-color:#333333;
+	text-shadow: none;
+	padding-left: 5px;
+	padding-right: 5px;
+	background-color: rgb(255, 255, 255);
+	-webkit-appearance: none;
+	line-height: 25px;
+}
+.confirmBoxInput>div>input:focus{
+	border: 1px #66AFE9 solid;
+}
+.confirmBoxInput>div>input::-webkit-input-placeholder{
+    color:#CCCCCC;
+    text-shadow: none;
+    -webkit-text-fill-color: initial;
+    font-size: 13px;
+}
+.confirmBoxInput>div>div{
+	width: 100%;
+	height: 40px;
+	border-top: 1px rgba(115, 115, 115, 0.38) solid;
+	cursor: pointer;
+	position: relative;
+	outline: none;
+}
+.confirmBoxInput>div>div>span:nth-of-type(1){
+	width: 50%;
+	height: 40px;
+	display: inline-block;
+	font-size: 15px;
+	line-height: 40px;
+	text-align: center;
+	border-bottom-left-radius: 10px;
+	box-sizing: border-box;
+	font-weight: 400;
+	border-right: 1px rgba(115, 115, 115, 0.38) solid;
+	background-color: #FFFFFF;
+	color:#2E6BB3;
+	position: absolute;
+}
+.confirmBoxInput>div>div>span:nth-of-type(2){
+	width: 50%;
+	height: 40px;
+	display: inline-block;
+	font-size: 15px;
+	line-height: 40px;
+	text-align: center;
+	border-bottom-right-radius: 10px;
+	box-sizing: border-box;
+	font-weight: 400;
+	border-left: 1px rgba(0,0,0,0) solid;
+	background-color: #FFFFFF;
+	color:#2E6BB3;
+	position: absolute;
+    left: 50%;
+}
+.confirmBoxInput>div>div>span:nth-of-type(1):active{
+	background-color: rgb(240, 240, 240);
+}
+.confirmBoxInput>div>div>span:nth-of-type(2):active{
+	background-color: rgb(240, 240, 240);
+}
+
+.confirmBoxInput.show{
+	top: 0px;
+	transition: none;
+	-webkit-transition: none;
+}
+.confirmBoxInput.show>div{
+	opacity: 1;
+	-webkit-transform: scale(1,1);
+}
+
+
+.confirmBoxInputNumber{
+	width: 100vw;
+	height: 100vh;
+	position: fixed;
+	top: -3000px;
+	margin: 0;
+	padding: 0;
+	background-color: rgba(0,0,0,0.3);
+	transition: top 0s 0.125s;
+	-webkit-transition: top 0s 0.125s;
+	z-index: 999;
+}
+.confirmBoxInputNumber>div{
+	position: absolute;
+	width: 260px;
+	height: auto;
+	top: 35%;
+	left: 50%;
+	margin: -10vh 0 0 -130px;
+	background-color: #FFFFFF;
+	border-radius: 10px;
+	opacity: 0;
+	-webkit-transform: scale(1.15,1.15);
+	transition: opacity 0.125s,-webkit-transform 0.125s;
+	-webkit-transition: opacity 0.125s,-webkit-transform 0.125s;
+}
+.confirmBoxInputNumber>div>span:nth-of-type(1){
+	display: block;
+    text-align: center;
+    line-height: 30px;
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    color: #000000;
+    border-bottom: 1px #cccccc solid;
+    position: relative;
+}
+.confirmBoxInputNumber>div>span:nth-of-type(2){
+	display: block;
+    text-align: center;
+    line-height: 22px;
+    padding-left: 40px;
+    padding-right: 40px;
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #333333;
+}
+.confirmBoxInputNumber>div>input{
+	width: 40%;
+    height: 35px;
+    font-size: 14px;
+    border: 1px rgba(0,0,0,0) solid;
+    border-bottom-color: rgba(0,0,0,0.5);
+    margin: 0 auto;
+    outline: none;
+    display: block;
+    margin-bottom: 5px;
+    -webkit-text-fill-color: #333333;
+    text-shadow: none;
+    padding-left: 5px;
+    padding-right: 5px;
+    background-color: rgb(255, 255, 255);
+    -webkit-appearance: none;
+    line-height: 25px;
+    text-align: center;
+}
+.confirmBoxInputNumber>div>input::-webkit-input-placeholder{
+    color:#CCCCCC;
+    text-shadow: none;
+    -webkit-text-fill-color: initial;
+    font-size: 13px;
+}
+.confirmBoxInputNumber>div>input::-webkit-inner-spin-button,.confirmBoxInputNumber>div>input::-webkit-outer-spin-button{
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+
+.confirmBoxInputNumber.show{
+	top: 0px;
+	transition: none;
+	-webkit-transition: none;
+}
+.confirmBoxInputNumber.show>div{
+	opacity: 1;
+	-webkit-transform: scale(1,1);
+}
+
+.confirmBoxInputNumber>div>ul{
+	width: 100%;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	font-size: 0px;
+	cursor: pointer;
+	padding-bottom: 10px;
+}
+.confirmBoxInputNumber>div>ul>li{
+	width: 33%;
+	height: 43px;
+	box-sizing: border-box;
+	display: inline-block;
+	font-size: 18px;
+	text-align: center;
+	line-height: 43px;
+	border-radius: 5px;
+}
+
+.confirmBoxInputNumber>div>ul>li:active{
+	background-color: #E4E4E4;
+}
+
+.confirmBoxOK{
+	width: 100vw;
+	height: 100vh;
+	position: fixed;
+	top: -3000px;
+	margin: 0;
+	padding: 0;
+	background-color: rgba(0,0,0,0.3);
+	transition: top 0s 0.125s;
+	-webkit-transition: top 0s 0.125s;
+	z-index: 999;
+}
+.confirmBoxOK>div{
+	position: absolute;
+	width: 260px;
+	height: auto;
+	top: 35%;
+	left: 50%;
+	margin: -10vh 0 0 -130px;
+	background-color: #FFFFFF;
+	border-radius: 10px;
+	opacity: 0;
+	-webkit-transform: scale(1.15,1.15);
+	transition: opacity 0.125s,-webkit-transform 0.125s;
+	-webkit-transition: opacity 0.125s,-webkit-transform 0.125s;
+}
+.confirmBoxOK>div>span:nth-of-type(1){
+	display: block;
+	text-align: center;
+	line-height: 30px;
+	font-size: 16px;
+	font-weight: bold;
+	margin-top: 5px;
+	color:#000000;
+}
+.confirmBoxOK>div>span:nth-of-type(2){
+	display: block;
+	text-align: center;
+	line-height: 22px;
+	padding-left: 30px;
+	padding-right: 30px;
+	margin-bottom: 10px;
+	font-size: 13px;
+	color: #333333;
+}
+.confirmBoxOK>div>div{
+	width: 100%;
+	height: 40px;
+	border-top: 1px rgba(115, 115, 115, 0.38) solid;
+	cursor: pointer;
+	position: relative;
+	outline: none;
+}
+.confirmBoxOK>div>div>span{
+	width: 100%;
+	height: 40px;
+	display: inline-block;
+	font-size: 15px;
+	line-height: 40px;
+	text-align: center;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	box-sizing: border-box;
+	font-weight: 400;
+	border-right: 1px rgba(115, 115, 115, 0.38) solid;
+	background-color: #FFFFFF;
+	color:#2E6BB3;
+}
+.confirmBoxOK>div>div>span:nth-of-type(1):active{
+	background-color: rgb(240, 240, 240);
+}
+.confirmBoxOK.show{
+	top: 0px;
+	transition: none;
+	-webkit-transition: none;
+}
+.confirmBoxOK.show>div{
+	opacity: 1;
+	-webkit-transform: scale(1,1);
+}
+
+
+
+.bottomList{
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	bottom: 0px;
+	left: 0px;
+	background-color: rgba(0,0,0,0.3);
+	bottom: -100%;
+	transition: bottom 0s 0.25s;
+	z-index: 999;
+}
+.bottomList>ul{
+	width:100%;
+	height: auto;
+	bottom: 0px;
+	position: absolute;
+	transform: translateY(100%);
+	-webkit-transform: translateY(100%);
+	transition: transform 0.25s;
+	-webkit-transition: -webkit-transform 0.25s;
+}
+.bottomList>ul>li{
+	width: 96%;
+	height: 44px;
+	background-color: #ECECEC;
+	margin: 0 auto;
+	font-size: 16px;
+	line-height: 44px;
+	text-align: center;
+	color: #23527C;
+	cursor: pointer;
+}
+.bottomList>ul>li:nth-last-of-type(n+2){
+	border-top: 1px rgba(115, 115, 115, 0.38) solid;
+}
+.bottomList>ul>li:nth-last-of-type(2){
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+.bottomList>ul>li:nth-of-type(1){
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+.bottomList>ul>li:last-child{
+	margin-top: 5px;
+	font-weight: bold;
+	border-radius: 5px;
+	margin-bottom: 5px;
+}
+.bottomList.show{
+	bottom: 0px;
+	transition: bottom 0s;
+	-webkit-transition: bottom 0s;
+}
+.bottomList.show>ul{
+	transform: translateY(0%);
+	-webkit-transform: translateY(0%);
+}

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<style>
+			.uploadAndAddMusicManager{
+				width: 100%;
+				height: 100%;
+			}
+			.uploadAndAddMusicManager>.tableDiv{
+				width: 100%;
+				height: calc( 100% - 60px );
+				overflow: auto;
+				position: relative;
+				box-shadow: 0px -3px 3px #E0E0E0;
+			}
+			.uploadAndAddMusicManager>.tableDiv>.table>tbody>tr>td>button{
+				width: 26px;
+				height: 26px;
+				display: inline-block;
+			}
+			
+			.uploadAndAddMusicManager>.tableDiv>.table>tbody>tr>td>button>i.icon-arrow-up{
+				position: relative;
+				left: -1px;
+			}
+			.uploadAndAddMusicManager>.tableDiv>.table>tbody>tr>td>button>i.icon-arrow-down{
+				position: relative;
+				left: -1px;
+			}
+			.uploadAndAddMusicManager>.tableDiv>.table>tbody>tr>td:nth-of-type(2){
+				text-align: left;
+			}
+		</style>
+		<script id="uploadAndAddMusicTemplate" type="text/template">
+			<tr>
+				<td>{[AddMedia_SerialNo]}</td>
+				<td>{[AddMedia_Name]}</td>
+				<td>{[AddMedia_Path]}</td>
+				<td>{[AddMedia_Type]}</td>
+				<td>
+					<button class="btn orange addMusic" title="编辑" musicId="{[AddMedia_SerialNo]}" serialno="{[AddMedia_SerialNo]}">
+						<i class="icon-edit"></i>
+					</button>
+					<button class="btn red removeMusic" title="删除" musicId="{[AddMedia_SerialNo]}">
+						<i class="icon-remove"></i>
+					</button>
+				</td>
+			</tr>
+		</script>
+		<div class="uploadAndAddMusicManager">
+			<ul class="listButton">
+				<li class="uploadAddMusicBtn" accept=".ts,.mpg,.TS,.MPG"><i class="icon-plus">&nbsp;</i>上传视频</li>
+				<li class="importTxtHTML"><i class="icon-download-alt">&nbsp;</i>批量加歌</li>
+				<!--<li class="updateScan"><i class="icon-search">&nbsp;</i>磁盘文件比对</li>-->
+				<li class="deleteAllData"><i class="icon-remove">&nbsp;</i>清空全部数据</li>
+				<!--<li class="scpFileHTML"><i class="icon-sitemap">&nbsp;</i>磁盘均衡</li>-->
+				<li class="deleteDataForNullData"><i class="icon-remove-sign">&nbsp;</i>整理记录</li>
+			</ul>
+			<div class="tableDiv">
+				<table class="table scroll">
+					<thead>
+						<tr>
+							<th>编号</th>
+							<th>名称</th>
+							<th>路径</th>
+				        	<th>类型</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody class="uploadAndAddMusicPutData">
+						
+						
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<script>
+			$(function(){
+				$.tap(".deleteExportForNullData",function(){
+					$.createConfirmBox({"title":"系统提示","content":"删除空记录前,请先数据做好备份!是否确认删除空记录?","click":function(){
+						$(".loading").css("display","block");
+						deleteNullData(function(json){
+							$(".loading").css("display","none");
+							if(json.code==0)
+								$.altAuto("数据整理完成!共计"+json.len+"条记录");
+						});
+					}});
+				});
+				function updateNullData(fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/updatenullmedia",
+                        cache: false,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				
+				function deleteNullData(fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/sql/deleteNullData",
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				
+				$.tap(".updateScan",function(){
+					$.hrefPage("bzy/checkedFileService.html",$(this).parentU("indexView"));
+				});
+				$.tap(".deleteDataForNullData",function(){
+					var _this=$(this);
+					$.createConfirmBox({"title":"系统提示","content":"整理记录前,请先导出数据做好备份!是否确认整理?","click":function(){
+						$(".loading").css("display","block");
+						updateNullData(function(json){
+							$(".loading").css("display","none");
+							if(json.code==0)
+								$.altAuto("数据整理完成! "+json.msg);
+						});
+					}});
+				});
+				$.tap(".importTxtHTML",function(){
+					sendGetIsAddData(function(json){
+						 $.hrefPage("bzy/importParseText.html",$(".importTxtHTML").parentU("indexView"));
+						if(!!json&&json.state==true){
+							$.altAuto("当前库文件导入中,请稍后再试");
+							return;
+						}
+					});
+				});
+				$.tap(".scpFileHTML",function(){
+					$.hrefPage("bzy/scpFile.html",$(this).parentU("indexView"));
+				});
+				$(".cloudAddMedia").upload($.baseUrl+"/sql/uploadImportTxt",function(xhr,input,fileUpload_Div){
+					fileUpload_Div.style.transform="scale(1,1)";
+					fileUpload_Div.style.webkitTransform="scale(1,1)";
+					fileUpload_Div.style.opacity="1";
+					sendOnlyParseTxt(input.files[0].name,function(json){
+						if(!!json.msg){
+							$.createConfirmBoxOK({"title":"系统提示","content":json.msg,"click":function(){
+								$(".uploadAndAddMusicManager").removeClass("div_load");
+							}});
+							return;
+						}
+						if(!!json&&json.code=="0"){
+							$.data_mediaAddSuccessPresentation=json.data;
+							fileUpload_Div.style.transform="scale(0,0)";
+							fileUpload_Div.style.webkitTransform="scale(0,0)";
+							fileUpload_Div.style.opacity="0";
+							$(".loading").css("display","none");
+							$.altAuto("添加完成");
+						}
+					});
+					$(".loading").css("display","block");
+				});
+				
+				$(".uploadAddMusicBtn").uploadBtn($.baseUrl+"/mediafile/uploads",function(name,path,size,no){
+					var type=name.substring(name.lastIndexOf(".")+1,name.length);
+					var addMusic={};
+					addMusic.AddMedia_Name=name;
+					addMusic.AddMedia_Path=path;
+					addMusic.AddMedia_Type=type;
+					addMusic.AddMedia_Size=size;
+					addMusic.AddMedia_SerialNo=no;
+					sendInsertAddMusic($.createObjDataOnlyKey(addMusic),function(json){
+						if(!!json.msg){
+							$.altAuto(json.msg);
+							$(".uploadRollDiv>ul").html("");
+						}
+						uploadAndAddMusicInitLoadData();
+					});
+					sendGetAddMediaFileFormScpOtherService(no,function(json){
+						if(!!json&&json.code=="0"){
+							
+						}
+					});
+				},function(file,fn){
+					sendGetMusicNoFromFileName(file.name,function(json){
+						if(!!json){
+							if(!!json.msg){
+								$.altAuto(json.msg);
+								return;
+							}
+							if(json.data=="0"){
+								var obj={};
+								obj.iname=file.name;
+								obj.lname="";
+								obj.type1="";
+								obj.type2="";
+								obj.jianpin="";
+								obj.pinyin="";
+								obj.sname1="";
+								obj.sname2="";
+								obj.sname3="";
+								obj.sname4="";
+								obj.ltype="";
+								obj.volume="";
+								obj.stroke="";
+								obj.bihua="";
+								obj.videoformat="";
+								obj.audioformat="";
+								obj.videotype="";
+								obj.ztrack="";
+								obj.ytrack="";
+								obj.isnew=0;
+								obj.groupid="";
+								obj.filename="";
+								obj.lyric="";
+								obj.IsMovie=0;
+								obj.IsKaraok=1;
+								obj.IsAds=0;
+								obj.isNullData=1;
+								sendAddMusic(JSON.stringify(obj),function(json){
+									if(!!json.msg){
+										$.altAuto(json.msg);
+										$(".uploadRollDiv>ul").html("");
+										return;
+									}
+									if(!!fn)
+										fn(json.no);
+								});
+							}else{
+								$.altAuto("该歌曲已存在,不能上传!");
+							}
+						}
+					});
+				});
+				$.tap(".deleteAllData",function(){
+					$.createConfirmBox({"title":"系统提示","content":"是否确认清空数据?","click":function(){
+						sendDeleteAllData(function(json){
+							if(!!json&&json.code=="0"){
+								$.altAuto("清除成功!");
+								$(".uploadAndAddMusicPutData").html("");
+							}
+						});
+					}});
+				});
+				$.tap(".tableDiv>.table>.uploadAndAddMusicPutData>tr>td>.addMusic",function(e){
+					e.stopPropagation();
+					$.data_uploadAndAddMusicCheckId = $(this).attr("musicid");
+					$.data_updateMusicSerialno="";
+					var no=$(this).attr("serialno");
+					$.data_updateMusicSerialno=no;
+					$.hrefPage("bzy/addMusic.html",$(this).parentU("indexView"));
+				});
+				$.tap(".importLyricText",function(){
+					var _this=$(this);
+					$.createConfirmBox({"title":"系统提示","content":"是否确认关联歌词？","click":function(){
+						$(".loading").css("display","block");
+						sendImportLyricText(function(json){
+							if(!!json&&!!json.msg){
+								$.altAuto(json.msg);
+								return;
+							}
+							if(!!json&&json.code=="0"){
+								$(".loading").css("display","none");
+								$.altAuto("歌词关联完成,共关联"+json.data+"个歌词文件");
+							}
+						});
+					}});
+				});
+				$.tap(".tableDiv>.table>.uploadAndAddMusicPutData>tr>td>.removeMusic",function(){
+					var _this=$(this);
+					$.data_uploadAndAddMusicCheckId = _this.attr("musicid");
+					$.createConfirmBox({"title":"系统提示","content":"是否确认删除该歌曲？","click":function(){
+						var addMusic={};
+						addMusic.AddMedia_SerialNo=$.data_uploadAndAddMusicCheckId;
+						sendDeleteAddMusic($.createObjDataOnlyKey(addMusic),function(json){
+							if(!!json&&!!json.msg){
+								if(json.code=="0"){
+									_this.parent().parent().remove();
+								}
+								$.altAuto(json.msg);
+								window.reload();
+							}
+						});
+					}});
+				});
+				function uploadAndAddMusicInitLoadData(){
+					sendUploadAndAddMusicSelectMusic(function(json){
+						if(!!json&&!!json.data){
+							$.data_uploadAndAddMusicListArr = json.data;
+							var html = $.fillData($("#uploadAndAddMusicTemplate").html(),json.data,function(key,val){
+								if(key=="AddMedia_Size"){
+									var dw=["B","K","M","G","T","P","E","Z","Y","N","D"];
+									var dwi=0;
+									while(val>1024){
+										val=val/1024;
+										dwi++;
+									}
+									val=parseFloat(val).toFixed(1)+dw[dwi];
+								}
+								return val;
+							});
+							if(!!html)
+								$(".uploadAndAddMusicPutData").html(html);
+								if(json.data.length>12)
+									$(".uploadAndAddMusicPutData").scrollTable(12);
+						}
+					});
+				}
+				uploadAndAddMusicInitLoadData();
+				function sendUploadAndAddMusicSelectMusic(fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/sql/selectAllAddMedia",
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendInsertAddMusic(data,fn){
+					$.ajax({
+						type:"post",
+						url:$.baseUrl+"/addmedia/add",
+						data:data+"&ip="+$.baseUrl,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendDeleteAddMusic(data,fn){
+					$.ajax({
+						type:"post",
+						url:$.baseUrl+"/mediadel",
+						data:data,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendAddMusic(data,fn){
+					$.ajax({
+						type:"post",
+						url:$.baseUrl+"/sql/addMusic",
+						data:data,
+						dataType:"json",
+						processData:false,
+		                contentType:false,
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendGetMusicNoFromFileName(data,fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/sql/getMediasNoFromFileName?Media_Name="+data,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendDeleteAllData(fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/sql/deleteAllData",
+						async:false,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				
+				function sendOnlyParseTxt(data,fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/sql/onlyParseText?fileName="+data,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendGetAddMediaFileFormScpOtherService(no,fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/sql/getAddMediaFileFormScpOtherService?no="+no+"&ip="+$.baseIp,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendGetIsAddData(fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/sql/getIsAddData",
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendImportLyricText(fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/sql/importLyricText",
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+			});
+		</script>
+	</body>
+</html>

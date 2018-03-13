@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>视频管理系统</title>
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Cache-Control" content="no-cache,no-store" />
+		<meta http-equiv="Expires" content="0" />
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+    	<link rel="stylesheet" href="css/font-awesome.min.css" />
+    	<link rel="stylesheet" href="css/loading.css" />
+    	<link rel="stylesheet" href="css/switch.css" />
+	    <link rel="stylesheet" href="css/radio.css" />
+	    <link rel="stylesheet" href="css/list.css" />
+	    <link rel="stylesheet" href="css/confirmBox.css" />
+	    <link rel="stylesheet" href="css/animation.css" />
+	    <link rel="stylesheet" href="css/openView.css" />
+	    <link rel="stylesheet" href="css/rightClickMenu.css" />
+	    <link rel="stylesheet" href="css/newTable.css" />
+	    <link rel="stylesheet" href="css/paging.css" />
+	    <link rel="stylesheet" href="css/common.css" />
+	    <link rel="stylesheet" href="css/subsectionUpload.css" />
+	    <link rel="stylesheet" href="css/popPanel.css" />
+	    <link rel="stylesheet" href="css/inputList.css" />
+	    <link rel="stylesheet" href="css/messageBox.css" />
+	    <link rel="stylesheet" href="css/fileUpload.css" />
+	    <script>
+			(function(){
+				var CURL=window.location.href;
+				if(CURL.indexOf("_")==-1){
+					if(CURL.indexOf("#")!=-1){
+						var CURLQ=CURL.substring(0,CURL.indexOf("#"))
+						window.location.href=CURLQ+"?_="+(new Date()).getTime();
+					}else{
+						window.location.href=CURL+"?_="+(new Date()).getTime();
+					}
+				}
+			})();
+		</script>
+	    <script type="text/javascript" src="js/jquery.js" ></script>
+	    <script type="text/javascript" src="js/common.js" ></script>
+	    <script type="text/javascript" src="js/popPanel.js" ></script>
+	    <script type="text/javascript" src="js/saveHTML.js" ></script>
+	    <script>
+	    	$.saveHTMLInit();
+	    	$.deleteHTML();
+	    </script>
+	    <script type="text/javascript" src="js/openView.js" ></script>
+	    <script type="text/javascript" src="js/hrefPage.js" ></script>
+	    <script type="text/javascript" src="js/messageBox.js" ></script>
+		<script type="text/javascript" src="js/webSource.js" ></script>
+		<script type="text/javascript" src="js/createConfirmBox.js" ></script>
+	    <script type="text/javascript" src="js/otherTool.js" ></script>
+	    <script type="text/javascript" src="js/webSource.js" ></script>
+	    <script type="text/javascript" src="js/fileUpload.js" ></script>
+	    <script type="text/javascript" src="js/rightClickMenu.js" ></script>
+		<script type="text/javascript" src="js/paging.js" ></script>
+		<script type="text/javascript" src="js/subsectionUpload.js" ></script>
+		<script type="text/javascript" src="js/subsectionUploadMD5.js" ></script>
+		<script type="text/javascript" src="js/subsectionUploadYYL.js" ></script>
+		<script type="text/javascript" src="js/array.js" ></script>
+		<script type="text/javascript" src="js/pinyin.js" ></script>
+		<script type="text/javascript" src="js/scrollTable.js" ></script>
+		<script type="text/javascript" src="js/htm.js" ></script>
+		<script type="text/javascript" src="js/inputList.js" ></script>
+		<script type="text/javascript" src="js/easyLoadPage.js" ></script>
+		<script async="true" defer="defer" type="text/javascript" src="js/echarts.min.js" ></script>
+	    <script async="true" defer="defer" type="text/javascript" src="js/jquery.qrcode.js" ></script>
+		<script async="true" defer="defer" type="text/javascript" src="js/qrcode.js" ></script>
+	    <script async="true" defer="defer" type="text/javascript" src="js/spark-md5.js" ></script>
+		<style>
+			*{
+				backface-visibility: hidden;
+			}
+			::-webkit-scrollbar{  
+	            width:10px;  
+	        }  
+	        ::-webkit-scrollbar-track{  
+	            background-color:rgb(193, 193, 193); 
+	        }  
+	        ::-webkit-scrollbar-track-piece{  
+	            background-color: rgb(199, 199, 199);
+	            border-radius: 10px; 
+    			-webkit-border-radius: 10px; 
+	        }  
+	        ::-webkit-scrollbar-thumb{  
+	            background-color:rgb(241, 241, 241);
+	            border:solid 1px #C0C0C0;  
+	            border-radius:4px;  
+	        }  
+	        ::-webkit-scrollbar-corner {  
+	            background-color:rgba(225,225,225,0); 
+	        }  
+	        ::-webkit-scrollbar-thumb:hover{  
+	            background-color:rgb(255, 255, 255);  
+	        }
+			body{
+				margin: 0;
+				padding: 0;
+				font-size: 0px;
+				//font-family: 'Helvetica Neue',Helvetica,sans-serif;
+				font-family: "微软雅黑";
+				background-color: rgba(185, 185, 185, 0.19);
+				user-select: none;
+				-webkit-user-select: none;
+				overflow: hidden;
+			}
+			p{
+				margin: 0;
+				padding: 0;
+			}
+			ul{
+				margin: 0;
+				padding: 0;
+				list-style: none;
+			}
+			a{
+				cursor: pointer;
+			}
+			a:hover,a:active{
+				color: #FFFFFF;
+				text-decoration: none;
+			}
+		</style>
+		<style>
+			.index_contentLeft{
+				width: 130px;
+				height: 100vh;
+				display: none;
+				position: fixed;
+				top: 0px;
+				left: 0px;
+				border-right: 1px rgb(49, 46, 46) solid;
+				box-sizing: border-box;
+			}
+			.index_contentRight{
+				width: calc( 100% - 130px );
+				height: 100vh;
+				display: none;
+				position: fixed;
+				top: 0px;
+				right: 0px;
+			}
+			
+			.index_logo{
+				width: 100%;
+				height: 100px;
+				position: absolute;
+			}
+			
+			.index_leftMenu{
+                position:relative;
+				width: 100%;
+				height: 100%;
+				background-color: #505050;
+				margin: 0;
+				padding: 0;
+			}
+			.index_leftMenu>ul{
+				width: 100%;
+                height:100%;
+				position: absolute;
+				margin-top: 100px;
+                padding-bottom:130px;
+                overflow-y:scroll;
+			}
+			.index_leftMenu>ul>li{
+				width: 100%;
+				height: 38px;
+				font-size: 16px;
+				line-height: 38px;
+				color: #FFFFFF;
+				padding-left: 12%;
+				cursor: pointer;
+				box-sizing: border-box;
+			}
+			.index_leftMenu>ul>li:hover{
+				background-color: #333333;
+			}
+			
+			.index_header{
+				width: 100%;
+				height: 50px;
+				background-color: #505050;
+				position: relative;
+			}
+			.index_header>menu{
+				width: calc( 100% - 280px );
+				height: 100%;
+				position: absolute;
+				text-align: right;
+				padding: 0;
+			}
+			.index_header>menu>ul{
+				width: 100%;
+				height: 100%;
+			}
+			.index_header>menu>ul>li{
+				height: 100%;
+				font-size: 24px;
+				line-height: 50px;
+				padding-left: 10px;
+				padding-right: 10px;
+				display: inline-block;
+				color: #FBFBFB;
+				cursor: pointer;
+			}
+			.index_header>menu>ul>li:hover{
+				background-color: #333333;
+			}
+			
+			.index_login{
+				width: 80px;
+				height: 100%;
+				position: absolute;
+				top: 0px;
+				right: 0px;
+			}
+			.index_login>button{
+				width: 80px;
+				height: 100%;
+				text-align: center;
+				border: none;
+				background-color: #4CAE4C;
+				color: #FFFFFF;
+				font-size: 20px;
+				position: absolute;
+				top:0px;
+				right: 0px;
+				box-shadow: inset 0px 0px 5px #5A984F;
+				outline: none;
+			}
+			
+			.index_footer{
+				width: 100%;
+				height: 50px;
+				background-color: #505050;
+				position: fixed;
+				bottom: 0px;
+				display: none;
+			}
+			.index_rightMenu{
+				width: 50px;
+				height: calc( 100% - 130px );
+				position: fixed;
+				right: 0px;
+				top: 100px;
+				background-color: #505050;
+				display: none;
+			}
+			.index_rightMenu>ul{
+				width: 100%;
+			}
+			.index_rightMenu>ul>li{
+				width: 100%;
+				height: 50px;
+				font-size: 30px;
+				color: #FFFFFF;
+				line-height: 50px;
+				text-align: center;
+				cursor: pointer;
+			}
+			.index_rightMenu>ul>li:hover{
+				background-color: #333333;
+			}
+			.index_centerContent{
+				width: calc( 100% - 130px );
+				height: calc( 100% - 50px );
+				position: fixed;
+				top: 50px;
+				right: 0px;
+			}
+			
+			
+			
+			
+			.initSeting{
+				width: 80%;
+				height: 95%;
+				text-align: center;
+				padding: 30px;
+				margin: 0 auto;
+			}
+			.initSeting>h1{
+				font-size: 26px;
+				margin: 0;
+				padding: 0;
+			}
+			.initSeting>div{
+				width: 100%;
+				height: 30px;
+				margin-top: 25px;
+				margin-bottom: 15px;
+				position: relative;
+				box-shadow: inset 0px 0px 3px #999999;
+			}
+			.initSeting>div>label{
+				width: 80px;
+				height: 30px;
+				display: inline-block;
+				line-height: 30px;
+				font-size: 14px;
+				position: absolute;
+				top: 0px;
+				left: 0px;
+			}
+			.initSeting>div>input{
+				width: calc( 100% - 80px );
+				height: 30px;
+				line-height: 30px;
+				position: absolute;
+				top: 0px;
+				left: 80px;
+				margin: 0;
+				padding: 0;
+				border: none;
+				outline: none;
+				box-shadow: inset 0px 0px 3px #999999;
+				padding-left: 10px;
+				padding-right: 10px;
+				text-align: left;
+				font-size: 15px;
+			}
+			.initSeting>button{
+				padding: 6px 30px;
+				margin: 0 auto;
+				background-color: #FFFFFF;
+				border: none;
+				outline: none;
+				box-shadow: 0px 0px 3px #999999;
+				font-size: 18px;
+				margin-top: 15px;
+			}
+			.initSeting>button:active{
+				box-shadow: inset 0px 0px 3px #999999;
+			}
+			.showDBserviceIP{
+				width: 100px;
+			    height: 25px;
+			    font-size: 12px;
+			    line-height: 20px;
+			    position: fixed;
+			    left: 10px;
+			    bottom: 0px;
+			    color: #FFFFFF;
+			    white-space: nowrap;
+			}
+			.index_contentRight>ul>li{
+				width: 45px;
+			}
+			.index_contentLeft>.index_leftMenu>ul>li.active{
+				background-color: #333333;
+			}
+			.index_contentRight>.index_header>menu>ul>li::after{
+				width: 40px;
+			    height: 100%;
+			    position: absolute;
+			    left: 0;
+			    right: 0;
+			    top: 0;
+			    bottom: 0;
+			    margin: auto;
+			    pointer-events: none;
+			    transition: -webkit-transform 0.25s;
+			    -webkit-transform: scale(0,0);
+			    font-size: 15px;
+			    line-height: 20px;
+			    text-align: center;
+			    margin-top: 5px;
+			}
+			.index_contentRight>.index_header>menu>ul>li>i{
+				transition: opacity 0.25s;
+				opacity: 1;
+			}
+			.index_contentRight>.index_header>menu>ul>li:hover>i{
+				opacity: 0;
+			}
+			.index_contentRight>.index_header>menu>ul>li:hover::after{
+				-webkit-transform: scale(1,1);
+			}
+			.index_contentRight>.index_header>menu>ul>li:nth-of-type(1)::after{
+				content: "系统状态";
+			}
+			.index_contentRight>.index_header>menu>ul>li:nth-of-type(2)::after{
+				content: "上传列表";
+			}
+			.index_contentRight>.index_header>menu>ul>li:nth-of-type(3)::after{
+				content: "消息管理";
+			}
+			.index_contentRight>.index_header>menu>ul>li:nth-of-type(4)::after{
+				content: "健康检查";
+			}
+			.messageNum{
+				width: 18px;
+				height: 18px;
+				font-size: 13px;
+				text-align: center;
+				line-height: 18px;
+				border-radius: 50%;
+				background-color: #C53838;
+				color: #FFFFFF;
+				position: absolute;
+				right: 2px;
+				top: 8px;
+			}
+			.index_contentRight>.index_header>menu>ul>li:hover>.messageNum{
+				opacity: 0;
+			}
+			
+			
+			.messagePanelDiv>div{
+			    width: 85%;
+			    height: auto;
+			    max-height: 300px;
+			    font-size: 15px;
+			    color: #333333;
+			    box-sizing: border-box;
+			    padding: 5px;
+			    line-height: 22px;
+			    margin: auto;
+			    position: absolute;
+			    top: 58px;
+			    left: 0px;
+			    right: 0px;
+		    }
+		    .messagePanelDiv>ul{
+		    	width: 98%;
+		    	position: absolute;
+		    	bottom: 0px;
+		    	left: 0px;
+		    	right: 0px;
+		    	margin: auto;
+		    }
+		    .messagePanelDiv>ul>li>span{
+		    	position: absolute;
+			    right: 15px;
+			    font-weight: bold;
+			    color: #333333;
+		    }
+		    .notClickDiv{
+		    	width: 100vw;
+		    	height: 100vh;
+		    	position: fixed;
+		    	left: 0px;
+		    	top: 0px;
+		    	z-index: 9999;
+		    }
+		    .showTime{
+	    	    width: 200px;
+			    position: absolute;
+			    line-height: 50px;
+			    font-size: 15px;
+			    color: #FFFFFF;
+			    z-index: 1;
+			    right: 80px;
+			    box-sizing: border-box;
+			    padding-left: 10px;
+			    padding-right: 10px;
+			    text-align: right;
+		    }
+		</style>
+		<script>
+			$.protNo="8888";
+			$.baseUrl=$.getRootPathAndPort();
+//			$.baseUrl="http://10.0.3.111:8887";
+			$.baseIp=$.getRootPath();
+//			$.baseIp="http://10.0.3.111";
+			$.baseIp=$.baseIp.substring($.baseIp.indexOf("//")+2);
+			if(!window.chrome){
+				alert("本系统暂不支持chrome以外浏览器");
+			}
+		</script>
+		
+	</head>
+	<body>
+		<script>
+			$(function(){
+				var appCache = window.applicationCache; 
+				try{
+					appCache.update();
+				}catch(e){}
+				window.addEventListener('load', function(e){ 
+					appCache.addEventListener('error', function(){
+						$.altAuto("更新出错");
+					}, false);
+					appCache.addEventListener('updateready', function(e) {
+						if(window.applicationCache.status == 1 || window.applicationCache.status == 4){
+						    appCache.swapCache();
+						    $.deleteHTML();
+						    $.createConfirmBoxOK({"title":"系统提示","content":"发现新版本点击'是'更新到最新版",click:function(){
+						    	window.location.reload();
+						    }});
+						}
+				    }, false);
+			   	}, false);
+			});
+		</script>
+		<script>
+			if(!!sessionStorage.getItem("username")){
+				$("body").addClass("closeLogin");
+				$.user={};
+				$.user.username=sessionStorage.getItem("username");
+				$.user.password=sessionStorage.getItem("password");
+			}
+		</script>
+		<style>
+			.loginHTML{
+				position: fixed;
+				left: 0px;
+				top: 0px;
+				width: 100vw;
+				height: 100vh;
+				font-family: "微软雅黑";
+				font-size: 0px;
+				user-select: none;
+				-webkit-user-select: none;
+				z-index: 98;
+			}
+			.loginHTMLheader{
+				width: 100%;
+				height: calc( 50% - 250px );
+				background-color: #505050;
+				font-size: 14px;
+				position: relative;
+				z-index: 1;
+				cursor: default;
+				transition: transform 1s;
+				-webkit-transition: -webkit-transform 1s;
+				transform: translateY(0%);
+				-webkit-transform: translateY(0%);
+			}
+			.loginHTMLheader>img{
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				margin: auto;
+			}
+			.loginHTMLheader>h1{
+				width: 350px;
+				height: 45px;
+				margin: 0;
+				padding: 0;
+				color: #FFFFFF;
+				line-height: inherit;
+				text-shadow: -2px 2px 2px #C3BEBE;
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				margin: auto;
+				left: 200px;
+				overflow: hidden;
+			}
+			.loginHTMLfooter{
+				width: 100%;
+				height: calc( 50% - 250px );
+				background-color: #505050;
+				text-align: center;
+				color: #FFFFFF;
+				font-size: 14px;
+				position: relative;
+				z-index: 1;
+				transition: transform 1s;
+				-webkit-transition: -webkit-transform 1s;
+				transform: translateY(0%);
+				-webkit-transform: translateY(0%);
+			}
+			.loginHTMLfooter>p{
+				width: 100%;
+				height: 20px;
+				position: absolute;
+				display: block;
+				top: 0;
+				bottom: 0;
+				margin: auto;
+				user-select: initial;
+				-webkit-user-select: initial;
+			}
+			.loginHTMLsection{
+				width: 100%;
+				height: 499px;
+				background-color: #007fd5;
+				position: relative;
+				overflow: hidden;
+				transform: translate3d(0, 0, 0);
+				-webkit-transform: translate3d(0, 0, 0);
+				animation: skyBackground 50s ease-out infinite;
+				-webkit-animation: skyBackground 50s ease-out infinite;
+				box-shadow: 0px 0px 10px #007FD5;
+				z-index: 2;
+				transition: transform 1s,opacity 1s 0.8s;
+				-webkit-transition: -webkit-transform 1s,opacity 1s 0.8s;
+				perspective: 1000px;
+				-webkit-perspective: 1000px;
+			}
+			.loginHTMLsection>.cloudsOne,.loginHTMLsection>.cloudsTwo,.loginHTMLsection>.cloudsThree{
+				position: absolute;
+				left: 0px;
+				top: 0px;
+				width: 300%;
+				height: 100%;
+				pointer-events: none;
+				transform: translate3d(0, 0, 0);
+				-webkit-transform: translate3d(0, 0, 0);
+				backface-visibility: hidden;
+				-webkit-backface-visibility: hidden;
+				transform-style: preserve-3d;
+			    -webkit-transform-style: preserve-3d;
+			}
+			.loginHTMLsection>.cloudsOne{
+				background-image: url(img/cloud_one.png);
+				animation: cloud_one 50s linear infinite;
+				-webkit-animation: cloudAnimation 50s linear infinite;
+			}
+			.loginHTMLsection>.cloudsTwo{
+				background-image: url(img/cloud_two.png);
+				animation: cloud_one 75s linear infinite;
+				-webkit-animation: cloudAnimation 75s linear infinite;
+			}
+			.loginHTMLsection>.cloudsThree{
+				background-image: url(img/cloud_three.png);
+				animation: cloud_one 100s linear infinite;
+				-webkit-animation: cloudAnimation 100s linear infinite;
+			}
+			@keyframes skyBackground {
+			  0% {
+			    background: #007fd5;
+			  }
+			  50% {
+			    background: #405D75;
+			  }
+			  100% {
+			    background: #007fd5;
+			  }
+			}
+			@-webkit-keyframes skyBackground {
+			  0% {
+			    background: #337AB7;
+			  }
+			  50% {
+			    background: #405D75;
+			  }
+			  100% {
+			    background: #337AB7;
+			  }
+			}
+			
+			
+			@keyframes cloudAnimation {
+			  0% {
+			    left: 0
+			  }
+			  100% {
+			    left: -200%
+			  }
+			}
+			@-webkit-keyframes cloudAnimation {
+			  0% {
+			    left: 0
+			  }
+			  100% {
+			    left: -200%
+			  }
+			}
+			
+			.loginForm{
+				width: 420px;
+				height: 350px;
+				position: absolute;
+				top: 0;
+				right: 80px;
+				bottom: 0;
+				margin: auto;
+				background-color: rgba(0,0,0,0.5);
+				border-radius: 3px;
+				box-shadow: 0px 0px 3px #333333;
+				transition: transform 0.5s;
+				-webkit-transition: transform 0.5s;
+				transform-style: preserve-3d;
+			    -webkit-transform-style: preserve-3d;
+				backface-visibility: hidden;
+				-webkit-backface-visibility: hidden;
+			}
+			.loginForm>h1{
+				font-size: 26px;
+				text-align: center;
+				color: #FFFFFF;
+				margin-top: 35px;
+			}
+			.loginForm>div{
+				width: 60%;
+				height: 30px;
+				position: relative;
+				margin: 0 auto;
+				margin-bottom: 20px;
+				transition: opacity 0s 0.2s;
+				-webkit-transition: opacity 0s 0.2s;
+			}
+			.loginForm>div>label{
+				width: 30px;
+				height: 30px;
+				display: inline-block;
+				line-height: 30px;
+				font-size: 24px;
+				position: absolute;
+				top: 0px;
+				left: 0px;
+				text-align: center;
+				color: #FFFFFF;
+			}
+			.loginForm>div>input{
+				width: calc( 100% - 30px );
+				height: 30px;
+				line-height: 30px;
+				position: absolute;
+				top: 0px;
+				left: 30px;
+				margin: 0;
+				padding: 0;
+				border: none;
+				outline: none;
+				border: 1px #DEDEDE solid;
+				box-sizing: border-box;
+				/*box-shadow: inset 0px 0px 3px #FFFFFF;*/
+				padding-left: 10px;
+				padding-right: 10px;
+				text-align: left;
+				font-size: 15px;
+				background-color: rgba(0,0,0,0);
+				color: #FFFFFF;
+				user-select: initial;
+				-webkit-user-select: initial;
+			}
+			/*.loginForm>div .verifyCode{
+				width: calc( 100% - 150px );
+			}*/
+			.loginForm>div>input.required{
+				border: 1px #EE5C42 solid;
+			}
+			
+			.loginForm>div>.isSavePassword{
+				font-size: 25px;
+				color: #EFEFEF;
+				position: absolute;
+				right: 70px;
+				top: 3px;
+				cursor: pointer;
+				width: 23px;
+				height: 25px;
+			}
+			.loginForm>div>small{
+				font-size: 13px;
+				color: #FFFFFF;
+				width: 60px;
+				height: 30px;
+				line-height: 30px;
+				position: absolute;
+				right: 0px;
+				cursor: default;
+			}
+			.loginForm>button{
+				padding: 6px 30px;
+				margin: 0 auto;
+				background-color: rgba(0,0,0,0);
+				border: none;
+				outline: none;
+				border: 1px #DEDEDE solid;
+				box-sizing: border-box;
+				/*box-shadow: 0px 0px 3px #FFFFFF;*/
+				font-size: 18px;
+				position: relative;
+				color: #FFFFFF;
+				display: block;
+				cursor: pointer;
+			}
+			.loginForm>button:hover{
+				background-color: rgba(0,0,0,0.1);
+			}
+			.loginForm>button:active{
+				background-color: #FFFFFF;
+				color: #333333;
+				/*box-shadow: inset 0px 0px 3px #999999;*/
+			}
+			.index_login>button.outLogin{
+				background-color: #BF4545;
+			}
+			
+			.help,.help:visited,.help:focus{
+				text-decoration:none;
+				width: 150px;
+			    height: 32px;
+			    font-size: 20px;
+			    position: absolute;
+			    display: block;
+			    top: 0;
+			    bottom: 0;
+			    right: 5px;
+			    margin: auto;
+			    color: #FFFFFF;
+			    cursor: pointer;
+			    color: #fff;
+			}
+			.loginForm.twoCode{
+				transform: rotateY(180deg);
+				-webkit-transform: rotateY(180deg);
+			}
+			.loginForm.twoCode>div{
+				opacity: 0;
+			}
+			.loginForm.twoCode>div.loginFormAfter{
+				transform:rotateY(180deg);
+			    -webkit-transform:rotateY(180deg);
+			}
+			.loginForm>div.loginFormAfter{
+				width: 100%;
+			    height: 100%;
+			    display: block;
+			    position: relative;
+			    top: calc( -100% + 42px );
+			    transform:rotateY(180deg);
+			    -webkit-transform:rotateY(180deg);
+			    transition: transform 0.5s;
+				-webkit-transition: transform 0.5s;
+			    transform-style: preserve-3d;
+			    -webkit-transform-style: preserve-3d;
+				backface-visibility: hidden;
+				-webkit-backface-visibility: hidden;
+				background-color: rgba(0,0,0,0.5);
+				opacity: 1;
+			}
+			.twoCode{
+				width: 420px;
+				height: 320px;
+				text-align: center;
+			}
+			.borderDiv{
+				width: 210px;
+				height: 210px;
+				border: 5px #FFFFFF solid;
+				box-sizing: border-box;
+				position: absolute;
+				left: 105px;
+				top: 40px;
+				box-shadow: inset 0px 0px 3px #333333;
+			}
+			/*.borderDiv::after{
+				content: "扫一扫查看操作指南";
+				font-size: 20px;
+				color: #FFFFFF;
+				line-height: 60px;
+			}*/
+			
+			
+			body.closeLogin>.loginHTML{
+				pointer-events: none;
+			}
+			body.closeLogin>.loginHTML>.loginHTMLheader{
+				transform: translateY(-100%);
+				-webkit-transform: translateY(-100%);
+			}
+			body.closeLogin>.loginHTML>.loginHTMLfooter{
+				transform: translateY(100%);
+				-webkit-transform: translateY(100%);
+			}
+			body.closeLogin>.loginHTML>.loginHTMLsection{
+				opacity: 0;
+				transform: scale(1.8,1.8);
+				-webkit-transform: scale(1.8,1.8);
+			}
+			body.closeLogin>.loginHTML>.loginHTMLsection>.cloudsOne{
+				animation-play-state:paused;
+			}
+			body.closeLogin>.loginHTML>.loginHTMLsection>.cloudsTwo{
+				animation-play-state:paused;
+			}
+			body.closeLogin>.loginHTML>.loginHTMLsection>.cloudsThree{
+				animation-play-state:paused;
+			}
+			body.closeLogin>.loginHTML>.loginHTMLsection>.loginForm{
+				opacity: 0;
+			}
+			body.closeLogin>.index_contentLeft{
+				display: inline-block;
+			}
+			body.closeLogin>.index_contentRight{
+				display: inline-block;
+			}
+			
+		</style>
+		<div class="loginHTML">
+			<header class="loginHTMLheader">
+				<img src="img/logo.png" />
+				<h1>雷客KTV点歌后台服务系统</h1>
+				<a class="help" href="/static/doc/UserManual.pdf" download="操作指南">
+					<i class="icon-book"></i> 操作指南
+				</a>
+				
+			</header>
+			<section class="loginHTMLsection">
+				<div class="cloudsOne"></div>
+			    <div class="cloudsTwo"></div>
+			    <div class="cloudsThree"></div>
+			    <div class="loginForm">
+			    	<h1>用户登录</h1>
+					<div>
+						<label><i class="icon-user"></i></label><input class="username" type="text" placeholder="用户名" />
+					</div>
+					<div>
+						<label><i class="icon-lock"></i></label><input class="password" type="password" placeholder="密码" />
+					</div>
+					<div>
+						<i class="icon-check-empty isSavePassword"></i><small>记住密码</small>
+					</div>
+					<button class="login">登录</button>
+					<div class="loginFormAfter">
+			    		<div class="twoCode">
+			    			<div class="borderDiv">
+			    				
+			    			</div>
+			    		</div>
+			    	</div>
+			    </div>
+			</section>
+			<footer class="loginHTMLfooter">
+				<p>
+					北京雷客世纪科技有限公司&nbsp;&nbsp;&nbsp;&nbsp;北京市朝阳区北苑路北绿色家园媒体村天畅园8号楼3层
+				<br />
+					邮编：100107&nbsp;&nbsp;&nbsp;&nbsp;电话：010-64424996&nbsp;&nbsp;&nbsp;&nbsp;传真：010-64446528
+				</p>
+			</footer>
+		</div>
+		
+		<div class="index_contentLeft">
+			<menu class="index_leftMenu">
+		        <img class="index_logo" src="img/logo.png" />
+				<ul>
+					<li class="animation-scale-Delay1 hrefTo" href="bzy/uploadAndAddMusic.html">
+						<i class="icon-plus">&nbsp;</i>视频管理
+					</li>
+					<li class="animation-scale-Delay13 hrefTo" href="bzy/cloudMusicManager.html">
+						<i class="icon-cloud-download">&nbsp;</i>云端加歌
+					</li>
+					<li class="animation-scale-Delay2 hrefTo" href="bzy/musicManager.html">
+						<i class="icon-music">&nbsp;</i>曲库管理
+					</li>
+					<li class="animation-scale-Delay3 hrefTo" href="bzy/starManagerList.html">
+						<i class="icon-signal">&nbsp;</i>歌星管理
+					</li>
+					<li class="animation-scale-Delay4 hrefTo" href="bzy/rankingManagerForLanguage.html">
+						<i class="icon-group">&nbsp;</i>语种榜单
+					</li>
+					<li class="animation-scale-Delay5 hrefTo" href="bzy/rankingManagerForType.html">
+						<i class="icon-edit">&nbsp;</i>分类榜单
+					</li>
+					<li class="animation-scale-Delay6 hrefTo" href="bzy/diskStatistics.html">
+						<i class="icon-sitemap">&nbsp;</i>磁盘统计
+					</li>
+					<li class="animation-scale-Delay7 hrefTo" href="bzy/customPublicPlay.html">
+						<i class="icon-headphones">&nbsp;</i>公播管理
+					</li>
+					<!--li class="animation-scale-Delay8 hrefTo" href="bzy/musicManagerExport.html">
+						<i class="icon-external-link">&nbsp;</i>曲库导出
+					</li-->
+	                <li class="animation-scale-Delay9 hrefTo" href="yeyinlin/fangtaiset.html">
+	                    <i class="icon-home">&nbsp;</i>房台设置
+	                </li>
+	                <li class="animation-scale-Delay10 hrefTo" href="yeyinlin/systemset.html">
+	                    <i class="icon-cog">&nbsp;</i>系统设置
+	                </li>
+	                <li class="animation-scale-Delay11 hrefTo" href="yeyinlin/encryptiondog.html">
+	                    <i class="icon-key">&nbsp;</i>加密狗
+	                </li>
+	                <li class="animation-scale-Delay12 hrefTo" href="yeyinlin/uploadSeting.html">
+	                    <i class="icon-cogs">&nbsp;</i>批量设置
+	                </li>
+				</ul>
+			</menu>
+		</div>
+		<div class="index_contentRight">
+			<span class="showTime"></span>
+			<header class="index_header">
+				<menu>
+					<ul>
+						<li text="系统状态" class="animation-translateX-Delay1 hrefTo" href="md/sysStatus.html">
+							<i class="icon-bar-chart"></i>
+						</li>
+						<li class="animation-translateX-Delay2 uploadBox">
+							<i class="icon-upload-alt"></i>
+						</li>
+						<li class="animation-translateX-Delay3 messageBtn">
+							<i class="icon-envelope"></i>
+							<b class="messageNum">0</b>
+						</li>
+						<li text="健康检查" class="animation-translateX-Delay4 hrefTo" href="health.html">
+							<i class="icon-medkit"></i>
+						</li-
+					</ul>
+				</menu>
+				<div class="index_login">
+					<button type="button" class="outLogin">注销</button>
+				</div>
+			</header>
+			<div class="index_centerContent">
+
+			</div>
+			<footer class="index_footer">
+
+			</footer>
+			<div class="index_rightMenu">
+				<ul>
+					<li class="animation-translateX-Delay1">
+						<i class="icon-laptop"></i>
+					</li>
+					<li class="animation-translateX-Delay2">
+						<i class="icon-envelope-alt"></i>
+					</li>
+					<li class="animation-translateX-Delay3">
+						<i class="icon-bar-chart"></i>
+					</li>
+					<li class="animation-translateX-Delay4">
+						<i class="icon-briefcase"></i>
+					</li>
+					<li class="animation-translateX-Delay5">
+						<i class="icon-tasks"></i>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="showDBserviceIP"></div>
+		<script id="setingHTML" type="text/template">
+			<form class="initSeting">
+				<h1>初始设置</h1>
+				<div>
+					<label>数据库地址</label><input name="DataBaseServerIp" type="text" />
+				</div>
+				<button type="submit">设置</button>
+			</form>
+		</script>
+		<script id="messagePanel" type="text/template">
+			<div class="messagePanelDiv">
+				<div></div>
+				<ul class="list">
+					<li>消息地址:<span></span></li>
+					<li>来源应用:<span></span></li>
+					<li>消息级别:<span></span></li>
+				</ul>
+			</div>
+		</script>
+		<script>
+			var obj={};
+			function clearCookie(){
+			    var keys=document.cookie.match(/[^ =;]+(?=\=)/g);
+			    if (keys) {
+			        for (var i =  keys.length; i--;)
+			            document.cookie=keys[i]+'=0;expires=' + new Date( 0).toUTCString()
+			    }    
+			}
+			clearCookie();
+		
+			var version="V1.2";
+			$.tap(".index_logo",function(){
+				sendMessage({"title":"系统通知","content":"早上好，今天您有1个紧急任务，1个任务已超期","state":4});
+			});
+			$.tap(".index_leftMenu>ul>li.hrefTo",function(){
+				$(".index_leftMenu>ul>li.hrefTo").removeClass("active");
+				$(this).addClass("active");
+			});
+			if(!!localStorage.getItem("currentUrl")){
+				$("li[href='"+localStorage.getItem("currentUrl")+"']").click();
+			}else{
+				$(".index_leftMenu>ul>li:eq(0)").click();
+			}
+			// $.tap(".help",function(){
+			// 	var _this=$(this);
+				// if($(".loginForm").hasClass("twoCode")){
+				// 	_this.html("<i class=\"icon-book\"></i> 操作指南");
+				// 	$(".loginForm").removeClass("twoCode");
+				// }else{
+				// 	_this.html("<i class=\"icon-signin\"></i> 返回登录");
+				// 	$(".loginForm").addClass("twoCode");
+				// 	if(!$.trim($(".loginFormAfter>.twoCode>.borderDiv").html()))
+				// 		$(".loginFormAfter>.twoCode>.borderDiv").qrcode({width:200,height:200,correctLevel:QRErrorCorrectLevel.H,text:$.baseUrl+"/static/explain.html"});
+				// }
+			// });
+			$.tap(".uploadBox",function(){
+				var offset=$(this).offset()
+				var uploadBoxWidth=$(this).width();
+				var uploadBoxHeight=$(this).height();
+				var uploadRollDiv=$(".uploadRollDiv");
+				if(uploadRollDiv.length>0){
+					var top=offset.top+uploadBoxHeight+20;
+					var left=offset.left+uploadBoxWidth-345;
+					uploadRollDiv.css("display","block").css("top",top+"px").css("left",left+"px");
+					
+				}else{
+					$.altAuto("暂无文件上传");
+				}
+			});
+			var objStateList={1:"普通",2:"提示",3:"警告",4:"错误"};
+			function messageBoxLiClick(){
+				$(this).removeClass("unRead");
+				$(".messageNum").html($(".messageBox>ul:eq(1)").children("li.unRead").length);
+				var id = $(this).attr("no");
+				var obj = $(this).data("obj")
+				_.popPanel(obj.title,document.getElementById("messagePanel").innerHTML,"400px","500px",false);
+				$(".messagePanelDiv>div").html("&nbsp;&nbsp;"+obj.content);
+				$(".messagePanelDiv>ul>li:eq(0)>span").html(obj.ip);
+				$(".messagePanelDiv>ul>li:eq(1)>span").html(obj.app);
+				$(".messagePanelDiv>ul>li:eq(2)>span").html(objStateList[obj.state]);
+				$(".messageBox").css("display","none");
+				sendSetUnRead(id,function(json){
+					if(!!json&&json.code!="0")
+						$.altAuto("服务器异常");
+				});
+			}
+			
+			function loadMessageList(fn){
+				sendSelectMessage(page,pageCount,function(json){
+					if(!!json&&json.code=="0"){
+						var arr = json.data;
+						if(arr.length==0&&$(".messageBox>ul:eq(1)>li").length>0){
+							$.altAuto("数据已全部加载");
+							return;
+						}
+						var html = $("<ul></ul>");
+						for(var i in arr){
+							if(arr.hasOwnProperty(i)){
+								var obj = arr[i];
+								var classUnRead="";
+								if(obj.unRead=="0")
+									classUnRead="unRead";
+								var li = $("<li no=\""+obj.id+"\" class=\"messageState"+obj.state+" "+classUnRead+"\">"+obj.title+"<small>"+obj.time+"</small></li>");
+								li.data("obj",obj);
+								li.off("click").on("click",messageBoxLiClick);
+								html.append(li);
+							}
+						}
+						$(".messageBox>ul:eq(1)").append(html.children());
+						$(".messageNum").html($(".messageBox>ul:eq(1)").children("li.unRead").length);
+						$(".messageBox>ul:eq(1)").off("scroll").on("scroll",function(e){
+							if(parseInt($(this)[0].scrollTop)+parseInt($(this).height())==parseInt($(this)[0].scrollHeight)-4){
+								page++;
+								loadMessageList();
+							}
+						});
+						if(!!fn)
+							fn();
+					}
+				});
+			}
+			var page=1;
+			var pageCount=15;
+			if(!!sessionStorage.getItem("username")){
+				$(".messageBtn").messageBox([
+					{"text":"全部标为已读","click":function(e){
+						$(".messageBox>ul:eq(1)>li.unRead").removeClass("unRead");
+						$(".messageNum").html(0);
+						sendSetUnRead("",function(json){
+							if(!!json&&json.code!="0")
+								$.altAuto("服务器异常");
+						});
+					}}
+				]);
+				loadMessageList(createSource);
+			}
+			
+			function createSource(){
+				$.initWebSource($.baseUrl+"/websource",function(text){
+					try{
+						if(text!="[]"){
+							var arr=$.parseJSON(text);
+							for(var i in arr){
+								if(arr.hasOwnProperty(i)){
+									var obj = arr[i];
+									var li=$.messageBoxPush(obj);
+									if(!!li)
+										li.off("click").on("click",messageBoxLiClick);
+//									if(obj.state==4){
+//										_.popPanel(obj.title,document.getElementById("messagePanel").innerHTML,"400px","500px",false);
+//										$(".messagePanelDiv>div").html("&nbsp;&nbsp;"+obj.content);
+//										$(".messagePanelDiv>ul>li:eq(0)>span").html(obj.ip);
+//										$(".messagePanelDiv>ul>li:eq(1)>span").html(obj.app);
+//										$(".messagePanelDiv>ul>li:eq(2)>span").html(obj.state);
+//									}
+								}
+							}
+						}
+					}catch(e){}
+				});
+			}
+			
+			
+			sendAjaxInit(function(json){
+				if(!!json){
+					if($.baseIp!=json.thunder.mainserver.DataBaseServerIp){
+						var url = window.location.href;
+						url=url.replace($.baseIp,json.thunder.mainserver.DataBaseServerIp);
+						$.ajax({
+							type:"get",
+							url:"http://"+json.thunder.mainserver.DataBaseServerIp+":"+$.protNo+"/sql/getIsAddData",
+							dataType:"text",
+							success:function(){
+								window.location.href=url;
+							}
+						});
+					}
+					//$(".showDBserviceIP").html(version+" - "+json.thunder.mainserver.DataBaseServerIp);
+                    $(".showDBserviceIP").html("V" + json.system.version);
+					$.data_DataBaseServerIp=json.thunder.mainserver.DataBaseServerIp;
+					if(json.thunder.mainserver.DataBaseServerIp=="127.0.0.1"){
+						try{outLogin();}catch(e){}
+						_.popPanel(null,document.getElementById("setingHTML").innerHTML,"400px","300px",false);
+						$(".initSeting>div>input[name='DataBaseServerIp']").val($.baseIp);
+						$(".initSeting").formImgSubmit({url:$.baseUrl+"/isset",success:function(text){
+							if(!!text){
+								var jsonT=$.parseJSON(text);
+								if(jsonT.code=="0"){
+									$.altAuto(jsonT.result);
+									_.popPanelClose();
+									json.thunder.mainserver.DataBaseServerIp=$(".initSeting>div>input[name='DataBaseServerIp']").val();
+								}else if(jsonT.code=="1"){
+									$.altAuto(jsonT.result);
+								}
+							}
+						}});
+					}
+				}
+			});
+			
+			
+			// $(".username,.password,verifyCode").off("keyup").on("keyup",function(){
+			// 	if (event.keyCode == "13") {
+			// 		$(".username,.password,verifyCode").blur();
+			// 		$(".login").click();
+			// 	}
+			// });
+			function setUserPassInput(){
+				if(!!localStorage.getItem("username"))
+					$(".username").val(localStorage.getItem("username"));
+				if(!!localStorage.getItem("password")){
+					$(".isSavePassword").removeClass("icon-check-empty").addClass("icon-check");
+					$(".password").val(localStorage.getItem("password"));
+				}
+			}
+			setUserPassInput();
+			
+			$.tap(".loginHTML>.loginHTMLsection>.loginForm>.login",function(){
+				$(".loginHTML>.loginHTMLsection>.loginForm>.login").blur();
+				var obj = {}
+				obj.username=$(".username").val();
+				obj.password=$(".password").val();
+				if(!obj.username){
+					$(".username").addClass("required");
+					$.timer=window.setTimeout(function(){
+						$(".username").removeClass("required");
+					},500);
+					return;
+				}
+				if(!obj.password){
+					$(".password").addClass("required");
+					$.timer=window.setTimeout(function(){
+						$(".password").removeClass("required");
+					},500);
+					return;
+				}
+				sendLogin(JSON.stringify(obj),function(json){
+					if(!!json&&json.code=="0"){
+						if(json.data=="1"){
+							$("body").addClass("closeLogin");
+							$.user={};
+							$.user.username=obj.username;
+							$.user.password=obj.password;
+							sessionStorage.setItem("username",obj.username);
+							sessionStorage.setItem("password",obj.password);
+							$(".messageBtn").messageBox([
+								{"text":"全部标为已读","click":function(e){
+									$(".messageBox>ul:eq(1)>li.unRead").removeClass("unRead");
+									$(".messageNum").html(0);
+									sendSetUnRead("",function(json){
+										if(!!json&&json.code!="0")
+											$.altAuto("服务器异常");
+									});
+								}}
+							]);
+							loadMessageList(createSource);
+							if($(".isSavePassword").hasClass("icon-check")){
+								localStorage.setItem("username",obj.username);
+								localStorage.setItem("password",obj.password);
+							}else{
+								localStorage.removeItem("password");
+							}
+                            $.timer=window.setTimeout(function(){
+                                $(".index_leftMenu>ul>li:eq(0)").click();
+                            },1000);
+						}else{
+							$(".password").val("");
+							$(".password").addClass("required");
+							$.timer=window.setTimeout(function(){
+								$(".password").removeClass("required");
+							},500);
+						}
+					}else{
+						if(!!json.msg)
+							$.altAuto(json.msg);
+						else
+							$.altAuto("登录失败");
+					}
+				})
+			});
+			
+			$.tap(".isSavePassword",function(){
+				if($(this).hasClass("icon-check-empty"))
+					$(this).removeClass("icon-check-empty").addClass("icon-check");
+				else
+					$(this).removeClass("icon-check").addClass("icon-check-empty");
+			});
+			function outLogin(){
+				sessionStorage.removeItem("username");
+				sessionStorage.removeItem("password");
+				$(".username").val("")
+				$(".password").val("");
+				setUserPassInput();
+				$("body").removeClass("closeLogin");
+				$.closeWebSource();
+			}
+			$.tap(".index_login>.outLogin",function(){
+				outLogin();
+			});
+			function sendAjaxInit(fn){
+				$.ajax({
+					type:"get",
+					url:$.baseUrl+"/isset",
+					dataType:"json",
+					success:function(json){
+						if(!!fn)
+							fn(json);
+					},error:function(){
+						$.altAuto("服务器未开启或网络连接不通");
+					}
+				});
+			}
+			function sendLogin(data,fn,codekey){
+				$.ajax({
+					type:"post",
+					url:$.baseUrl+"/sql/login",
+					data:data,
+					timeOut:2000,
+					dataType:"json",
+					success:function(json){
+						if(!!fn)
+							fn(json);
+					},error:function(xhr){
+						$.altAuto("服务器未开启或网络连接不通");
+					}
+				});
+			}
+			function sendMessage(data){
+				$.ajax({
+					type:"post",
+					url:$.baseUrl+"/websource",
+					data:JSON.stringify(data),
+					dataType:"json",
+					success:function(json){
+						if(json.code!="0")
+							$.altAuto("推送通知失败!");
+					},error:function(){
+						$.altAuto("服务器异常");
+					}
+				});
+			}
+			function sendSetUnRead(id,fn){
+				$.ajax({
+					type:"get",
+					url:$.baseUrl+"/sql/setUnRead",
+					data:"id="+id,
+					dataType:"json",
+					success:function(json){
+						if(!!fn)
+							fn(json);
+					},error:function(){
+						$.altAuto("服务器异常");
+					}
+				});
+			}
+			function sendSelectMessage(page,count,fn){
+				$.ajax({
+					type:"get",
+					url:$.baseUrl+"/sql/selectMessage",
+					data:"page="+page+"&count="+count,
+					dataType:"json",
+					success:function(json){
+						if(!!fn)
+							fn(json);
+					},error:function(){
+						$.altAuto("服务器异常");
+					}
+				});
+			}
+			
+			window.location.hash="#index";
+			$.timerOut=window.setTimeout(function(){
+				clearTimeout($.timerOut);
+				window.location.hash="#main";
+				$(window).off("hashchange").on("hashchange",function(){
+					if(window.location.hash!="#main"){
+						$.altAuto("当前系统禁止后退");
+						window.location.hash="#main";
+					}
+				});
+			},300);
+			
+			
+			function sendSelectMusicCount(text){
+				return $.ajax({
+					type:"get",
+					url:$.baseUrl+"/medias/count?text="+text,
+					dataType:"json"
+				});
+			}
+			function sendLoadIpList(){
+				return $.ajax({
+					type:"get",
+					url:$.baseUrl+"/servers/list",
+					dataType:"json"
+				});
+			}
+			window.setTimeout(function(){
+				sendGetTime(function(json){
+			  		var showTime=$(".showTime");
+			  		if(!!json&&json.code==0){
+			  			window.setInterval(function(){},2000);
+			  			var time=json.data;
+			  			var work=new Worker("js/webwork.js");
+						work.postMessage(parseFloat(time));
+						work.onmessage = function (event) {
+							showTime.html(event.data);
+							work.postMessage(1);
+					  	};
+			  		}
+			  		
+			  	});
+			  	function sendGetTime(fn){
+			  		$.ajax({
+			  			type:"get",
+			  			url:$.baseUrl+"/sql/getTime",
+			  			dataType:"json",
+			  			success:function(json){
+			  				if(!!fn)
+			  					fn(json);
+			  			}
+			  		});
+			  	}
+			},1000);
+				
+		</script>
+	</body>
+	<foot>
+		<div class="confirmBox">
+			<div>
+				<span></span>
+				<span></span>
+				<div>
+					<span>是</span>
+					<span>否</span>
+				</div>
+			</div>
+		</div>
+		<div class="confirmBoxInput">
+			<div>
+				<span></span>
+				<span></span>
+				<input type="text" placeholder="" />
+				<div>
+					<span>是</span>
+					<span>否</span>
+				</div>
+			</div>
+		</div>
+		<div class="confirmBoxOK">
+			<div>
+				<span></span>
+				<span></span>
+				<div>
+					<span>是</span>
+				</div>
+			</div>
+		</div>
+		<div class="popPanel">
+			<div>
+				<header>
+					<span></span>
+					<b>×</b>
+				</header>
+				<div>
+					
+				</div>
+			</div>
+		</div>
+		<div class="loading" style="display: none;"></div>
+		<div class="notClickDiv" style="display: none;"></div>
+		<div class="tip" style="display: none;"></div>
+		<ul class="inputList">
+			
+		</ul>
+	</foot>
+</html>

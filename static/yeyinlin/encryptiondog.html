@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+		<style>
+			.Encrypt_form {
+				width: 760px;
+				height: 400px;
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				margin: auto;
+				/* padding: 10px; */
+				box-sizing: border-box;
+				/* border: 1px solid #CDCDCD; */
+			}
+			
+			.Encrypt_form>div {
+				width: 370px;
+				height: 40px;
+				position: relative;
+				margin-top: 10px;
+				/* margin-left: 50px; */
+				display: inline-block;
+			}
+			
+			.Encrypt_form>div>label {
+				width: 180px;
+				height: 100%;
+				font-size: 16px;
+				text-align: right;
+				padding-right: 20px;
+				line-height: 40px;
+				display: inline-block;
+			}
+			
+			.Encrypt_form>div>input,
+			.Encrypt_form>div>select {
+				width: 70%;
+				height: 100%;
+			}
+			
+			.Encrypt_form>div>input.inputBox {
+				width: 190px
+			}
+			
+			.btn_ed {
+				margin-top: 50px;
+				width: 150px;
+				height: 40px;
+				margin: 10px 10px;
+			}
+			
+			.button_style_one {
+				width: 10%;
+				background: #009688;
+				font-size: 18px;
+				color: #ffffff;
+			}
+			
+			.inputBox {
+				margin-right: 0px;
+			}
+			
+			.VGsetone_form {
+				width: 100%;
+				height: 250px;
+				position: absolute;
+				top: 45px;
+				margin: 0 auto;
+			}
+			
+			.Dogsetone_form>div {
+				width: 80%;
+				height: 40px;
+				position: relative;
+				margin-top: 10px;
+				margin-left: 0px;
+				display: block;
+				left: 51px;
+			}
+			
+			.Dogsetone_form>div>label {
+				width: 128px;
+				height: 100%;
+				font-size: 16px;
+				text-align: left;
+				padding-right: 20px;
+				line-height: 40px;
+				display: inline-block;
+			}
+			
+			.Dogsetone_form>div>input,
+			.Dogsetone_form>div>select {
+				width: 53%;
+				height: 100%;
+			}
+			
+			.btn_bs_dog {
+				margin-top: 12px;
+				width: 140px;
+				height: 40px;
+			}
+			
+			.enc_p_text {
+				width: 100%;
+				font-size: 20px;
+				color: red;
+				position: absolute;
+				bottom: 300px;
+				text-align: center;
+			}
+		</style>
+
+		<ul class="listButton">
+			<li class="uploadDog"><i class="icon-plus">&nbsp;</i>上传加密狗认证</li>
+			<li class="beiyongdog"><i class="icon-download-alt">&nbsp;</i>应急秘钥</li>
+			<li class="deletedog"><i class="icon-remove">&nbsp;</i>删除应急秘钥</li>
+		</ul>
+
+		<form class="Encrypt_form">
+			<div>
+				<label>加密狗IP：</label>
+				<input id="dogip" name="iname" class="inputBox" type="text" disabled="true" />
+			</div>
+
+			<div>
+				<label>点数：</label>
+				<input id="dogmaxpoint" required="required" name="iname" class="inputBox" type="text" disabled="true" />
+			</div>
+			<div>
+				<label>场所名称：</label>
+				<input id="ktvname" name="iname" class="inputBox" type="text" disabled="true" />
+			</div>
+			<div>
+				<label>剩余时间：</label>
+				<input id="lasttime" required="required" name="iname" class="inputBox" type="text" disabled="true" />
+			</div>
+
+		</form>
+		<p class="enc_p_text"></p>
+
+		<script type="text/javascript" src="js/Aimara.js"></script>
+		<script id="my_dog" type="text/template">
+
+			<form class="Dogsetone_form">
+				<div id="select_mainname">
+					<label>
+                加密狗ip：</label>
+					<select class="selectBox" id="server_text"></select>
+				</div>
+				<center>
+					<button type="button" id="btcancel" class="btn green btn_bs_dog">选择认证文件</button>
+				</center>
+			</form>
+
+		</script>
+
+		<script id="my_dog_delect" type="text/template">
+
+			<form class="Dogsetone_form">
+				<div id="select_mainname">
+					<label>
+                加密狗ip：</label>
+					<select class="selectBox" id="server_text"></select>
+				</div>
+				<center>
+					<button type="button" id="btcancel" class="btn green btn_bs_dog">删除</button>
+				</center>
+			</form>
+
+		</script>
+
+		<script id="my_dog_beiyong" type="text/template">
+
+			<form class="Dogsetone_form">
+				<div id="select_mainname">
+					<label>
+                加密狗ip：</label>
+					<select class="selectBox" id="server_text"></select>
+				</div>
+				<div>
+					<label>
+                应急秘钥：</label>
+					<input id="dog_value" type="text" class="inputBox"></input>
+				</div>
+				<center>
+					<button type="button" id="btcancel" class="btn green btn_bs_dog">确定</button>
+				</center>
+			</form>
+
+		</script>
+		<script>
+			var arrdog = [""];
+
+			$(".uploadDog").click(function() {
+				_.popPanel("选择服务器", document.getElementById("my_dog").innerHTML, "400px", "150px", false);
+				if(!$.allip) {
+					initdata("get", function(str) {
+						$.allip = str.serverip;
+						uploadDogFn();
+					});
+				} else {
+					uploadDogFn();
+				}
+			});
+
+			function uploadDogFn() {
+				for(var i = 0; i < $.allip.length; i++) {
+					$("#server_text").append("<option value='" + $.allip[i] + "' class='my_ip_address'>" + $.allip[i] + "</option>");
+				}
+				if($.allip.length == 0) {
+					arrdog[0] = $.baseUrl;
+				} else {
+					$.data_checkedUploadOldIp = $.allip[0];
+					arrdog[0] = "http://" + $.data_checkedUploadOldIp + ":8888";
+				}
+
+				$("#server_text").off("change").on("change", function() {
+					$.data_checkedUploadOldIp = $(this).val();
+					arrdog[0] = "http://" + $.data_checkedUploadOldIp + ":8888";
+					$(".btn_bs_dog").upload(arrdog[0] + "/dog/upfile", function(xhr, input) {
+						_.popPanelClose();
+						initdata('get');
+					}, function(xhr, error) {
+						error.style.transform = "scale(0,0)";
+						error.style.webkitTransform = "scale(0,0)";
+						error.style.opacity = "0";
+						mtoast('上传失败！');
+					}, function(input) {
+						return true;
+					});
+
+				});
+				//				alert(arrdog[0]);
+
+				$(".btn_bs_dog").upload(arrdog[0] + "/dog/upfile", function(xhr, input) {
+					$.createConfirmBoxOK({
+						"title": "系统提示",
+						"content": "加密狗上传完成",
+						"click": function() {
+						}
+					});
+					_.popPanelClose();
+					initdata('get');
+				}, function(xhr, error) {
+					error.style.transform = "scale(0,0)";
+					error.style.webkitTransform = "scale(0,0)";
+					error.style.opacity = "0";
+					mtoast('上传失败！');
+				}, function(input) {
+					return true;
+				});
+			}
+
+			$(".deletedog").click(function() {
+				_.popPanel("选择服务器", document.getElementById("my_dog_delect").innerHTML, "400px", "150px", false);
+				for(var i = 0; i < $.allip.length; i++) {
+					$("#server_text").append("<option value='" + $.allip[i] + "' class='my_ip_address'>" + $.allip[i] + "</option>");
+				}
+				if($.allip.length == 0) {
+					arrdog[0] = $.baseUrl;
+				} else {
+
+					arrdog[0] = "http://" + $.allip[0] + ":8888";
+				}
+
+				$("#server_text").off("change").on("change", function() {
+					arrdog[0] = "http://" + $(this).val() + ":8888";
+
+				});
+
+				$(".btn_bs_dog").click(function() {
+
+					$.createConfirmBox({
+						"title": "系统提示",
+						"content": "是否确认删除应急秘钥?",
+						"click": function() {
+							senddelete(arrdog[0]);
+						}
+					});
+
+				});
+
+			});
+
+			$(".beiyongdog").click(function() {
+
+				_.popPanel("选择服务器", document.getElementById("my_dog_beiyong").innerHTML, "400px", "250px", false);
+				for(var i = 0; i < $.allip.length; i++) {
+					$("#server_text").append("<option value='" + $.allip[i] + "' class='my_ip_address'>" + $.allip[i] + "</option>");
+				}
+				if($.allip.length == 0) {
+					arrdog[0] = $.baseUrl;
+				} else {
+					if(!!$.data_checkedUploadOldIp) {
+						arrdog[0] = "http://" + $.data_checkedUploadOldIp + ":8888";
+						$(this).val($.data_checkedUploadOldIp);
+					} else {
+						arrdog[0] = "http://" + $.allip[0] + ":8888";
+					}
+				}
+
+				$("#server_text").off("change").on("change", function() {
+					$.data_checkedUploadOldIp = $(this).val();
+					arrdog[0] = "http://" + $.data_checkedUploadOldIp + ":8888";
+				});
+
+				$("#dog_value").focus();
+
+				$(".btn_bs_dog").click(function() {
+					if(!!($("#dog_value").val())) {
+						sendbeuying($("#dog_value").val(), arrdog[0]);
+					} else {
+						mtoast("备用秘钥不能为空");
+					}
+
+				});
+
+			});
+			initdata('get');
+
+			function sendbeuying(sercrt, murl) {
+				var url = murl + "/dog/setpwd";
+				var strjson = {}
+				strjson.sercrt = sercrt;
+				$.ajax({
+					type: 'post',
+					url: url,
+					dataType: 'json',
+					data: 'mdata=' + JSON.stringify(strjson),
+					success: function(str) {
+						if(str.code == "0") {
+							mtoast("操作成功");
+							_.popPanelClose();
+							//initdata('2');
+							initdata('get');
+						} else {
+							mtoast("操作失败");
+						}
+
+					},
+					error: function(msg) {
+						mtoast("后台有点忙");
+					}
+				});
+			}
+
+			function senddelete(murl) {
+				var url = murl + "/dog/delpwd";
+				var strjson = {}
+				$.ajax({
+					type: 'post',
+					url: url,
+					dataType: 'json',
+					data: 'mdata=' + JSON.stringify(strjson),
+					success: function(str) {
+						if(str.code == 0) {
+							mtoast("删除成功");
+							_.popPanelClose();
+							//initdata('2');
+							initdata('get');
+						} else {
+							mtoast("删除失败");
+						}
+
+					},
+					error: function(msg) {
+						mtoast("后台有点忙");
+						_.popPanelClose();
+					}
+				});
+			}
+
+			function initdata(ttype, fn) {
+				var url = $.baseUrl + "/dog/" + ttype;
+				var strjson = {}
+
+				$.ajax({
+					type: 'post',
+					url: url,
+					dataType: 'json',
+					data: 'mdata=' + JSON.stringify(strjson),
+					success: function(str) {
+						if(ttype == 'get') {
+							setdata(str);
+							if(!!fn)
+								fn(str);
+						} else {
+							setrefdata(str);
+						}
+
+					},
+					error: function(msg) {
+						mtoast("后台有点忙");
+					}
+				});
+			}
+
+			function setrefdata(jsondata) {
+				if(jsondata.code == "0") {
+
+					var doginfo = jsondata.doginfo;
+					$("#dogip").val(doginfo.dogip);
+					$("#dogmaxpoint").val(doginfo.maxuser);
+					$("#lasttime").val(doginfo.remaintime);
+					$("#ktvname").val(doginfo.name);
+					if(!!doginfo.moduleno) {
+						if(doginfo.moduleno == "6") {
+							$("#lasttime").val('永久');
+							if(!!doginfo.describe) {
+								$(".enc_p_text").html("*" + doginfo.describe);
+							}else{
+								$(".enc_p_text").html("");
+							}
+						} else {
+							if(!!doginfo.describe) {
+								$(".enc_p_text").html("*" + doginfo.describe);
+							}else{
+								$(".enc_p_text").html("");
+							}
+						}
+					} else {
+						if(!!doginfo.describe) {
+							$(".enc_p_text").html("*" + doginfo.describe);
+						}else{
+								$(".enc_p_text").html("");
+							}
+					}
+				}
+			}
+
+			function setdata(jsondata) {
+
+				//				_.popPanelClose();
+				$.allip = jsondata.serverip;
+				if(jsondata.code == "0") {
+					var doginfo = jsondata.doginfo;
+					$("#dogip").val(doginfo.dogip);
+					$("#dogmaxpoint").val(doginfo.maxuser);
+					$("#lasttime").val(doginfo.remaintime);
+					$("#ktvname").val(doginfo.name);
+
+					if(!!doginfo.moduleno) {
+						if(doginfo.moduleno == "6") {
+							$("#lasttime").val('永久');
+						} else {
+							if(!!doginfo.describe) {
+								$(".enc_p_text").html("*" + doginfo.describe);
+							}
+						}
+					} else {
+						if(!!doginfo.describe) {
+							$(".enc_p_text").html("*" + doginfo.describe);
+						}
+					}
+
+				} else if(jsondata.code == "1") {
+					mtoast("无加密狗认证文件，需要上传加密狗文件")
+				} else if(jsondata.code == "2") {
+
+					if(jsondata.result == "1") {
+						mtoast("网卡或thunder.ini配置出错");
+					} else if(jsondata.result == "2") {
+						mtoast("本地broadcast访问初始化错误");
+					} else if(jsondata.result == "3") {
+						mtoast("本地broadcast访问连接错误");
+					} else if(jsondata.result == "4") {
+						mtoast("本地broadcast访问数据发送错误");
+					} else if(jsondata.result == "5") {
+						mtoast("本地broadcast访问接收错误");
+					} else if(jsondata.result == "6") {
+						mtoast("本地broadcast访问接收错误");
+					} else if(jsondata.result == "7") {
+						mtoast("本地broadcast访问接收错误");
+					} else if(jsondata.result == "8") {
+						mtoast("本地broadcast访问初始化错误");
+					} else if(jsondata.result == "11") {
+						mtoast("MainKtvServer访问超时");
+					} else if(jsondata.result == "12") {
+						mtoast("本地broadcast访问初始化错误");
+					} else if(jsondata.result == "13") {
+						mtoast("本地broadcast访问初始化错误");
+					} else if(jsondata.result == "14") {
+						mtoast("MainKtvServer访访问连接错误");
+					} else if(jsondata.result == "15") {
+						mtoast("MainKtvServer访问数据发送错误");
+					} else if(jsondata.result == "16") {
+						mtoast("MainKtvServer访问select错误");
+					} else if(jsondata.result == "17") {
+						mtoast("MainKtvServer访问数据接收错误");
+					} else if(jsondata.result == "30") {
+						mtoast("访问超时");
+					}
+
+				}
+				//			}
+			}
+
+			function popBeiYong() {
+				$.createConfirmBoxInput({
+					"title": "应急秘钥",
+					"content": "使用期限已过！请输入应急认证密码或联系你的销售商获得正式认证",
+					"inputVal": name,
+					"placeholder": "秘钥",
+					"click": function() {
+						sendbeuying($(".confirmBoxInput>div>input").val());
+					}
+				});
+			}
+
+			function mtoast(text) {
+				$.createConfirmBoxOK({
+					"title": "系统提示",
+					"content": text,
+					"click": function() {}
+				});
+			}
+		</script>
+
+	</body>
+
+</html>

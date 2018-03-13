@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<style>
+			.publicPlayManager{
+				width: 100%;
+				height: 100%;
+			}
+			.publicPlayManager>.tableDiv{
+				width: 100%;
+				position: relative;
+				box-shadow: 0px -3px 3px #E0E0E0;
+			}
+			.publicPlayManager>.tableDiv>.table>tbody>tr>td>button{
+				width: 26px;
+				height: 26px;
+				display: inline-block;
+			}
+			
+			.publicPlayManager>.tableDiv>.table>tbody>tr>td>button>i.icon-arrow-up{
+				position: relative;
+				left: -1px;
+			}
+			.publicPlayManager>.tableDiv>.table>tbody>tr>td>button>i.icon-arrow-down{
+				position: relative;
+				left: -1px;
+			}
+			.setPublicTypeHTMLDiv{
+				width: 100%;
+				text-align: center;
+			}
+			.setPublicTypeHTMLSelect{
+				width: 90%;
+			    height: 38px;
+			    line-height: 38px;
+			    margin: 0 auto;
+			}
+			.setPublicTypeHTMLInput{
+				width: 90%;
+			    height: 38px;
+			    line-height: 38px;
+			    margin: 0 auto;
+			}
+			.setPublicTypeHTMLSubmitBtn{
+				width: 30%;
+			    height: 38px;
+			    margin-top: 10px;
+			}
+		</style>
+		<div class="publicPlayManager">
+			<ul class="listButton">
+				<li class="addPublicPlayAdvertisement"><i class="icon-plus">&nbsp;</i>添加广告</li>
+			</ul>
+			<div class="tableDiv">
+				<table class="table scroll">
+					<thead>
+						<tr>
+							<th>编号</th>
+							<th>名称</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<script>
+			$(".addPublicPlayAdvertisement").uploadBtn($.baseUrl+"/mediafile/uploads",function(name,path,size,no){
+				var type=name.substring(name.lastIndexOf(".")+1,name.length);
+				var addMusic={};
+				addMusic.AddMedia_Name=name;
+				addMusic.AddMedia_Path=path;
+				addMusic.AddMedia_Type=type;
+				addMusic.AddMedia_Size=size;
+				addMusic.AddMedia_SerialNo=no;
+				sendInsertAddMusic($.createObjDataOnlyKey(addMusic),function(json){
+					if(!!json.msg){
+						$.altAuto(json.msg);
+						$(".uploadRollDiv>ul").html("");
+						return;
+					}
+					
+				});
+				sendGetAddMediaFileFormScpOtherService(no,function(json){
+					if(!!json&&json.code=="0"){
+						
+					}
+				});
+			},function(file,fn){
+				sendGetMusicNoFromFileName(file.name,function(json){
+					if(!!json){
+						if(!!json.msg){
+							$.altAuto(json.msg);
+							return;
+						}
+						if(json.data=="0"){
+							var obj={};
+							obj.iname=file.name;
+							obj.lname="";
+							obj.type1="";
+							obj.type2="";
+							obj.jianpin="";
+							obj.pinyin="";
+							obj.sname1="";
+							obj.sname2="";
+							obj.sname3="";
+							obj.sname4="";
+							obj.ltype="";
+							obj.volume="";
+							obj.stroke="";
+							obj.bihua="";
+							obj.videoformat="";
+							obj.audioformat="";
+							obj.videotype="";
+							obj.ztrack="";
+							obj.ytrack="";
+							obj.isnew=0;
+							obj.groupid="";
+							obj.filename="";
+							obj.lyric="";
+							obj.isAdvertisement="1";
+							sendAddMusic(JSON.stringify(obj),function(json){
+								if(!!json.msg){
+									$.altAuto(json.msg);
+									$(".uploadRollDiv>ul").html("");
+									return;
+								}
+								if(!!fn)
+									fn(json.no);
+							});
+						}else{
+							$.altAuto("该广告已存在,不能上传!");
+						}
+					}
+				});
+			});
+			function sendGetMusicNoFromFileName(data,fn){
+				$.ajax({
+					type:"get",
+					url:$.baseUrl+"/sql/getMediasNoFromFileName?Media_Name="+data,
+					dataType:"json",
+					success:function(json){
+						if(!!fn)
+							fn(json);
+					},error:function(){
+						$.altAuto("无法访问或服务器发生异常");
+					}
+				});
+			}
+			function sendInsertAddMusic(data,fn){
+				$.ajax({
+					type:"post",
+					url:$.baseUrl+"/addmedia/add",
+					data:data+"&ip="+$.baseUrl,
+					dataType:"json",
+					success:function(json){
+						if(!!fn)
+							fn(json);
+					},error:function(){
+						$.altAuto("无法访问或服务器发生异常");
+					}
+				});
+			}
+			function sendGetAddMediaFileFormScpOtherService(no,fn){
+				$.ajax({
+					type:"get",
+					url:$.baseUrl+"/sql/getAddMediaFileFormScpOtherService?no="+no+"&ip="+$.baseIp,
+					dataType:"json",
+					success:function(json){
+						if(!!fn)
+							fn(json);
+					},error:function(){
+						$.altAuto("无法访问或服务器发生异常");
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

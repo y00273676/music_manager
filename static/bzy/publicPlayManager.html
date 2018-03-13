@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<style>
+			.publicPlayManager{
+				width: 100%;
+				height: 100%;
+			}
+			.publicPlayManagerUl{
+				width: 100%;
+				height: 42px;
+				margin: 0;
+				padding: 0;
+				list-style: none;
+				box-sizing: border-box;
+				padding-left: 30px;
+				padding-right: 30px;
+				position: absolute;
+				top: 20px;
+				z-index: 2;
+			}
+			.publicPlayManagerUl>li{
+			    width: 166px;
+			    height: 42px;
+			    border: 1px #CCCCCC solid;
+			    box-sizing: border-box;
+			    background-color: #FFFFFF;
+			    display: inline-block;
+			    font-size: 16px;
+			    text-align: center;
+			    line-height: 42px;
+			    z-index: 2;
+			    cursor: pointer;
+			}
+			.publicPlayManagerUl>li.active{
+				border-bottom: 1px #FFFFFF solid;
+			}
+			.publicPlayManagerDiv{
+			    width: calc( 100% - 60px );
+			    height: calc( 100% - 82px );
+			    box-sizing: border-box;
+			    margin-left: 30px;
+			    margin-right: 30px;
+			    background-color: #FFFFFF;
+			    border: 1px #CCCCCC solid;
+			    margin-top: -10px;
+			    z-index: 1;
+			    position: absolute;
+			    top: 71px;
+			    overflow-y: auto;
+			}
+			.publicPlayManagerDiv>ul{
+			    width: 90%;
+			    height: auto;
+			    margin: 0;
+			    padding: 0;
+			    list-style: none;
+			    margin: 0 auto;
+			    margin-top: 10px;
+			    margin-bottom: 10px;
+			    display: -webkit-flex;
+			    display: flex;
+			    flex-flow: row wrap;
+			    align-content: flex-start;
+			}
+			.publicPlayManagerDiv>ul>li{
+				width: 180px;
+				height: 40px;
+				font-size: 15px;
+				color: #7B7A7A;
+				line-height: 40px;
+				border: 1px #CCCCCC solid;
+				text-align: center;
+				flex-grow: 1;
+				flex: 0 0 180px;
+				cursor: pointer;
+			}
+			.publicPlayManagerDiv>ul>li.active{
+				background-color: #296BA7;
+				color: #FFFFFF;
+			}
+			.publicPlayManagerContent{
+			    width: 100%;
+			    height: calc( 100% - 60px );
+			    margin: 0 auto;
+			    display: inline-block;
+			    border: 1px #CCCCCC solid;
+			    overflow-y: auto;
+			    transform: scale(1,1);
+			}
+			.setPublicType{
+				font-size: 16px;
+			    position: absolute;
+			    right: 30px;
+			    top: 20px;
+			    padding: 8px 15px 8px 15px;
+			    border: 1px #cccccc solid;
+			    background-color: #ffffff;
+			    cursor: pointer;
+			    outline: none;
+			    z-index: 2;
+			}
+		</style>
+		<script id="setPublicTypeHTML" type="text/template">
+			<div class="setPublicTypeHTMLDiv">
+				<label class="titleLabel">轮播类型</label>
+				<select class="setPublicTypeHTMLSelect selectBox">
+					<option value="0">广告</option>
+					<option value="1">电影</option>
+					<option value="2">歌曲</option>
+					<option value="3">高清歌曲</option>
+					<option value="4">广告顺序播放</option>
+					<option value="5">歌曲总排行顺序播放</option>
+					<option value="6">歌曲总排行随机播放</option>
+					<option value="7">歌曲周排行顺序播放</option>
+					<option value="8">歌曲周排行随机播放</option>
+					<option value="9">歌曲月排行顺序播放</option>
+					<option value="10">歌曲月排行随机播放</option>
+					<option value="11">新歌排行顺序播放</option>
+					<option value="12">新歌排行随机播放</option>
+					<option value="13">自定义歌曲顺序播放</option>
+					<option value="14">自定义歌曲随机播放</option>
+				</select>
+				<button class="setPublicTypeHTMLSubmitBtn btn green">提交</button>
+			</div>
+		</script>
+		<div class="publicPlayManager">
+			<ul class="publicPlayManagerUl">
+				<li href="bzy/advertisementManager.html">
+					公播广告管理
+				</li>
+				<!--<li type="2" href="bzy/rankingManagerForType.html">
+					公播视频管理
+				</li>-->
+				<li href="bzy/customPublicPlay.html">
+					自定义公播管理
+				</li>
+			</ul>
+			<button class="setPublicType">设置公播类型</button>
+			<div class="publicPlayManagerDiv">
+				
+			</div>
+		</div>
+		<script>
+			$(".publicPlayManagerUl>li").loadPage(".publicPlayManagerDiv",function(){
+				$(".publicPlayManagerUl>li").removeClass("active");
+				$(this).addClass("active");
+			});
+			$.tap(".setPublicType",function(){
+				_.popPanel("公播类型设置",document.getElementById("setPublicTypeHTML").innerHTML,"400px","255px");
+				$(".setPublicTypeHTMLInput").isNumberBox();
+				sendSelectPublicPlayType(function(json){
+					if(json.code=="0"){
+						$(".setPublicTypeHTMLSelect").val(json.result.type);
+					}
+				});
+				$(".setPublicTypeHTMLSubmitBtn").off("click").on("click",function(){
+					sendSetPublicPlayType($(".setPublicTypeHTMLSelect").val(),function(json){
+						if(json.code=="0"){
+							$.altAuto(json.msg);
+							_.popPanelClose();
+						}
+					});
+				});
+			});
+			function sendSelectPublicPlayType(fn){
+				$.ajax({
+					type:"get",
+					url:$.baseUrl+"/ktvsetting?from=1",
+					dataType:"json",
+					success:function(json){
+						if(!!fn)
+							fn(json);
+					},error:function(){
+						$.altAuto("无法访问或服务器发生异常");
+					}
+				});
+			}
+			function sendSetPublicPlayType(type,time,fn){
+				$.ajax({
+					type:"get",
+					url:$.baseUrl+"/ktvsetting?from=0&type="+type+"&time="+time,
+					dataType:"json",
+					success:function(json){
+						if(!!fn)
+							fn(json);
+					},error:function(){
+						$.altAuto("无法访问或服务器发生异常");
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

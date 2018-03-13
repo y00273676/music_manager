@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <style>
+            .addActor_outA{
+                width: 45px;
+                height: 35px;
+                display: inline-block;
+                font-size: 20px;
+                line-height: 30px;
+                text-align: center;
+                padding: 0px;
+                text-decoration: none;
+                color: #FFFFFF;
+                position: absolute;
+                top: 20px;
+                left: 20px;
+            }
+            .addActor_pageTitle{
+                width: 100%;
+                position: absolute;
+                top: 16px;
+                font-size: 25px;
+                margin: 0;
+                padding: 0;
+                text-align: center;
+                pointer-events: none;
+            }
+            .addActor_form{
+                width: 370px;
+                height: auto;
+                position: absolute;
+                top: 60px;
+                left: 0px;
+                right: 0px;
+                margin: 0 auto;
+            }
+            .addActor_form>div{
+                width: 100%;
+                height: 40px;
+                position: relative;
+                margin-top: 10px;
+            }
+            .addActor_form>div>label{
+                position: absolute;
+                width: 30%;
+                height: 100%;
+                left: 0px;
+                font-size: 16px;
+                text-align: right;
+                padding-right: 20px;
+                line-height: 40px;
+            }
+            .addActor_form>div>input,.addActor_form>div>select,.addActor_form>div>button{
+                position: absolute;
+                width: 70%;
+                height: 100%;
+                right: 0px;
+            }
+            .addActor_form>div>input[type='file'],.addActor_form>div>select{
+                cursor: pointer;
+            }
+            .addActor_form>div>input[type='file']:active+button.selectBox{
+                background: -webkit-linear-gradient(top,#D0D0D0,#DCDCDC);
+            }
+            .addActor_form>center{
+                margin-top: 20px;
+            }
+            .addActor_form>center>button{
+                font-size: 20px;
+                padding: 6px 30px 8px 30px;
+            }
+            .actorImgUpload{
+                opacity: 0;
+                z-index: 9;
+            }
+            .thumbnailImg{
+                width: 100px;
+                height: 100px;
+                display: block;
+                margin: 0 auto;
+                position: absolute;
+                top: -60px;
+                right: -100px;
+            }
+            .thumbnailImg.hide{
+                display: none;
+            }
+        </style>
+    <a class="addActor_outA btn blue"> <i class="icon-arrow-left"></i>
+    </a>
+    <h4 class="addActor_pageTitle">添加配置选项</h4>
+    <form class="addActor_form">
+        <div>
+            <label>名称</label>
+            <input name="actor_name" class="inputBox" type="text" placeholder="请填写名称" id="configname" />
+        </div>
+        <div>
+            <label>AppValue</label>
+            <input name="actor_name" class="inputBox" type="text" placeholder="请填写appvalue" id="appvalue"/>
+        </div>
+        <div>
+            <label>含有备注</label>
+            <input type="checkbox" name="aaa" class="switch" style="width: 70%; height: 0;position: absolute;margin-top: 15px;" id="isstring"></div>
+        <div id="ishassel">
+            <label>多选项</label>
+            <input type="checkbox" name="aaa" class="switch" style="width: 70%; height: 0;position: absolute;margin-top: 15px;" id="isselect"></div>
+        <div id="selectcontent">
+            <label>多选项填写</label>
+            <input name="actor_name" class="inputBox" type="text" placeholder="选项请用\隔开" id="optionvalue"/>
+        </div>
+
+        <center>
+            <button type="button" class="btn green" onclick="submitdata()" id="submit">提交</button>
+        </center>
+    </form>
+    <script>
+//          $.tap(".addActor_outA",function(){
+//              $.toBack($(this).parentU("indexView"));
+//          });
+            
+            	$(".addActor_outA").one("click",function(){
+			$.toBack($(this).parentU("indexView"));
+		});
+            initdata();
+            function initdata () {
+                 if($.configtype=="0"){
+                        // $.selectconfig
+                        var selectfig=$.selectconfig;
+                        $("#configname").val(selectfig.ShowName);
+                        $("#appvalue").val(selectfig.AppValue);
+
+                        if(selectfig.IsString=="1"){
+                            $("#isstring")[0].checked=true;
+                            $("#ishassel").show();
+                            if(selectfig.result=="1"){
+                                    $("#isselect")[0].checked=true;
+                                    $("#optionvalue").val(selectfig.select);
+                                    $("#selectcontent").show();
+
+                            }else{
+                                 $("#isselect")[0].checked=false;
+                                  $("#selectcontent").hide();
+                            }
+                        }else{
+                            $("#isstring")[0].checked=false;
+                            $("#ishassel").hide();
+                            $("#selectcontent").hide();
+                        }
+                 }else if($.configtype=="1"){
+                        $("#isstring")[0].checked=false;
+                        $("#isselect")[0].checked=false;
+                        $("#ishassel").hide();
+                        $("#selectcontent").hide();
+                 }
+            }
+
+            $(function(){
+                 $("#isstring").change(function() {
+                    if($(this)[0].checked){
+                     $("#ishassel").show();
+                    }else{
+                         $("#ishassel").hide();
+                         $("#selectcontent").hide();
+                    }
+                    // alert("isstring");
+                    });
+                        $("#isselect").change(function() {
+                            if($(this)[0].checked){
+                                    $("#selectcontent").show();
+                       }else{
+                            $("#selectcontent").hide();
+                    }
+                    // alert("isselect");
+                    });
+                });
+
+            function submitdata () {
+
+                $.createConfirmBox({"title":"系统提示","content":"是否提交该配置?","click":function(){
+                       var subdata=getsubdata ();
+                if(subdata==""){
+                      return;
+                }
+                if($.configtype=="0"){
+                    senddata(subdata,"5");
+                }else if($.configtype=="1"){
+                     senddata(subdata,"6");
+                }
+                }});
+
+
+
+            }
+
+
+            function senddata(jsondata,mtype)
+        {
+                var url=$.baseUrl+"/boxsetting";
+
+                var strjson=jsondata;
+                $.ajax({
+                                    type: 'post',
+                                    url: url,
+                                    dataType: 'html',
+                                    data:'imgurl='+JSON.stringify(strjson)+'&type='+mtype,
+                                    success: function (str) {
+                                        alert(str);
+                                        if($.parseJSON(str)['code']=="0"){
+                                                $.toBack($("#submit").parentU("indexView"));
+                                        }
+
+
+                                 },
+                                    error: function (msg) {
+                                    }
+                                });
+
+                        }
+
+            function getsubdata () {
+                var data={};
+                if($("#configname").val()==""){
+                    alert("名称不能为空")
+                        return "";
+                }
+                if($("#appvalue").val()==""){
+                    alert("appvalue不能为空")
+                    return "";
+                }
+                data.ShowName=$("#configname").val();
+                data.AppValue=$("#appvalue").val();
+                if($("#isstring")[0].checked){
+                    data.IsString="1";
+                    if($("#isselect")[0].checked){
+                            data.result="1";
+                            data.select=$("#optionvalue").val();
+                    }else{
+                          data.result="0";
+                    }
+                }else{
+                    data.IsString="0";
+                    data.result="0";
+                }
+                return data;
+            }
+        </script>
+</body>
+</html>

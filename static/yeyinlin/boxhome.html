@@ -1,0 +1,265 @@
+<body>
+
+	<style type="text/css">
+		.my_box_seting {
+			width: 560px;
+			height: 560px;
+			overflow-y: auto;
+			box-shadow: 0px 0px 5px #C1C1C1;
+			border-radius: 5px;
+			display: inline-block;
+			position: absolute;
+			left: 0px;
+			right: 0px;
+			margin: 0 auto;
+			top: 20px;
+			background-color: #ffffff;
+		}
+		
+		.selectBox {
+			width: 50%;
+			line-height: 38px;
+			position: absolute;
+			right: 45px;
+			height: 40px;
+		}
+		
+		.switch {
+			position: absolute;
+			right: 75px;
+			top: 35px;
+		}
+		
+		.inputBox {
+			position: absolute;
+			height: 40px;
+			right: 45px;
+			width: 50%;
+		}
+		
+		.btn_one {
+			width: 100px;
+			height: 40px;
+			margin-top: 20px;
+		}
+		
+		.my_box_seting_two {}
+		
+		.addActor_outb {
+			width: 45px;
+			height: 35px;
+			display: inline-block;
+			font-size: 20px;
+			line-height: 30px;
+			text-align: center;
+			padding: 0px;
+			text-decoration: none;
+			color: #FFFFFF;
+			position: absolute;
+			top: 20px;
+			left: 20px;
+		}
+		
+		.add_but {
+			width: 40px;
+			height: 40px;
+			line-height: 40px;
+			position: absolute;
+			right: 10px;
+		}
+	</style>
+
+	<a class="addActor_outb btn blue"> <i class="icon-arrow-left"></i>
+	</a>
+	<div class="BoxManager">
+		<div class="my_box_seting">
+			<ul class="list">
+				<li>
+                    <label class="my_box_seting_two"> 点播控制设置 </label>
+					<select class="selectBox" id="cansong">
+						<option value="0">开台才能点歌</option>
+						<option value="1">不开台就能点歌</option>
+					</select>
+				</li>
+
+				<!--li>
+					<label class="my_box_seting_two"> 包房酒水设置 </label>
+					<select class="selectBox" id="ordertype">
+						<option value="0">不使用密码</option>
+						<option value="1">进入酒水系统时使用密码</option>
+						<option value="2">提交点单时使用密码</option>
+						<option value="3">进入酒水系统和提交点单时均使用密码</option>
+					</select>
+				</li>
+				<li>
+					<label class="my_box_seting_two"> 酒水密码 </label>
+                    <input class="inputBox" type="text" placeholder="" id="order_passwd" />
+				</li-->
+
+
+				<li>
+                    <label class="my_box_seting_two"> 主题皮肤设置 </label>
+					<select class="selectBox" id="my_skin">
+						<!--<option value="nopass">90后v2</option>-->
+					</select>
+					<button class="btn blue add_but"> <i class="icon-plus"></i></button>
+				</li>
+
+				<li>
+					<label class="my_box_seting_two"> 子网掩码 </label>
+					<!--<input class="inputBox" type="text" placeholder="" id="netmask" />-->
+                    <select class=" selectBox" id="netmask">
+                    <option value="255.255.255.0">255.255.255.0</option>
+                    <option value="255.255.0.0">255.255.0.0</option>
+                    <option value="255.0.0.0">255.0.0.0</option>
+                    </select>
+				</li>
+
+                
+				<!--li>
+					<label class="my_box_seting_two"> 迪曲控制 </label>
+                    <select class=" selectBox" id="dscoset">
+                    <option value="0">不使用密码</option>
+                    <option value="1">使用密码</option>
+                    </select>
+				</li>
+				<li>
+					<label class="my_box_seting_two"> 迪曲密码 </label>
+                    <input class="inputBox" type="text" placeholder="" id="disco_passwd" />
+				</li-->
+
+			</ul>
+			<center>
+				<button type="button" class="btn green btn_one" onclick="submitconfig()" id="submit">提交</button>
+			</center>
+		</div>
+	</div>
+
+	<script>
+        $(".addActor_outb").one("click",function(){
+            $.toBack($(this).parentU("indexView"));
+        });
+
+        init_theme();
+		findinitdata();
+
+		function init_theme() {
+			var url = $.baseUrl + "/skins/list";
+			var strjson = {}
+			$.ajax({
+				type: 'get',
+				url: url,
+				dataType: 'json',
+				//data: 'mdata=' + JSON.stringify(strjson) + '&type=2',
+				success: function(str) {
+                    if (!str.result){
+                        return;
+                    }
+                    var skins = str.result.matches;
+                    var html = "";
+                    for(var i = 0; i < skins.length; i++) {
+                        var obj = skins[i];
+                        html += "<option value=\"" + obj.skin_name + "\">" + obj.skin_name + "</option>";
+                    }
+                    $("#my_skin").html(html);
+				},
+				error: function(msg) {}
+			});
+		}
+
+
+		function findinitdata() {
+			var url = $.baseUrl + "/config/list";
+			var strjson = {}
+			$.ajax({
+				type: 'get',
+				url: url,
+				dataType: 'json',
+				success: function(res) {
+                    if (!res.result){
+                        return;
+                    }
+                    var config=res.result
+                    $("#netmask").val(config.default_netmask.config_value);
+                    $("#my_skin").val(config.default_skin.config_value);
+                    //需要设置默认theme
+                    $("#cansong").val(config.CanSing_ayways.config_value);
+				},
+				error: function(msg) {}
+			});
+		}
+
+		
+		$.tap(".add_but", function() {
+				$.hrefPage("yeyinlin/skin.html", $(this).parentU("indexView"));
+			});
+
+		function submitconfig() {
+			$.createConfirmBox({
+				"title": "系统提示",
+				"content": "确认是否提交?",
+				"click": function() {
+					updataConfig();
+				}
+			});
+		}
+
+		function updataConfig() {
+
+			var url = $.baseUrl + "/config/update";
+			var strjson = getallinfo();
+			$.ajax({
+				type: 'post',
+				url: url,
+				dataType: 'json',
+				data: JSON.stringify(strjson),
+				// data:'imgurl='+strjson+'&type=1',
+				success: function(str) {
+
+					if(str.code == "0") {
+						$.createConfirmBoxOK({
+							"title": "系统提示",
+							"content": "设置成功!",
+							"click": function() {}
+						});
+					} else {
+						$.createConfirmBoxOK({
+							"title": "系统提示",
+							"content": " 无法保存设置，请先配置主题皮肤！",
+							"click": function() {}
+						});
+					}
+
+				},
+				error: function(msg) {}
+			});
+
+		}
+
+		function getallinfo() {
+			var configures = {};
+			configures.CanSing_ayways = $("#cansong").val();
+			configures.default_netmask =$("#netmask").val();
+			configures.default_skin =$("#my_skin").val();
+			return configures;
+		}
+
+		function isIP2(ip) {
+			var re = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+			return re.test(ip);
+		}
+		
+		
+		
+		
+		
+
+		function mtoast(text) {
+			$.createConfirmBoxOK({
+				"title": "系统提示",
+				"content": text,
+				"click": function() {}
+			});
+		}
+	</script>
+</body>

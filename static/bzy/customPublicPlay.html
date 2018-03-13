@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<style>
+			.customPublicPlay{
+				width: 100%;
+				height: 100%;
+			}
+			.customPublicPlay>.tableDiv{
+				width: 100%;
+				height: calc( 100% - 60px);
+				position: relative;
+				box-shadow: 0px -3px 3px #E0E0E0;
+			}
+			.customPublicPlay>.tableDiv>.table>tbody>tr>td>button{
+				width: 26px;
+				height: 26px;
+				display: inline-block;
+			}
+			
+			.customPublicPlay>.tableDiv>.table>tbody>tr>td>button>i.icon-arrow-up{
+				position: relative;
+				left: -1px;
+			}
+			.customPublicPlay>.tableDiv>.table>tbody>tr>td>button>i.icon-arrow-down{
+				position: relative;
+				left: -1px;
+			}
+			.setPublicTypeHTMLDiv{
+				width: 100%;
+				text-align: center;
+			}
+			.setPublicTypeHTMLSelect{
+				width: 90%;
+			    height: 38px;
+			    line-height: 38px;
+			    margin: 0 auto;
+			}
+			.setPublicTypeHTMLInput{
+				width: 90%;
+			    height: 38px;
+			    line-height: 38px;
+			    margin: 0 auto;
+			}
+			.setPublicTypeHTMLSubmitBtn{
+				width: 30%;
+			    height: 38px;
+			    margin-top: 10px;
+			}
+		</style>
+		<script id="customPublicPlayDataTemplate" type="text/template">
+			<tr>
+				<td>{[Media_ID]}</td>
+				<td>{[Media_Name]}</td>
+				<td>{[Actor_Name1]}</td>
+				<td>{[MediaType_Name1]}</td>
+				<td>{[Language_Name]}</td>
+				<td>
+					<button class="btn green publicPlayUpMusic" title="上移">
+						<i class="icon-arrow-up"></i>
+					</button>
+					<button class="btn orange publicPlayDownMusic" title="下移">
+						<i class="icon-arrow-down"></i>
+					</button>
+					<button class="btn violet publicPlayMusicDelete" title="删除">
+						<i class="icon-trash"></i>
+					</button>
+				</td>
+			</tr>
+		</script>
+		<script id="setPublicTypeHTML" type="text/template">
+			<div class="setPublicTypeHTMLDiv">
+				<label class="titleLabel">轮播类型</label>
+				<select class="setPublicTypeHTMLSelect selectBox">
+					<option value="1">广告</option>
+					<option value="2">歌曲总排行播放</option>
+					<option value="3">歌曲周排行播放</option>
+					<option value="4">歌曲月排行播放</option>
+					<option value="5">新歌排行播放</option>
+					<option value="6">自定义歌曲播放</option>
+				</select>
+				<button class="setPublicTypeHTMLSubmitBtn btn green">提交</button>
+			</div>
+		</script>
+		<div class="customPublicPlay div_load">
+			<ul class="listButton">
+				<li class="setPublicType"><i class="icon-cog">&nbsp;</i>设置公播类型</li>
+				<li class="AddMediaUserSet" style="display: none;"><i class="icon-plus">&nbsp;</i>添加自定义公播歌曲</li>
+				<li class="AddAdsUserSet" style="display: none;"><i class="icon-plus">&nbsp;</i>添加公播广告</li>
+			</ul>
+			<div class="tableDiv">
+				<table class="table scroll">
+					<thead>
+						<tr>
+							<th>编号</th>
+							<th>名称</th>
+							<th>歌手</th>
+							<th>类型</th>
+							<th>语种</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<script>
+			$(function(){
+				$.tap(".AddMediaUserSet",function(){
+					$.data_musicManagerSelectType="1";
+					$.hrefPage("bzy/musicManagerSelect.html",$(this).parentU("indexView"));
+				});
+				$.tap(".AddAdsUserSet",function(){
+					$.data_musicManagerSelectType="3";
+					$.hrefPage("bzy/musicManagerSelect.html",$(this).parentU("indexView"));
+				});
+				$.tap(".setMPAds",function(){
+					$.hrefPage("yeyinlin/menpaiad.html",$(this).parentU("indexView"));
+				});
+				
+				$.tap(".publicPlayUpMusic",function(){
+					var tr = $(this).parent().parent();
+					var prevTr=tr.prev();
+					if(prevTr.length>0){
+						var mId1=tr.children("td").first().html();
+						var mId2=prevTr.children("td").first().html();
+						sendUpdateMediaUserSet(mId1,mId2,function(json){
+							if(!!json&&json.code=="0"){
+								prevTr.before(tr);
+							}
+						});
+					}
+				});
+				$.tap(".publicPlayDownMusic",function(){
+					var tr = $(this).parent().parent();
+					var nextTr=tr.next();
+					if(nextTr.length>0){
+						var mId1=tr.children("td").first().html();
+						var mId2=nextTr.children("td").first().html();
+						sendUpdateMediaUserSet(mId1,mId2,function(json){
+							if(!!json&&json.code=="0"){
+								nextTr.after(tr);
+							}
+						});
+					}
+				});
+				$(".indexHead>h4").html("公播管理");
+				$.tap(".publicPlayMusicDelete",function(){
+					var tr = $(this).parent().parent();
+					$.createConfirmBox({"title":"系统提示","content":"是否确认移除该歌曲？","click":function(){
+						sendDeleteMediaUserSet(tr.children("td").first().html(),function(json){
+							if(!!json&&json.code=="0"){
+								tr.remove();
+								$.altAuto(json.msg);
+							}
+						});
+					}});
+				});
+				function loadDataMediaUserSet(){
+					sendSelectMediaUserSet(function(json){
+						if(!!json){
+							var data=json.data;
+							if(!!data&&!!data.matches&&data.matches.length>0){
+								if($("#customPublicPlayDataTemplate").length>0){
+									var html=$.fillData(document.getElementById("customPublicPlayDataTemplate").innerHTML,data.matches);
+									$(".customPublicPlay>.tableDiv>.table>tbody").html(html);
+								}
+							}else{
+								$.data_customPublicPlayMaxId=1;
+								$.data_customPublicPlayMaxShunXu=1;
+							}
+							$(".customPublicPlay").removeClass("div_load");
+						}
+					});
+				}
+				loadDataMediaUserSet();
+				$.data_PublicType={};
+				$.when(sendSelectPublicPlayType(),sendSelectConfigures55()).done(function(j1,j2){
+					var json1=j1[0];
+					var json2=j2[0];
+					if(!!json1&&json1.code=="0"&&!!json2&&json2.code=="0"){
+						if(json2.data==""||json2.data==null||json2.data==undefined){
+							$.data_PublicType.type=json1.result.type;
+						}else{
+							$.data_PublicType.type=json2.data;
+						}
+					}
+					if($.data_PublicType.type==1){
+						$(".AddMediaUserSet").hide();
+						$(".AddAdsUserSet").show();
+					}else if($.data_PublicType.type==6){
+						$(".AddMediaUserSet").show();
+						$(".AddAdsUserSet").hide();
+					}
+					$.tap(".setPublicType",function(){
+						_.popPanel("公播类型设置",document.getElementById("setPublicTypeHTML").innerHTML,"400px","255px");
+						$(".setPublicTypeHTMLSelect").val($.data_PublicType.type);
+						$(".setPublicTypeHTMLSubmitBtn").off("click").on("click",function(){
+							$.createConfirmBox({"title":"系统提示","content":"该操作将清空原有公播数据,是否继续？","click":function(){
+								var val=$(".setPublicTypeHTMLSelect").val();
+								if(val==1){
+									$(".AddMediaUserSet").hide();
+									$(".AddAdsUserSet").show();
+								}else if(val==6){
+									$(".AddMediaUserSet").show();
+									$(".AddAdsUserSet").hide();
+								}else{
+									$(".AddMediaUserSet").hide();
+									$(".AddAdsUserSet").hide();
+								}
+								$.data_PublicType.type=val;
+								sendSetConfigures55(val);
+								sendDeleteMediaUserSetAll();
+								if(val=="0") val=14;
+								if(val=="4") val=13;
+								$(".customPublicPlay>.tableDiv>.table>tbody").html("");
+								sendSetPublicPlayType(val,function(json){
+									if(json.code=="0"){
+										$.altAuto(json.msg);
+										_.popPanelClose();
+									}
+								});
+							}});
+						});
+					});
+				});
+				function sendSelectPublicPlayType(fn){
+					return $.ajax({
+						type:"get",
+						url:$.baseUrl+"/ktvsetting?from=1",
+						dataType:"json"
+					});
+				}
+				function sendSetPublicPlayType(type,fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/ktvsetting?from=0&type="+type,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendUpdateMediaUserSet(id1,id2,fn){
+					$.ajax({
+						type:"post",
+						url:$.baseUrl+"/loop/exchange?MediaId1="+id1+"&MediaId2="+id2,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendSelectMediaUserSet(fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/loop/list",
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendDeleteMediaUserSet(id,fn){
+					$.ajax({
+						type:"post",
+						url:$.baseUrl+"/loop/del?media_no="+id,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendSetConfigures55(type,fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/looptype/set?type="+type,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendSelectConfigures55(fn){
+					return $.ajax({
+						type:"get",
+						url:$.baseUrl+"/looptype/get",
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendDeleteMediaUserSetAll(fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/looptype/del",
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+			});
+		</script>
+	</body>
+</html>

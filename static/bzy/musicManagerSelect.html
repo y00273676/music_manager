@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<style>
+			.musicManagerSelect{
+				width: 100%;
+				height: 100%;
+			}
+			.musicManagerSelect>.tableDiv{
+				width: 100%;
+				height: calc( 100% - 100px);
+				overflow: auto;
+				position: relative;
+				box-shadow: 0px -3px 3px #E0E0E0;
+			}
+			.musicManagerSelect_musicForm{
+				width: 100%;
+				height: 50px;
+				padding: 5px 10px 5px 10px;
+				text-align: right;
+			}
+			.musicManagerSelect_musicForm>input{
+				width: calc( 100% - 300px);
+				height: 40px;
+			}
+			.musicManagerSelect_musicForm>button{
+				width: 100px;
+			    height: 40px;
+			    outline: none;
+			    margin-right: 10px;
+			}
+			.musicManagerSelect_addMusic{
+				font-size: 18px;
+			}
+			.musicManagerSelect>.tableDiv>.table>tbody>tr>td>button{
+				width: 26px;
+				height: 26px;
+				display: inline-block;
+			}
+			
+			.musicManagerSelect>.tableDiv>.table>tbody>tr>td>button>i.icon-edit{
+				position: relative;
+				left: -1px;
+			}
+			.musicManagerSelect>.tableDiv>.table>tbody>tr>td>button>i.icon-reorder{
+				position: relative;
+				left: -1px;
+			}
+			.musicManagerSelect_outA{
+				width: 45px;
+			    height: 35px;
+			    display: inline-block;
+			    font-size: 20px;
+			    line-height: 30px;
+			    text-align: center;
+			    padding: 0px;
+			    text-decoration: none;
+			    color: #FFFFFF;
+			    margin-right: 10px;
+			}
+			.musicManagerSelect>.tableDiv>.table>thead>tr>th>.switch{
+				top: 8px;
+    			margin-right: 50px;
+			}
+			.musicManagerSelect>.tableDiv>.table>tbody>tr>td>.switch{
+				top: 8px;
+    			margin-right: 50px;
+			}
+		</style>
+		<script id="musicManagerSelectDataTemplate" type="text/template">
+			<tr>
+				<td>{[Media_ID]}</td>
+				<td>{[Media_Name]}</td>
+				<td>{[Actor_Name1]}</td>
+				<td>{[MediaType_Name1]}</td>
+				<td>{[Language_Name]}</td>
+				<td>
+					<input type="checkbox" mediaId="{[Media_ID]}" class="switch musicManagerSelect_switch" />
+				</td>
+			</tr>
+		</script>
+		<div class="musicManagerSelect">
+			<div class="musicManagerSelect_musicForm">
+				<a class="musicManagerSelect_outA btn blue">
+					<i class="icon-arrow-left"></i>
+				</a>
+				<input class="inputBox musicManagerSelect_search" type="text" placeholder="检索请输入编号、名称、歌手、类型或语种" />
+				<button type="button" class="btn yellow musicManagerSelect_formSearch">
+					<i class="icon-search"></i>
+				</button>
+				<button type="button" class="btn sky musicManagerSelect_OK">
+					<i class="icon-ok"></i>
+				</button>
+			</div>
+			<div class="tableDiv div_load">
+				<table class="table scroll">
+					<thead>
+						<tr>
+							<th>编号</th>
+							<th>名称</th>
+							<th>歌手</th>
+							<th>类型</th>
+							<th>语种</th>
+							<th><input type="checkbox" class="switch musicManagerSelect_allChecked" /></th>
+						</tr>
+					</thead>
+					<tbody>
+
+					</tbody>
+				</table>
+			</div>
+			<footer class="listPageNum">
+			</footer>
+		</div>
+		<script>
+			$(function(){
+				sendSelectMusicMax(function(json){
+					if(!!json){
+						$.data_publicPlayManagerMaxShunXu=$.data_publicPlayManagerMaxId=parseInt(json.data)+1;
+					}
+					$.tap(".musicManagerSelect_OK",function(){
+						var _this=$(this);
+						var switchArr=[];
+						$(".musicManagerSelect_switch:checked").each(function(){
+							switchArr.push($(this).attr("mediaId"));
+						});
+						for(var i in switchArr){
+							if(switchArr.hasOwnProperty(i)){
+								var mediauserset={};
+								mediauserset.MediaUserSet_Id=parseInt($.data_publicPlayManagerMaxId)+parseInt(i);
+								mediauserset.MediaUserSet_MediaId=switchArr[i];
+								mediauserset.MediaUserSet_Shunxu=parseInt($.data_publicPlayManagerMaxShunXu)+parseInt(i);
+								var count=0;
+								sendAddMediaUserSet($.createObjDataOnlyKey(mediauserset),function(json){
+									if(!!json&&json.code=="0"){
+										count++;
+										if(count==switchArr.length){
+											$.toBack(_this.parentU("indexView"));
+										}
+									}else if(!!json&&json.code=="1"){
+									    alert(json.msg)
+									}
+								});
+							}
+						}
+					});
+				});
+				$(".musicManagerSelect_outA").one("click",function(e){
+					e.stopPropagation();
+					$.toBack($(this).parentU("indexView"));
+				});
+				$.tap(".musicManagerSelect>.tableDiv>.table>tbody>tr",function(e){
+					$(this).find(".musicManagerSelect_switch").click();
+				});
+				
+				$.tap(".musicManagerSelect_allChecked",function(){
+					var active=$(this).attr("mk");
+					if(active=="active"){
+						$(".musicManagerSelect_switch").each(function(){
+							$(this)[0].checked=false;
+						});
+						$(this).attr("mk","");
+					}else{
+						$(".musicManagerSelect_switch").each(function(){
+							$(this)[0].checked=true;
+						});
+						$(this).attr("mk","active");
+					}
+				});
+				var notDataAltText="暂无数据";
+				if($.data_musicManagerSelectType==1){
+					$(".indexHead>h4").html("自定义公播");
+				}else if($.data_musicManagerSelectType==3){
+					$(".indexHead>h4").html("公播广告");
+					notDataAltText="请先添加广告,视频管理-上传视频-编辑该广告视频修改类别为广告";
+				}
+				$.tap(".musicManagerSelect_switch",function(e){
+					e.stopPropagation();
+				});
+				$.tap(".musicManagerSelect_addMusic",function(){
+					$.hrefPage("addMusic.html",$(this).parentU("indexView"));
+				});
+				$(".musicManagerSelect_search").off('keyup').on('keyup', function(event) {
+					if (event.keyCode == "13") {
+						searchData();
+					}
+				});
+				$.tap(".musicManagerSelect_formSearch",function(){
+					searchData();
+				});
+				function searchData(){
+					$.musicManagerSelect_pageNum=1;
+					loadData();
+					sendSelectMusicCount($(".musicManagerSelect_search").val(),function(json){
+						$(".listPageNum").paging(json.data.total,$.musicManagerSelect_pageNum,$.musicManagerSelect_pageSize,function(num){
+							$.musicManagerSelect_pageNum=num;
+							loadData();
+						});
+					});
+				}
+				if(!$.musicManagerSelect_pageNum)
+					$.musicManagerSelect_pageNum=1;
+				if(!$.musicManagerSelect_pageSize)
+					$.musicManagerSelect_pageSize=10;
+				loadData();
+				function loadData(){
+					$(".tableDiv").addClass("div_load");
+					sendSelectMusic($.musicManagerSelect_pageNum,$.musicManagerSelect_pageSize,$(".musicManagerSelect_search").val(),function(json){
+						if(!json||!json.data||!json.data.matches){
+							$(".musicManagerSelect>.tableDiv>.table>tbody").html("");
+							$.altAuto(notDataAltText);
+							$(".tableDiv").removeClass("div_load");
+							return;
+						}
+						var html=$.fillData(document.getElementById("musicManagerSelectDataTemplate").innerHTML,json.data.matches);
+						$(".musicManagerSelect>.tableDiv>.table>tbody").html(html);
+						$(".tableDiv").removeClass("div_load");
+					});
+				}
+				sendSelectMusicCount($(".musicManagerSelect_search").val(),function(json){
+					$(".listPageNum").paging(json.data.total,$.musicManagerSelect_pageNum,$.musicManagerSelect_pageSize,function(num){
+						$.musicManagerSelect_pageNum=num;
+						loadData();
+					});
+				});
+				function sendSelectMusicMax(fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/mediauserset/max",
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendSelectMusic(page,pSize,text,fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/loop/list?page="+page+"&psize="+pSize+"&text="+text+"&type="+$.data_musicManagerSelectType,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendSelectMusicCount(text,fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/loop/count?text="+text+"&type="+$.data_musicManagerSelectType,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendAddMediaUserSet(data,fn){
+					$.ajax({
+						type:"post",
+						url:$.baseUrl+"/loop/add",
+						data:data,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+			});
+		</script>
+	</body>
+</html>

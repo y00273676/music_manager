@@ -1,0 +1,104 @@
+#!/bin/sh
+# searchd - this script starts and stops the searchd-server daemon
+#
+# chkconfig:   2345 90 10 
+# description:  Redis is a persistent key-value database
+# processname: searchd-server
+
+
+OPTS=$1
+Port=$2
+WorkDir="/usr/local/coreseek"
+cd $WorkDir
+
+# Source function library.
+#. /etc/init.d/functions
+. /lib/lsb/init-functions
+
+# Check that networking is up.
+[ "$NETWORKING" = "no" ] && exit 0
+
+searchd=$WorkDir"/bin/searchd"
+PROG=$(basename $searchd)
+lockfile=/var/lock/searchd_"$Port"
+
+DAEMON_USER="root"
+PID_FILE=$WorkDir"/var/log/searchd_${Port}.pid"
+CONF_FILE="searchd_${Port}.conf"
+SEARCHD_CONF=$WorkDir"/etc/"$CONF_FILE
+
+
+do_start() {
+    [ -x $searchd ] || exit 5
+    [ -f $SEARCHD_CONF ] || exit 6
+    echo -n $"Starting $PROG: "
+#    daemon --user=$DAEMON_USER $searchd -c $SEARCHD_CONF --logdebug --iostats --cpustats
+    su $DAEMON_USER -c "$searchd -c $SEARCHD_CONF"
+    retval=$?
+    echo
+    [ $retval -eq 0 ] && touch $lockfile
+    return $retval
+}
+
+do_stop() {
+    echo -n $"Stopping $PROG: "
+    if [ -f "$PID_FILE" ]; then
+        killproc -p $PID_FILE $PROG 
+    else
+        MyPid=$(ps axu|grep -v grep|grep $PROG|grep $CONF_FILE|awk '{print $2}')
+        MyPid=$((MyPid+0)) > /dev/null 2>&1
+        [ $MyPid -ge 1 ] && kill -TERM $MyPid 
+        RC=$?
+        [ "$RC" -eq 0 ] && success $"$PROG stop success" || failure $"$PROG stop failure"
+    fi
+    retval=$?
+    echo
+    [ $retval -eq 0 ] && rm -f $lockfile
+    return $retval
+}
+
+do_restart() {
+    do_stop
+    do_start
+}
+
+rh_status() {
+    #[ -f "$PID_FILE" ] && status -p $PID_FILE $PROG
+    if start-stop-daemon --stop --quiet --signal 0 --name searchd --pidfile $PID_FILE
+    then 
+        echo 'searchd is running'
+        echo 'searchd pid is '`cat $PID_FILE`
+        return 0
+    else
+        echo 'searchd is not runnint'
+        return 1
+    fi
+}
+
+rh_status_q() {
+    rh_status >/dev/null 2>&1
+}
+
+if [ $# -ne 2 ]; then
+        echo $"Usage: $0 {start|stop|status|restart} port"
+        exit 0 
+fi
+case "$OPTS" in
+    start)
+        rh_status_q && exit 0
+        do_start
+        ;;
+    stop)
+        rh_status_q || exit 0
+        do_stop
+        ;;
+    restart)
+        do_restart
+        ;;
+    status)
+        rh_status
+        ;;
+    *)
+        echo $"Usage: $0 {start|stop|status|restart|auto} port"
+        exit 2
+esac

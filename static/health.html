@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<style>
+			.healthychecking{
+				width: 100%;
+				height: 100%;
+			}
+			.healthychecking>.tableDiv{
+				width: 100%;
+				height: calc(100% - 100px);
+				overflow: auto;
+				position: relative;
+				box-shadow: 0px -3px 3px #E0E0E0;
+			}
+			.healthychecking>.tableDiv>.table>tbody>tr>td>button{
+				width: 26px;
+				height: 26px;
+				display: inline-block;
+			}
+			
+			.healthychecking>.tableDiv>.table>tbody>tr>td>button>i.icon-arrow-up{
+				position: relative;
+				left: -1px;
+			}
+			.healthychecking>.tableDiv>.table>tbody>tr>td>button>i.icon-arrow-down{
+				position: relative;
+				left: -1px;
+			}
+			.healthychecking>.listButton>li.active{
+				color: #FFFFFF;
+				background-color: #337AB7;
+			}
+			.languageManagerHTMLDiv{
+				width: 100%;
+				height: 100%;
+			}
+			
+			.languageManagerHTMLDiv>ul{
+				width: calc( 100% - 4px );
+				height: 100%;
+				overflow-y: auto;
+				margin: 0 auto;
+			}
+			.languageManagerHTMLDiv>ul>li{
+				width: 100%;
+			}
+			.languageManagerHTMLDiv>ul>li>i{
+				position: absolute;
+				right: 15px;
+				font-size: 24px;
+				color: #999999;
+				line-height: 42px;
+			}
+			.languageManagerHTMLDiv>ul>li>i:hover{
+				color: #333333;
+			}
+			
+		</style>
+		<script id="healthDataTemplate" type="text/template">
+			<tr>
+				<td>{[name]}</td>
+				<td>{[op]}</td>
+				<td>{[msgtype]}</td>
+				<td>{[msg]}</td>
+				<td>
+					<button class="btn green tryrepair" title="偿试修复问题" fixname="{[name]}">
+						<i class="icon-medkit"></i>
+					</button>
+				</td>
+			</tr>
+		</script>
+		<script id="languageManagerHTML" type="text/template">
+			<div class="languageManagerHTMLDiv">
+				<ul class="list">
+					<li></li>
+				</ul>
+			</div>
+		</script>
+		<div class="healthychecking">
+			<ul class="listButton">
+                <li checktype='dbchk'>数据库</li>
+			</ul>
+			<div class="tableDiv">
+				<table class="table scroll">
+					<thead>
+						<tr>
+							<th>名称</th>
+							<th>操作</th>
+							<th>消息类型</th>
+							<th>状态（消息）</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						
+					</tbody>
+				</table>
+			</div>
+			<footer class="listPageNum">
+			</footer>
+		</div>
+		<script>
+			$(function(){
+				function fillData(dataTemplate,arrList,filterFn){
+					var html="";
+					var arr = [].concat(arrList);
+					for(var i in arr){
+						if(arr.hasOwnProperty(i)){
+							var obj=arr[i];
+							var tp=dataTemplate;
+							for(var key in obj){
+								if(obj.hasOwnProperty(key)){
+									if(!!filterFn)
+										obj[key]=filterFn(key,obj[key])||obj[key];
+                                    if (key=='msg' && obj[key]!='好的'){
+									    tp = tp.replace(" green ", " red ");
+                                    }
+                                    else{
+									    tp = tp.replace(" green ", " grey ");
+                                    }
+									tp = tp.replace(new RegExp("\\{\\["+key+"\\]\\}","ig"),obj[key]);
+								}
+							}
+							html+=tp;
+						}
+					}
+					html=html.replace(new RegExp("\\{\\[.*\\]\\}","ig"),"");
+					return html;
+				};
+
+				$.tap(".healthychecking>.listButton>li:not(.languageManager,.addLanguage)",function(){
+                    $(".tableDiv").addClass("div_load");
+					$(".healthychecking>.listButton>li.active").removeClass("active");
+					$(this).addClass("active");
+					$.checktype = $(this).attr("checktype");
+					loadDataCreatePaging($.checktype);
+				});
+                $(".healthychecking>.listButton>li:first").click();
+				$.tap(".tryrepair",function(e){
+					e.stopPropagation();
+					var _this = $(this);
+                    var chktype = $.checktype
+					var num = _this.parent().prev().html();
+					var fixname = _this.attr("fixname");
+                    send_try_fix(chktype, fixname, function(json){
+						if(!!json&&!!json.msg){
+                            if (json.code != 1){
+							    $.altAuto(json.msg+",暂时无法显示该页数据");
+                            }
+                            else{
+							    $.altAuto(json.msg);
+                            }
+							return;
+						}
+                        /*
+						$(".listPageNum").paging(json.data,$.pageNum,$.pageSize,function(num){
+							$.pageNum=num;
+							initLoadSequence(chktype);
+						});
+                        */
+					});
+                    /*
+					$.createConfirmBoxInput({"title":"点播编辑","content":"请输入要修改的点播量","inputVal":num,"placeholder":"点播量","click":function(){
+						var val=$(".confirmBoxInput>div>input").val();
+						if(!$.regTestNumber(val)){
+							$(".confirmBoxInput>div>input").val("");
+							$.altAuto("点播量只能为数字");
+							$(".confirmBoxInput").addClass("show");
+							return;
+						}
+						if((val+"").length>8){
+							$(".confirmBoxInput>div>input").val("");
+							$.altAuto("点播量最大为8位数字");
+							$(".confirmBoxInput").addClass("show");
+							return;
+						}
+						var obj={};
+						obj.Language_ID=$(".healthychecking>.listButton>li.active").attr("languageId");
+						obj.Media_ID=id;
+						obj.MediaManage_OrderCount=val;
+						sendUpdateOrderCount(JSON.stringify(obj),function(json){
+							if(!!json&&json.code=="0"){
+								$.altAuto("修改成功!");
+								loadDataCreatePaging(obj.Language_ID);
+							}
+						});
+					}});
+                    */
+				});
+				function loadDataCreatePaging(type){
+					$.pageNum=1;
+					$.pageSize=10;
+					initLoadSequence(type);
+				}
+				function status_filter(key, valu){
+                    if (key == 'msg'){
+                        if (valu == 'OK'){
+                            return '好的';
+                        }
+                    }
+                }
+				function initLoadSequence(type){
+					sendHealthyCheck(type, $.pageNum, $.pageSize, function(json){
+						if(!!json && !!json.msg){
+							$.altAuto(json.msg+",暂时无法显示该页数据");
+							return;
+						}
+						if(!json||!json.data){
+							$(".healthychecking>.tableDiv>.table>tbody").html("");
+							$.altAuto("暂无数据");
+							$(".tableDiv").removeClass("div_load");
+							return;
+						}
+						if($("#healthDataTemplate").length>0){
+                            var html = fillData(document.getElementById("healthDataTemplate").innerHTML, json.data, function status_filter(key, valu){
+                                if (key == 'msg'){
+                                    if (valu == 'OK'){
+                                        return '好的';
+                                    }
+                                    else{
+                                        return valu;
+                                    }
+                                }
+                                if (key == 'op'){
+                                    if (valu == 'check'){
+                                        return '检测';
+                                    }
+                                    else{
+                                        return valu;
+                                    }
+                                }
+                                if (key == 'msgtype'){
+                                    if (valu == 'status'){
+                                        return '状态';
+                                    }
+                                    else{
+                                        return valu;
+                                    }
+                                }
+
+                            });
+							$(".healthychecking>.tableDiv>.table>tbody").html(html);
+							$(".tableDiv").removeClass("div_load");
+						}
+					});
+				}
+				function sendHealthyCheck(type, page, psize, fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/" + type + "/check?page="+page+"&psize="+psize,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+							$(".tableDiv").removeClass("div_load");
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function send_try_fix(type, name, fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/" + type + "/repair?name=" + name,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+			});
+		</script>
+	</body>
+</html>

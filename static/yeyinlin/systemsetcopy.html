@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body style="background:#efefef;">
+		<style>
+			.addActor_outA {
+				width: 45px;
+				height: 35px;
+				display: inline-block;
+				font-size: 20px;
+				line-height: 30px;
+				text-align: center;
+				padding: 0px;
+				text-decoration: none;
+				color: #FFFFFF;
+				position: absolute;
+				top: 20px;
+				left: 20px;
+			}
+			
+			.addActor_pageTitle {
+				width: 100%;
+				position: absolute;
+				top: 16px;
+				font-size: 25px;
+				margin: 0;
+				padding: 0;
+				text-align: center;
+				pointer-events: none;
+			}
+			
+			.addActor_form {
+				width: 370px;
+				height: auto;
+				position: absolute;
+				top: 60px;
+				left: 0px;
+				right: 0px;
+				margin: 0 auto;
+			}
+			
+			.addActor_form_one {
+				width: 370px;
+				height: auto;
+				
+				top: 60px;
+				left: 0px;
+				right: 0px;
+				margin: 0 auto;
+				background: #FFFFFF;
+			}
+			
+			.addActor_form>div {
+				width: 100%;
+				height: 40px;
+				position: relative;
+				margin-top: 10px;
+			}
+			
+			.addActor_form>div>label {
+				position: absolute;
+				width: 30%;
+				height: 100%;
+				left: 0px;
+				font-size: 16px;
+				text-align: right;
+				padding-right: 20px;
+				line-height: 40px;
+			}
+			
+			.addActor_form>div>input,
+			.addActor_form>div>select,
+			.addActor_form>div>button {
+				position: absolute;
+				width: 70%;
+				height: 100%;
+				right: 0px;
+			}
+			
+			
+			
+			.addActor_form>div>input[type='file'],
+			.addActor_form>div>select {
+				cursor: pointer;
+			}
+			
+			.addActor_form>div>input[type='file']:active+button.selectBox {
+				background: -webkit-linear-gradient(top, #D0D0D0, #DCDCDC);
+			}
+			
+			.addActor_form>center {
+				margin-top: 20px;
+			}
+			
+			.addActor_form>center>button {
+				font-size: 20px;
+				padding: 6px 30px 8px 30px;
+			}
+			
+			.actorImgUpload {
+				opacity: 0;
+				z-index: 9;
+			}
+			
+			.thumbnailImg {
+				width: 100px;
+				height: 100px;
+				display: block;
+				margin: 0 auto;
+				position: absolute;
+				top: -60px;
+				right: -100px;
+			}
+			
+			.thumbnailImg.hide {
+				display: none;
+			}
+			
+			.font-sizee- {
+				font-size: 12px;
+			}
+			
+			.my_dial {
+				width: 46%;
+				border: 1px solid #CDCDCD;
+				margin: 10px;
+				display: inline-block;
+				background: #FFFFFF;
+			}
+			
+			.my_dial_right {
+				float: right;
+			}
+			
+			.my_info_css {
+				padding: 2px 0;
+				/*height: 40px;*/
+				line-height: 40px;
+				background: #fff;
+			}
+			
+			.my_label_one{
+				
+				width: 30%;
+				height: 100%;
+				font-size: 16px;				
+				line-height: 40px;
+				
+			}
+			.my_label_one span{
+				display: inline-block;
+				width:44%;
+				text-align:right;
+			}
+			.my_input_one{
+				
+			}
+			
+			.button_style{
+				width: 10%;
+				background: #009688;
+				font-size: 18px;
+				color: #ffffff;
+			}
+			
+			/*.my_file {
+				height: 24px;
+				background: transparent;
+				position: absolute;
+				right: 0;
+				bottom: 13px;
+				width: 138px;
+			}*/
+			.text_css{
+				height: 35px; border: 1px solid #CCCCCC; width: 50%;
+			}
+		</style>
+		<div class="starManagerList_actorsForm">
+
+			<button type="button" class=" sky button_style" onclick="checkThunder()">thunder检查</button>
+			<!--<button type="button" class=" sky  addtheme button_style" style="visibility: hidden;">主题设置</button>-->
+			<!--<button type="button" class=" sky video_path button_style" style="visibility:hidden;">视频服务设置</button>-->
+			<button type="button" class=" sky system_video button_style">视频服务器组</button>
+			
+		</div>
+		
+		<div class="font-sizee- my_dial">
+			<div style="    font-size: 16px;
+    font-weight: bold; width:100%;border-bottom: 1px solid #CDCDCD; padding: 7px 35px ;   background: #efefef;">基本信息配置</div>
+			<form class="addActor_form_one">
+			<div class="my_info_css">
+				
+				<label style="" class="my_label_one">
+					<span>分屏版开台滚动字幕：</span>
+                
+                <input id="rocktext" type="text"  class="text_css inputBox" name="textuinput"></label>
+			</div>
+			<div class="my_info_css" >
+				<label style="" class="my_label_one">
+                <span>分屏版字幕停留时间：</span>
+                <input id="rocktexttime" type="text" class="text_css inputBox" name="textuinput"></label>
+			</div>
+			<div class="my_info_css" style="position: relative;">
+				<label style="" class="my_label_one">
+               		<span> 分屏版开机图片设置：</span>
+                <input id="rockpic" type="text" class="text_css inputBox" name="textuinput">
+                <input id="selectpic" type="file" class="my_file" style="background:rgba(0, 0, 0, 0);">
+                </label>
+			</div>
+			</form>
+		</div>
+		
+
+		<div class="font-sizee- my_dial my_dial_right">
+			<div style="    font-size: 16px;
+    font-weight: bold; width:100%;border-bottom: 1px solid #CDCDCD; padding: 7px 35px;background: #efefef;">主服务器信息配置</div>
+			<form class="addActor_form_one">
+			<div class="my_info_css">
+				<label style="" class="my_label_one">
+                <span>主服务器名称：</span>
+                <input id="servername" type="text"  class="text_css inputBox" name="textuinput"></label>
+			</div>
+			<div class="my_info_css">
+				<label style="" class="my_label_one">
+                <span>主服务器ip：</span>
+                <input id="serviceip" type="text"  class="text_css inputBox" name="textuinput" disabled="true"></label>
+			</div>
+			<div class="my_info_css">
+				<label style="" class="my_label_one">
+               <span>用户名：</span>
+                <input id="dataname" type="text"  class="text_css inputBox" name="textuinput" disabled="true"></label>
+			</div>
+			<div class="my_info_css">
+				<label style="" class="my_label_one">
+               <span> 数据库密码：</span>
+                <input  id="datapawa" type="text"  class="text_css inputBox" name="textuinput" disabled="true"></label>
+			</div>
+			</form>
+		</div>
+
+		<div class="font-sizee- my_dial" style=" float: left;">
+			<div style="       font-size: 16px;
+    font-weight: bold; width:100%;border-bottom: 1px solid #CDCDCD; padding: 7px 35px ;   background: #efefef;">ERP服务器信息配置</div>
+			<form class="addActor_form_one">
+			<div class="my_info_css">
+				<label style="" class="my_label_one">
+                <span>ERP服务器名称：</span>
+                <input id="erpname" type="text"  class="text_css inputBox" name="textuinput"></label>
+			</div>
+			<div class="my_info_css">
+				<label style="" class="my_label_one">
+                <span> ERP服务器ip：</span>
+                <input id="erpip" type="text" class="text_css inputBox" name="textuinput"></label>
+			</div>
+			<div class="my_info_css" >
+				<label style="" class="my_label_one">
+               <span> ERP数据库用户名：</span>
+                <input id="erpdataname" type="text" class="text_css inputBox" name="textuinput"></label>
+			</div>
+			<div class="my_info_css" >
+				<label style="" class="my_label_one">
+               <span> ERP数据库密码：</span>
+                <input id="erpdatapawa" type="text" class="text_css inputBox" name="textuinput"></label>
+			</div>
+			</form>
+		</div>
+
+		<div class="font-sizee- my_dial" style="float: right;">
+			<div style="    font-size: 16px;
+    font-weight: bold; width:100%;border-bottom: 1px solid #CDCDCD; padding: 7px 35px;background: #efefef;">数据库信息</div>
+			<form class="addActor_form_one">
+			<div class="my_info_css">
+				<label style="" class="my_label_one">
+                <span>软件版本号：</span>
+                <input id="softversion" type="text"  class="text_css inputBox" name="textuinput"></label>
+			</div>
+			<div class="my_info_css">
+				<label  class="my_label_one">
+                <span>数据库名称：</span>
+                <input id="basedb" type="text"  class="text_css inputBox" name="textuinput" disabled="true"></label>
+			</div>
+			<div class="my_info_css">
+				<label style="" class="my_label_one">
+                <span>ERP数据库名称：</span>
+                <input id="merpname" type="text"  class="text_css inputBox" name="textuinput" disabled="true"></label>
+			</div>
+			</form>
+
+		</div>
+
+		<div class="clear" style="clear: all;"></div>
+		<div class="font-sizee- my_dial" style="width: 98%;">
+			<div style="    font-size: 16px;
+    font-weight: bold; width:100%;border-bottom: 1px solid #CDCDCD; padding: 7px 35px ;   background: #efefef;">云服务配置</div>
+			<form class="addActor_form_one">
+			<div class="my_info_css">
+				<label style="" class="my_label_one">
+                <span>中转服务器内网ip：</span>
+                <input id="centerinip" type="text"  class="text_css inputBox" name="textuinput"></label>
+			</div>
+			<div class="my_info_css" >
+				<label style="" class="my_label_one">
+                <span>中转服务器外网ip：</span>
+                <input id="centeroutip" type="text"  class="text_css inputBox" name="textuinput"></label>
+			</div>
+			<div class="my_info_css">
+				<label style="" class="my_label_one">
+                <span>本地域名：</span>
+                <input id="localname" type="text"  class="text_css inputBox" name="textuinput"></label>
+			</div>
+			<div class="my_info_css">
+				<label style="" class="my_label_one">
+                <span>本地SSID：</span>
+                <input id="ssid" type="text"  class="text_css inputBox" name="textuinput"></label>
+			</div>
+
+			<div class="my_info_css">
+				<label style="" class="my_label_one">
+                <span>密码：</span>
+                <input id="ssidpw" type="text"  class="text_css inputBox" name="textuinput"></label>
+			</div>
+			</form>
+		</div>
+
+		<div class="font-sizee-" style="text-align: center;">
+			<div class="my_info_css">
+				<label style="margin-right: 45px;">
+                <button  id="btsure"   style="width:200px;" class="btn green" onclick="submitdata('sure')">确定</button>
+            </label>
+				<label style="margin-right: 45px;">
+                <button  id="btcancel"   class="btn green" style="width:200px;">取消</button>
+            </label>
+
+			</div>
+		</div>
+
+		<script>
+			$(document).ready(function(e) {
+				$("#selectpic").change(function(e) {
+					// alert("change事件触发");
+					$("#rockpic").val($("#selectpic").val());
+				});
+			});
+
+			$.tap(".system_video", function() {
+				$.hrefPage("yeyinlin/videogroups.html", $(this).parentU("indexView"));
+			});
+
+			$.tap(".video_path", function() {
+				$.hrefPage("yeyinlin/videopath.html", $(this).parentU("indexView"));
+			});
+
+			$.tap(".addtheme", function() {
+				$.hrefPage("yeyinlin/theme.html", $(this).parentU("indexView"));
+			});
+			findinitdata();
+
+			function findinitdata() {
+				var url = $.baseUrl + "/systemset";
+				var strjson = {}
+
+				$.ajax({
+					type: 'post',
+					url: url,
+					dataType: 'json',
+					data: 'mdata=' + JSON.stringify(strjson) + '&type=2',
+					success: function(str) {
+//						alert(JSON.stringify(str));
+						$.mjsondata = str;
+						addalldata(str);
+						// addnewview(str);
+					},
+					error: function(msg) {}
+				});
+			}
+
+			function submitdata(argument) {
+				$.createConfirmBox({
+					"title": "系统提示",
+					"content": "确认是否提交修改?",
+					"click": function() {
+						disp_alert(argument);
+					}
+				});
+			}
+			
+			function checkThunder(){
+				//检查是否是最新
+				var url = $.baseUrl + "/systemset";
+				var strjson = {}
+
+				$.ajax({
+					type: 'post',
+					url: url,
+					dataType: 'json',
+					data: 'mdata=' + JSON.stringify(strjson) + '&type=6',
+					success: function(str) {
+//						alert(JSON.stringify(str));
+						
+						
+						if(str.code==3){
+							mtoast("本机就是主服务器");
+						}else if(str.code==2){
+							mtoast("还没有设置主服务器");
+						}else if(str.code==1){
+							mtoast("当前配置文件是最新");
+						}else{
+							mtoast("同步成功");
+						}
+						// addnewview(str);
+					},
+					error: function(msg) {}
+				});
+				
+			}
+			
+			function isIP2(ip) {
+				var re = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+				return re.test(ip);
+			}
+
+			function disp_alert(changetype) {
+				var url = $.baseUrl + "/systemset";
+
+				var strjson = getalldata();
+//				 alert(JSON.stringify(strjson));
+
+				var user = {
+					imgurl: strjson,
+				};
+
+				$.ajax({
+
+					type: 'post',
+					url: url,
+					dataType: 'json',
+					data: 'mdata=' + JSON.stringify(strjson) + '&type=1' + '&changetype=' + changetype,
+					// data:'imgurl='+strjson+'&type=1',
+					success: function(str) {
+
+						if (str['code'] == "0") {
+							$.createConfirmBoxOK({
+								"title": "系统提示",
+								"content": " 修改成功！",
+								"click": function() {}
+							});
+						} else {
+							$.createConfirmBoxOK({
+								"title": "系统提示",
+								"content": " 修改失败！",
+								"click": function() {}
+							});
+						}
+					},
+					error: function(msg) {}
+				});
+
+			}
+
+			function getalldata() {
+				var jsondata = {};
+				var misc = {};
+				misc.Salutatory = $("#rocktext").val();
+				misc.StayTime = $("#rocktexttime").val();
+				misc.LoginPhoto = $("#rockpic").val();
+				
+
+				var mainserver = {};
+				mainserver.UserName = $("#dataname").val();
+				mainserver.DataBaseServerIp = $("#serviceip").val();
+				mainserver.DataBaseServerName = $("#servername").val();
+				mainserver.Password = $("#datapawa").val();
+				
+				var erpserver = {};
+				erpserver.DataBaseServerIp = $("#erpip").val();
+				var tmpip=$("#erpip").val();
+				
+				
+				if(!isIP2(tmpip)){
+					mtoast("ERP的ip地址格式不正确");
+					return;
+				}
+				
+				
+				erpserver.UserName = $("#erpdataname").val();
+				erpserver.DataBaseServerName = $("#erpname").val();
+				erpserver.Password = $("#erpdatapawa").val();
+
+				var ktv = {};
+				ktv.Version = $("#softversion").val();
+				ktv.DataBaseName = $("#basedb").val();
+
+				var erp = {};
+				erp.DataBaseName = $("#merpname").val();
+				
+				var cloudset = {};
+				cloudset.centerinip = $("#centerinip").val();
+				cloudset.centeroutip = $("#centeroutip").val();
+				
+				
+				
+				cloudset.localname = $("#localname").val();
+				cloudset.ssid = $("#ssid").val();
+				cloudset.ssidpw = $("#ssidpw").val();
+
+				jsondata.misc = misc;
+				jsondata.mainserver = mainserver;
+				jsondata.erpserver = erpserver;
+				jsondata.ktv = ktv;
+				jsondata.erp = erp;
+				jsondata.cloudset = cloudset;
+
+				return jsondata;
+
+			}
+
+			function addalldata(jsondata) {
+
+				var misc = jsondata.systemsetting.misc;
+
+				$("#rocktext").val(misc.Salutatory);
+				$("#rocktexttime").val(misc.StayTime);
+				$("#rockpic").val(misc.LoginPhoto);
+
+				var service = jsondata.systemsetting.mainserver;
+				$("#servername").val(service.DataBaseServerName);
+				$("#serviceip").val(service.DataBaseServerIp);
+				$("#dataname").val(service.UserName);
+				$("#datapawa").val(service.Password);
+
+				var erp = jsondata.systemsetting.erpserver;
+				$("#erpip").val(erp.DataBaseServerIp);
+				$("#erpname").val(erp.DataBaseServerName);
+				$("#erpdataname").val(erp.UserName);
+				$("#erpdatapawa").val(erp.Password);
+
+				var ktv = jsondata.systemsetting.ktv;
+				$("#softversion").val(ktv.Version);
+				$("#basedb").val(ktv.DataBaseName);
+
+				var merp = jsondata.systemsetting.erp;
+				$("#merpname").val(merp.DataBaseName);
+
+				// alert(JSON.stringify(cloud));
+				var cloud = jsondata.cloudset;
+
+				$("#centerinip").val(cloud.centerinip);
+				$("#centeroutip").val(cloud.centeroutip);
+				$("#localname").val(cloud.localname);
+				$("#ssid").val(cloud.ssid);
+				$("#ssidpw").val(cloud.ssidpw);
+				//  // body...
+				// settreeLevel(jsondata);
+			}
+			
+				function mtoast(text) {
+				$.createConfirmBoxOK({
+					"title": "系统提示",
+					"content": text,
+					"click": function() {}
+				});
+			}
+		</script>
+	</body>
+
+</html>

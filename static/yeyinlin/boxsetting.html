@@ -1,0 +1,537 @@
+<body>
+
+	<style type="text/css">
+		.Boxsetone_form {
+			width: 50%;
+			height: 250px;
+			position: absolute;
+			top: 60px;
+			margin: 0 auto;
+		}
+		
+		.Boxsetone_form>div {
+			width: 508px;
+			height: 40px;
+			position: relative;
+			margin-top: 10px;
+			/* margin-left: 50px; */
+			display: block;
+			left: 93px;
+		}
+		
+		.Boxsetone_form>div>label {
+			width: 150px;
+			height: 100%;
+			font-size: 16px;
+			text-align: left;
+			padding-right: 20px;
+			line-height: 40px;
+			display: inline-block;
+		}
+		
+		.Boxsetone_form>div>input[type='text'],
+		.Boxsetone_form>div>input[type='number'],
+		.Boxsetone_form>div>select {
+			width: 70%;
+			height: 100%;
+		}
+		
+		.Boxsetone_form>div>input.inputBox {
+			width: 240px;
+		}
+		
+		.Boxsetone_form>div>select.selectBox {
+			width: 240px;
+		}
+		
+		.addActor_outA_bs {
+			width: 45px;
+			height: 35px;
+			display: inline-block;
+			font-size: 20px;
+			line-height: 30px;
+			text-align: center;
+			padding: 0px;
+			text-decoration: none;
+			color: #FFFFFF;
+			position: absolute;
+			top: 20px;
+			left: 20px;
+		}
+		
+		.Boxsettwo_form {
+			width: 500px;
+			height: 90%;
+			position: absolute;
+			top: 50px;
+			margin: 0 auto;
+			overflow: auto;
+			border: 1px #333333 solid;
+			right: 112px;
+		}
+		
+		.Boxsetthree_form {
+			width: 50%;
+			height: auto;
+			position: absolute;
+			top: 250px;
+			/*left: 0px;
+				right: 0px;*/
+			margin: 0 auto;
+			float: right;
+		}
+		
+		.Boxsettwo_form>div {
+			width: 80%;
+			height: 40px;
+			position: relative;
+			margin-top: 10px;
+			margin-left: 50px;
+			display: inline-block;
+		}
+		
+		.Boxsettwo_form>div>label {
+			width: 220px;
+			height: 100%;
+			font-size: 16px;
+			text-align: right;
+			padding-right: 20px;
+			line-height: 40px;
+			display: inline-block;
+		}
+		
+		.Boxsettwo_form>div>input[type='text'],
+		.Boxsettwo_form>div>select {
+			height: 100%;
+		}
+		
+		.Boxsettwo_form>div>input.inputBox {
+			width: 150px;
+		}
+		
+		.Boxsettwo_form>div>select.selectBox {
+			width: 150px;
+		}
+		
+		.check_my {
+			position: absolute;
+			margin-top: 15px;
+		}
+		
+		.btn_bs {
+			margin-top: 50px;
+			width: 100px;
+			height: 40px;
+		}
+		
+		.requiredMark::after {
+			right: 95px;
+		}
+	</style>
+
+	<a class="addActor_outA_bs btn blue"> <i class="icon-arrow-left"></i>
+	</a>
+
+	<form class="Boxsetone_form">
+
+		<div>
+			<label>mac地址：</label>
+			<input id="stbmac" disabled="true" name="iname" class="inputBox" type="text" placeholder="" />
+		</div>
+
+		<div class="requiredMark">
+			<label>房间号：</label>
+			<input id="stbno" name="iname" class="inputBox" type="text" placeholder="请填写机顶盒名称" />
+		</div>
+
+		<div class="requiredMark">
+			<label>房间名称：</label>
+			<input id="stbname" name="iname" class="inputBox" type="text" placeholder="请填写机顶盒名称" />
+		</div>
+
+		<div class="requiredMark">
+			<label>机顶盒ip地址：</label>
+			<!--<input id="ipaddress" name="iname" class="inputBox" type="text" placeholder="请填写机顶盒ip地址" />-->
+			<input class="inputBox" id="ipaddress" type="text"></select>
+		</div>
+
+		<div class="requiredMark">
+			<label>子网掩码：</label>
+			<!--<input id="subnetmask" name="iname" class="inputBox" type="text" placeholder="" />-->
+			
+			<select class=" selectBox" id="subnetmask">
+				<option value="255.255.255.0">255.255.255.0</option>
+				<option value="255.255.0.0">255.255.0.0</option>
+			</select>
+		</div>
+
+		<div class="requiredMark">
+			<label>服务器ip地址：</label>
+			<select class="selectBox" id="serviceip"></select>
+		</div>
+
+		<!--div>
+			<label>机顶盒类型：</label>
+			<input id="devicetpone" name="selectRedio"  value="0" checked="true" type="radio"  class="radio" style="position: relative;top: 5px;left: -4px;"/>
+			<label style="    position: relative;left: 26px;">包机房机顶盒</label>
+			<input id="devicetptwo" name="selectRedio"  value="1" type="radio"  class="radio" style="position: relative;top: 5px;left: 2px;"/>
+			<label style="position: relative; left: 30px;">门牌机</label>
+		</div-->
+		<div class="">
+			<label>录音服务器：</label>
+			<select class="selectBox" id="iprecond"></select>
+			<!--input id="iprecond"  name="iname" class="inputBox" type="text" placeholder="请填写录音服务器" /-->
+		</div>
+
+		<!--div>
+			<label>点歌方式</label>
+			<select class=" selectBox" id="fangtait_order_type" >
+				<option value="鼠标">鼠标</option>
+				<option value="键盘">键盘</option>
+
+			</select>
+		</div-->
+		<div class="requiredMark">
+			<label>主题皮肤</label>
+			<select class="selectThemeBox selectBox " id="fangtait_theme"></select>
+		</div>
+		<!--div>
+			<label>麦克频道</label>
+			<input name="actor_name" class="inputBox"  type="number" placeholder="" id="fangtait_mic" />
+		</div-->
+
+		<center>
+			<button type="button" class="btn green btn_bs" onclick="showdialog()">提交</button>
+		</center>
+	</form>
+
+	<form class="Boxsettwo_form" id="configset">
+
+	</form>
+
+	<script>
+		function load_options(jsondata) {
+			var htmltext = ""
+			$.alldata = jsondata;
+            var room_options = $.parseJSON(jsondata.roominfo.room_profile);
+            debugger;
+
+			$.each(jsondata['option'], function(j, eletwo) {
+				var myhtml = "";
+				myhtml += "<div><input type='checkbox' class='switch check_my' value='" + eletwo.AppValue + "' tag='" + eletwo.IsString + "'>";
+				myhtml += "<label>" + eletwo.ShowName + "</label>";
+				if(eletwo.result == 0) {
+					if(eletwo.IsString == 0) {
+						myhtml += "<input class='inputBox' disabled='true' type='text' />";
+					} else {
+						myhtml += "<input class='inputBox'  disabled='true' type='text' />";
+					}
+
+				} else {
+					var moption = "";
+					var mselect = (eletwo.select).split("\\");
+
+					for(var k = 0; k < mselect.length; k++) {
+						if(mselect[k] != '') {
+							moption += "<option value='" + mselect[k] + "'>" + mselect[k] + "</option>";
+						}
+
+					}
+
+					myhtml += "<select class='selectBox'  disabled='true'> " + moption + "</select>";
+				}
+
+				myhtml += "</div>";
+				$("#configset").append(myhtml);
+			});
+			$(".check_my").each(function() {
+				var mtdata = room_options;
+				for(var i in mtdata) {
+                    if(mtdata[i].appvalue == $(this).attr("value")) {
+                        $(this)[0].checked = true;
+                        if($(this).attr("tag") == "1") {
+                            $(this).next().next().attr("disabled", false);
+                            $(this).next().next().val(mtdata[i].optionvalue);
+                        }
+                    }
+				}
+			});
+
+			$(".check_my").click(function() {
+				if($(this)[0].checked == true) {
+					if($(this).attr("tag") == "1") {
+						$(this).next().next().attr("disabled", false);
+						
+					}
+				} else {
+					$(this).next().next().attr("disabled", true);
+					$(this).next().next().val("");
+				}
+
+			});
+		}
+		
+        $(".addActor_outA_bs").one("click",function(e){
+            $.toBack($(this).parentU("indexView"));
+        });
+
+        findinitdata();
+
+        function load_server_data(serverbox) {
+            for(var i = 0; i < serverbox.length; i++) {
+                $("#serviceip").append("<option value='" + serverbox[i].server_ip + "'>" + serverbox[i].server_ip + "</option>");
+                $("#iprecond").append("<option value='" + serverbox[i].server_ip + "'>" + serverbox[i].server_ip + "</option>");
+                $.serverip = serverbox[i].server_ip;
+            }
+        }
+
+        function load_skin_data(result){
+            var html = "";
+            if (result.skins){
+                skinlist = result.skins;
+            } else{
+                skinlist= [];
+            }
+            if (result.roominfo){
+                room_skin = result.roominfo.room_skin;
+            }else{
+                room_skin = 0;
+            }
+
+
+            for(var i = 0; i < skinlist.length; i++) {
+                var obj = skinlist[i];
+                if ((obj.skin_id == room_skin) || (room_skin==0 && obj.skin_name == result.config.default_skin.config_value)){
+                    html += "<option value=\"" + obj.skin_id + "\" selected=\"selected\">" + obj.skin_name + "</option>";
+                }else{
+                    html += "<option value=\"" + obj.skin_id + "\">" + obj.skin_name + "</option>";
+                }
+            }
+            $(".Boxsetone_form>div>select.selectThemeBox").html(html);
+        }
+
+
+        $.serverip='';
+		function findinitdata() {
+			var url = $.baseUrl + "/rooms/setting";
+			var ele = $.fangtai_sign;
+			var mid = $.boxtempid;
+			$.ajax({
+				type: 'get',
+				url: url,
+				dataType: 'json',
+				data: 'room_mac=' + ele.room_mac,
+				success: function(str) {
+                    if (str.code == 0){
+                        debugger;
+                        load_server_data(str.result.servers);
+                        load_skin_data(str.result);
+                        setalldata(str.result);
+                        load_options(str.result);
+                    }
+                    else{
+                        mtoast('加载数据出错')
+                    }
+				},
+				error: function(msg) {}
+			});
+		}
+        function auto_complete_ip(serverip, netmask) {
+			svr_ip = $("#serviceip").val();
+			mask = $("#subnetmask").val();
+            if (mask == '255.255.255.0'){
+                auto_ip = '';
+            }
+
+        }
+
+		function setalldata(jsondata) {
+			var ele = $.fangtai_sign;
+			var boxip = jsondata.roominfo;
+            var configures = jsondata.config;
+            if (!boxip){
+                var boxip = {};
+                boxip.room_ip = "";
+                boxip.room_name = "";
+                boxip.room_no = "";
+                boxip.room_ip = "";
+                boxip.room_mask = "";
+                boxip.room_svr = "";
+                boxip.room_skin = 0;
+                boxip.room_theme = 0;
+            }
+			var fangtaibox = $.fangtaibox;
+
+            if (!!boxip.room_ip){
+                $("#ipaddress").val(boxip.room_ip);
+            }else{
+                $("#ipaddress").val(boxip.room_ip);
+            }
+
+            $("#stbname").val(boxip.room_name);
+			$("#stbmac").val(ele.room_mac);
+			$("#serviceip").val(boxip.room_svr);
+			$("#iprecond").val(boxip.room_svr);
+
+            if (!boxip.room_name){
+                $.autocomplete=1;
+            }else{
+                $.autocomplete=0;
+            }
+			//$("#stbno").val(boxip.room_no);
+            if (!boxip.room_ip){
+                $("#stbno").val(boxip.room_no).focus().off("input").on("input",function(){
+                    var ip=$(this).val();
+                    ip=$.serverip
+                    if(ip.lastIndexOf(".")>0){
+                        ip=ip.substring(0, ip.lastIndexOf(".")+1);
+                        $("#ipaddress").val(ip+$(this).val());
+                    }
+                    if ($.autocomplete == 1){
+                        $("#stbname").val($(this).val());
+                    }
+                });
+            }else{
+			    $("#stbno").val(boxip.room_no);
+            }
+
+
+			if(boxip.room_mask == "") {
+				boxip.room_mask = configures.default_netmask;
+			}
+			$("#subnetmask").val(boxip.room_mask);
+			$("#iprecond").val(boxip.room_recordsvr);
+			//if(boxip.room_skin == "") {
+			//	boxip.room_skin = configures.default_skin;
+			//}
+			//$("#fangtait_theme").val(boxip.skin_name);
+
+		}
+
+		function showdialog() {
+			$.createConfirmBox({
+				"title": "系统提示",
+				"content": "确认是否提交修改?",
+				"click": function() {
+					save_data();
+				}
+			});
+		}
+
+		function save_data() {
+			var url = $.baseUrl + "/rooms/update";
+			var strjson = getallinfo();
+			strjson.name = $.filename;
+			var user = {
+				imgurl: strjson,
+			};
+
+			$(".loading").css("display", "block");
+			$.ajax({
+				type: 'post',
+				url: url,
+				dataType: 'json',
+				data: JSON.stringify(strjson),
+				success: function(str) {
+                    $(".loading").css("display", "none");
+					if(str.code == "0") {
+						$.toBack($("#serviceip").parentU("indexView"));
+						//mtoast(str.msg);
+					} else {
+						mtoast(str.msg);
+					}
+
+				},
+				error: function(msg) {
+					mtoast("服务器有点忙");
+                    $(".loading").css("display", "none");
+				}
+			});
+		}
+
+		function getallinfo() {
+			//验证房台编号和房台ip地址
+			var boxip = {};
+
+			boxip.room_ip = $("#ipaddress").val();
+
+			boxip.room_mask = $("#subnetmask").val();
+			boxip.room_svr = $("#serviceip").val();
+			boxip.room_recordsvr = $("#iprecond").val();
+			boxip.room_name = $("#stbname").val();
+			boxip.room_no= $("#stbno").val();
+			if(!boxip.room_svr ) {
+				mtoast("服务器IP不能为空，请先进入\“系统设置\”-\“视频服务器组\”中添加服务器，并选择相应的服务器IP！");
+				return;
+			}
+			if(boxip.room_name == '') {
+				mtoast("机顶盒名称不能为空");
+				return;
+			}
+			if(boxip.room_ip == '') {
+				mtoast("机顶盒ip地址不能为空");
+				return;
+			}
+			if(!isIP2(boxip.room_ip)) {
+				mtoast("机顶盒ip地址格式不对");
+				return;
+			}
+
+			boxip.room_skin = $("#fangtait_theme").val();
+			var ele = $.fangtai_sign;
+			boxip.room_mac = ele.room_mac;
+            boxip.room_profile = JSON.stringify(getlistjson());
+			return boxip;
+		}
+
+		function isIP2(ip) {
+			var re = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+			return re.test(ip);
+		}
+
+		function getlistjson() {
+			//获取所有checkbox 和 value
+			var checkmap = $(".check_my");
+			var jsonall = [];
+
+			$.each(checkmap, function(i, ele) {
+				if(ele.checked == true) {
+					var jsonval = {};
+					var value = $(this).attr("value");
+					var obj = $(this).next().next();
+                    var op_val = $(this).next().next().attr('disabled');
+					jsonval.appvalue = value;
+                    if (op_val == 'disabled'){
+                            jsonval.optionvalue = 1;
+                    }else{
+                        if(obj.length == 1) {
+                            jsonval.optionvalue = isempty(obj.val());
+                        } else {
+                            jsonval.optionvalue = "";
+                        }
+                    }
+					jsonall.push(jsonval);
+				};
+			});
+			return jsonall;
+
+		}
+
+		function isempty(str) {
+			if((str == null) || (str == undefined)) {
+				return "";
+			} else {
+				return str;
+			}
+		}
+
+		function mtoast(text) {
+			$.createConfirmBoxOK({
+				"title": "系统提示",
+				"content": text,
+				"click": function() {}
+			});
+		}
+	</script>
+
+</body>

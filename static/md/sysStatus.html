@@ -1,0 +1,724 @@
+<body>
+	<style>
+		/*statManager 统一为文件名作为名称或前缀 （规范化）*/
+		.statManager{
+			width: 100%;
+			height: 100%;
+		}
+		.statManager>.tableDiv{
+			width: 100%;
+			height: calc( 100% - 4px);
+			overflow: auto;
+			position: relative;
+			box-shadow: 0px -3px 3px #E0E0E0;
+		}
+		/*statManager_statForm 类似这个  子命名横线分割 */
+		.statManager_statForm{
+			width: 100%;
+			height: 50px;
+			padding: 5px 10px 5px 10px;
+			text-align: right;
+		}
+		.statManager_statForm>input{
+			width: calc( 100% - 125px);
+			height: 40px;
+		}
+		.statManager_statForm>button{
+			width: 100px;
+		    height: 40px;
+		    outline: none;
+		    margin-right: 10px;
+		}
+		.statManager_addstat{
+			font-size: 18px;
+		}
+		.statManager>.tableDiv>.table>tbody>tr>td>button{
+			width: 26px;
+			height: 26px;
+			display: inline-block;
+		}
+		
+		.statManager>.tableDiv>.table>tbody>tr>td>button>i.icon-edit{
+			position: relative;
+			left: -1px;
+		}
+		.statManager>.tableDiv>.table>tbody>tr>td>button>i.icon-reorder{
+			position: relative;
+			left: -1px;
+		}
+
+		.nxnWrap {
+			padding: 4px 0 0 4px;
+			width: 100%;
+			overflow: hidden;
+		}
+
+		.nxnWrap>.n2nItem {
+			width: 50%;
+			height: 320px;
+			display: inline-block;
+			box-sizing: border-box;
+			border: 2px #CCCCCC solid;
+		}
+		
+		.n2nWrap>.n2nItem:hover {
+			border-color: #666666;
+		}
+
+		.statChart{
+			width: 100%;
+			height: 100%;
+		}
+		.statManager>.listButton>li.active{
+			background-color: #2E6BB3;
+			color: #FFFFFF;
+		}
+		
+	</style>
+	<div class="statManager">
+		<ul class="listButton">
+		</ul>
+		<div class="nxnWrap">
+			<div class="n2nItem"><div id="statChartCpu0" class="statChart"></div></div>
+			<div class="n2nItem"><div id="statChartCpu1" class="statChart"></div></div>
+			<div class="n2nItem"><div id="statChartCpu2" class="statChart"></div></div>
+			<div class="n2nItem"><div id="statChartCpu3" class="statChart"></div></div>
+		</div>
+	</div>
+	<script>
+		var host = ""
+		sendSelectFileServer(function(json){
+			if(!!json&&!!json.result){
+				var html="";
+				var arr = json.result.matches;
+				arr=$.jsonSort(arr,"server_name");
+				for(var i in arr){
+					if(arr.hasOwnProperty(i)){
+						var obj=arr[i];
+						html+="<li class=\"host" + i + "\" ip=\"" + obj.server_ip +"\">" + obj.server_name + "</li>";
+					}
+				}
+				$(".statManager>ul").htm(html);
+				host = $(".statManager>ul>li:eq(0)").addClass("active").attr("ip");
+				showChars();
+			}
+		});
+		$.tap(".statManager>ul>li",function(){
+			$(this).parent().children().removeClass("active");
+			$(this).addClass("active");
+			host=$(this).attr("ip");
+			myChartCpu.clear();
+			myChartMem.clear();
+			myChartNet.clear();
+			myChartDisk.clear();
+			showChars();
+		});
+	
+	
+	
+
+		
+		var myChartCpu = echarts.init(document.getElementById('statChartCpu0'));
+		var myChartMem = echarts.init(document.getElementById('statChartCpu1'));
+		var myChartNet = echarts.init(document.getElementById('statChartCpu2'));
+		var myChartDisk = echarts.init(document.getElementById('statChartCpu3'));
+
+		var initValues = 15;
+		
+		var timer_refresh;
+		var data_cpu = [];
+		var time_cpu = [];
+		
+		var data_net_in = [];
+		var data_net_out = [];
+		
+		var time_net = [];
+		
+		var data_mem = [];
+		var time_mem = [];
+		
+		var data_disk0 = [];
+		var data_disk1 = [];
+		var data_disk2 = [];
+		var data_disk3 = [];
+		var data_disk4 = [];
+		var data_disk5 = [];
+		var data_disk6 = [];
+		var data_disk7 = [];
+		
+		var time_disk = [];
+		
+		function RefreshTimer()
+		{
+			$.ajax({
+				type:"post",
+				url:"http://" + host  + ":1988/proc/cpu/usage",
+				dataType:"json",
+				success:function(json){
+					
+					if(data_cpu.length>=initValues){
+						data_cpu.shift();
+					}
+					if(time_cpu.length>=initValues){
+						time_cpu.shift();
+					}
+					data_cpu.push(json.data['busy'].toFixed(2));
+					var myDate = new Date();
+					time_cpu.push( myDate.getHours() + ':' + myDate.getMinutes() + ':' + myDate.getSeconds());
+					
+					myChartCpu.setOption(option_cpu);
+					
+				},
+				error:function(){
+					
+				}
+			});
+			
+			
+			$.ajax({
+				type:"post",
+				url:"http://" + host  + ":1988/proc/memory",
+				dataType:"json",
+				success:function(json){
+					
+					if(data_mem.length>=initValues){
+						data_mem.shift();
+					}
+					if(time_mem.length>=initValues){
+						time_mem.shift();
+					}
+					data_mem.push((json.data['used']*100/json.data['total']).toFixed(2));
+					
+					var myDate = new Date();
+					time_mem.push( myDate.getHours() + ':' + myDate.getMinutes() + ':' + myDate.getSeconds());
+					
+					myChartMem.setOption(option_mem);
+					
+				},
+				error:function(){
+					
+				}
+			});
+			
+			$.ajax({
+				type:"post",
+				url:"http://" + host  + ":1988/proc/ifstat",
+				dataType:"json",
+				success:function(json){
+					if(data_net_in.length>=initValues){
+						data_net_in.shift();
+						data_net_out.shift();
+					}
+					jobj = json.data['eth0'];
+					data_net_in.push(jobj['in_percent']);
+					data_net_out.push(jobj['out_percent']);
+					
+					if(time_net.length>=initValues){
+						time_net.shift();
+					}
+					var myDate = new Date();
+					time_net.push( myDate.getHours() + ':' + myDate.getMinutes() + ':' + myDate.getSeconds());
+					
+					myChartNet.setOption(option_net);
+				},
+				error:function(){
+					
+				}
+			});
+			
+			$.ajax({
+				type:"post",
+				url:"http://" + host  + ":1988/proc/diskio",
+				dataType:"json",
+				success:function(json){
+					if(data_disk0.length>=initValues){
+						data_disk0.shift();
+						data_disk1.shift();
+						data_disk2.shift();
+						data_disk3.shift();
+						data_disk4.shift();
+						data_disk5.shift();
+						data_disk6.shift();
+						data_disk7.shift();
+						
+						time_disk.shift();
+					}
+					var ob = json.data['sda']
+					if (ob==undefined){
+						data_disk0.push('-');
+					}else{
+						data_disk0.push(ob['util_percent']);
+					}
+
+					ob = json.data['sdb']
+					if (ob==undefined){
+						data_disk1.push('-');
+					}else{
+						data_disk1.push(ob['util_percent']);
+					}
+					ob = json.data['sdc']
+					if (ob==undefined){
+						data_disk2.push('-');
+					}else{
+						data_disk2.push(ob['util_percent']);
+					}	
+					ob = json.data['sdd']
+					if (ob==undefined){
+						data_disk3.push('-');
+					}else{
+						data_disk3.push(ob['util_percent']);
+					}
+					ob = json.data['sde']
+					if (ob==undefined){
+						data_disk4.push('-');
+					}else{
+						data_disk4.push(ob['util_percent']);
+					}
+					ob = json.data['sdf']
+					if (ob==undefined){
+						data_disk5.push('-');
+					}else{
+						data_disk5.push(ob['util_percent']);
+					}
+					ob = json.data['sdg']
+					if (ob==undefined){
+						data_disk6.push('-');
+					}else{
+						data_disk6.push(ob['util_percent']);
+					}
+					ob = json.data['sdh']
+					if (ob==undefined){
+						data_disk7.push('-');
+					}else{
+						data_disk7.push(ob['util_percent']);
+					}
+					
+					var myDate = new Date();
+					time_disk.push( myDate.getHours() + ':' + myDate.getMinutes() + ':' + myDate.getSeconds());
+					
+					myChartDisk.setOption(option_disk);
+					
+				},
+				error:function(){
+					
+				}
+			});
+		}
+
+		var option_cpu = {
+			title: {
+				text: 'CPU',
+				fontSize: 8
+			},
+			tooltip : {
+				trigger: 'axis'
+			},
+			toolbox: {
+				feature: {
+					saveAsImage: {}
+				}
+			},
+			grid: {
+				left: '1%',
+				right: '1%',
+				bottom: '1%',
+				containLabel: true
+			},
+			xAxis : [
+				{
+					type : 'category',
+					boundaryGap : false,
+					data : time_cpu
+				}
+			],
+			yAxis : [
+				{
+					type : 'value',
+					min: 0,
+					max: 100,
+					splitNumber: 20
+				},
+				
+			],
+
+			series : [
+				{
+					name:'CPU',
+					type:'line',
+					stack: '总量',
+					label: {
+						normal: {
+							show: true,
+							position: 'top'
+						}
+					},
+					areaStyle: {normal: {}},
+					data: data_cpu,
+					itemStyle:{
+						normal:{color:'#3333cc'}
+					}
+				}
+			]
+		};
+
+		var option_net = {
+			title: {
+				text: '网络',
+				fontSize: 8
+			},
+			tooltip : {
+				trigger: 'axis'
+			},
+			legend: {
+				data:['NET']
+			},
+			toolbox: {
+				feature: {
+					saveAsImage: {}
+				}
+			},
+			grid: {
+				left: '1%',
+				right: '1%',
+				bottom: '1%',
+				containLabel: true
+			},
+			xAxis : [
+				{
+					type : 'category',
+					boundaryGap : false,
+					data : time_net
+				}
+			],
+			yAxis : [
+				{
+					type : 'value',
+					min: 0,
+					max: 100,
+					splitNumber: 20
+				}
+			],
+
+			series : [
+				{
+					name:'传入',
+					type:'line',
+					label: {
+						normal: {
+							show: true,
+							position: 'top'
+						}
+					},
+					areaStyle: {normal: {}},
+					data: data_net_in,
+					itemStyle:{
+						normal:{color:'#ffcc33'}
+					}
+				},
+				{
+					name:'传出',
+					type:'line',
+					label: {
+						normal: {
+							show: true,
+							position: 'top'
+						}
+					},
+					areaStyle: {normal: {}},
+					data: data_net_out,
+					itemStyle:{
+						normal:{color:'#ff0066'}
+					}
+				}
+			]
+		};
+		
+		var option_mem = {
+			title: {
+				text: '内存',
+				fontSize: 8
+			},
+			tooltip : {
+				trigger: 'axis'
+			},
+			
+			toolbox: {
+				feature: {
+					saveAsImage: {}
+				}
+			},
+			grid: {
+				left: '1%',
+				right: '1%',
+				bottom: '1%',
+				containLabel: true
+			},
+			xAxis : [
+				{
+					type : 'category',
+					boundaryGap : false,
+					data : time_mem
+				}
+			],
+			yAxis : [
+				{
+					type : 'value',
+					min: 0,
+					max: 100,
+					splitNumber: 20
+				}
+			],
+
+			series : [
+				{
+					name:'内存',
+					type:'line',
+					stack: '总量',
+					label: {
+						normal: {
+							show: true,
+							position: 'top'
+						}
+					},
+					areaStyle: {normal: {}},
+					data: data_mem,
+					itemStyle:{
+						normal:{color:'#edb903'}
+					}
+				}
+			]
+		};
+		
+		var option_disk = {
+			title: {
+				text: '磁盘',
+				fontSize: 8
+			},
+			tooltip : {
+				trigger: 'axis'
+			},
+			legend: {
+				data:['disk']
+			},
+			toolbox: {
+				feature: {
+					saveAsImage: {}
+				}
+			},
+			grid: {
+				left: '1%',
+				right: '1%',
+				bottom: '1%',
+				containLabel: true
+			},
+			xAxis : [
+				{
+					type : 'category',
+					boundaryGap : false,
+					data : time_disk
+				}
+			],
+			yAxis : [
+				{
+					type : 'value',
+					min: 0,
+					max: 100,
+					splitNumber: 20
+				},
+				
+			],
+
+			series : [
+				{
+					name:'磁盘1',
+					type:'line',
+					label: {
+						normal: {
+							show: true,
+							position: 'top'
+						}
+					},
+					areaStyle: {normal: {}},
+					data: data_disk0,
+					itemStyle:{
+						normal:{color:'#33cc00'}
+					}
+				},
+				{
+					name:'磁盘2',
+					type:'line',
+					label: {
+						normal: {
+							show: true,
+							position: 'top'
+						}
+					},
+					areaStyle: {normal: {}},
+					data: data_disk1,
+					itemStyle:{
+						normal:{color:'#33cc66'}
+					}
+				},
+				{
+					name:'磁盘3',
+					type:'line',
+					label: {
+						normal: {
+							show: true,
+							position: 'top'
+						}
+					},
+					areaStyle: {normal: {}},
+					data: data_disk2,
+					itemStyle:{
+						normal:{color:'#33cccc'}
+					}
+				},
+				{
+					name:'磁盘4',
+					type:'line',
+					label: {
+						normal: {
+							show: true,
+							position: 'top'
+						}
+					},
+					areaStyle: {normal: {}},
+					data: data_disk3,
+					itemStyle:{
+						normal:{color:'#00ffcc'}
+					}
+				},
+				{
+					name:'磁盘5',
+					type:'line',
+					label: {
+						normal: {
+							show: true,
+							position: 'top'
+						}
+					},
+					areaStyle: {normal: {}},
+					data: data_disk4,
+					itemStyle:{
+						normal:{color:'#00ff99'}
+					}
+				},
+				{
+					name:'磁盘6',
+					type:'line',
+					label: {
+						normal: {
+							show: true,
+							position: 'top'
+						}
+					},
+					areaStyle: {normal: {}},
+					data: data_disk5,
+					itemStyle:{
+						normal:{color:'#00ff66'}
+					}
+				},
+				{
+					name:'磁盘7',
+					type:'line',
+					label: {
+						normal: {
+							show: true,
+							position: 'top'
+						}
+					},
+					areaStyle: {normal: {}},
+					data: data_disk6,
+					itemStyle:{
+						normal:{color:'#00ff33'}
+					}
+				},
+				{
+					name:'磁盘8',
+					type:'line',
+					label: {
+						normal: {
+							show: true,
+							position: 'top'
+						}
+					},
+					areaStyle: {normal: {}},
+					data: data_disk7,
+					itemStyle:{
+						normal:{color:'#00ff00'}
+					}
+				}
+			]
+		};
+		function showChars(){
+			for(var n = 0; n<initValues; n++){
+				data_cpu.push('0');
+				time_cpu.push('');
+				if(data_cpu.length>=initValues){
+					data_cpu.shift();
+					time_cpu.shift();
+				}
+				data_mem.push('0');
+				time_mem.push('');
+				if(data_mem.length>=initValues){
+					data_mem.shift();
+					time_mem.shift();
+				}
+
+				data_net_in.push('0');
+				data_net_out.push('0');
+				time_net.push('');
+				if(data_net_in.length>=initValues){
+					data_net_in.shift();
+					data_net_out.shift();
+					time_net.shift();
+				}
+				
+				data_disk0.push('0');
+				data_disk1.push('0');
+				data_disk2.push('0');
+				data_disk3.push('0');
+				data_disk4.push('0');
+				data_disk5.push('0');
+				data_disk6.push('0');
+				data_disk7.push('0');
+				time_disk.push('');
+				if(data_disk0.length>=initValues){
+					data_disk0.shift();
+					data_disk1.shift();
+					data_disk2.shift();
+					data_disk3.shift();
+					data_disk4.shift();
+					data_disk5.shift();
+					data_disk6.shift();
+					data_disk7.shift();
+					time_disk.shift();
+				}
+			}
+			myChartCpu.setOption(option_cpu);
+			myChartMem.setOption(option_mem);
+			myChartNet.setOption(option_net);
+			myChartDisk.setOption(option_disk);
+			
+			clearInterval($.timer)
+			$.timer = setInterval(RefreshTimer, 1500);
+		}
+		
+		
+		
+		function sendSelectFileServer(fn){
+			$.ajax({
+				type:"get",
+				url:$.baseUrl+"/servers/list",
+				dataType:"json",
+				success:function(json){
+					if(!!fn){
+						fn(json);
+					}
+				}
+			});
+		}
+		
+	</script>
+</body>

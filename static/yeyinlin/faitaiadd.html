@@ -1,0 +1,379 @@
+<br />
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+		<style>
+			.addActor_outA {
+				width: 45px;
+				height: 35px;
+				display: inline-block;
+				font-size: 20px;
+				line-height: 30px;
+				text-align: center;
+				padding: 0px;
+				text-decoration: none;
+				color: #FFFFFF;
+				position: absolute;
+				top: 20px;
+				left: 20px;
+			}
+			
+			.addActor_pageTitle {
+				width: 100%;
+				position: absolute;
+				top: 16px;
+				font-size: 25px;
+				margin: 0;
+				padding: 0;
+				text-align: center;
+				pointer-events: none;
+			}
+			
+			.addActor_form {
+				width: 370px;
+				height: auto;
+				position: absolute;
+				top: 60px;
+				left: 0px;
+				right: 0px;
+				margin: 0 auto;
+			}
+			
+			.addActor_form>div {
+				width: 100%;
+				height: 40px;
+				position: relative;
+				margin-top: 10px;
+			}
+			
+			.addActor_form>div>label {
+				position: absolute;
+				width: 30%;
+				height: 100%;
+				left: 0px;
+				font-size: 16px;
+				text-align: right;
+				padding-right: 20px;
+				line-height: 40px;
+			}
+			
+			.addActor_form>div>input,
+			.addActor_form>div>select,
+			.addActor_form>div>button {
+				position: absolute;
+				width: 70%;
+				height: 100%;
+				right: 0px;
+			}
+			
+			.addActor_form>div>input[type='file'],
+			.addActor_form>div>select {
+				cursor: pointer;
+			}
+			
+			.addActor_form>div>input[type='file']:active+button.selectBox {
+				background: -webkit-linear-gradient(top, #D0D0D0, #DCDCDC);
+			}
+			
+			.addActor_form>center {
+				margin-top: 20px;
+			}
+			
+			.addActor_form>center>button {
+				font-size: 20px;
+				padding: 6px 30px 8px 30px;
+			}
+			
+			.actorImgUpload {
+				opacity: 0;
+				z-index: 9;
+			}
+			
+			.thumbnailImg {
+				width: 100px;
+				height: 100px;
+				display: block;
+				margin: 0 auto;
+				position: absolute;
+				top: -60px;
+				right: -100px;
+			}
+			
+			.thumbnailImg.hide {
+				display: none;
+			}
+			
+			.selectThemeBox {
+				font-size: 14px;
+			}
+			
+			.check_fa {
+				width: 70%;
+				height: 0;
+				position: absolute;
+				margin-top: 15px;
+			}
+		</style>
+		<a class="addActor_outA btn blue"> <i class="icon-arrow-left"></i>
+		</a>
+		<h4 class="addActor_pageTitle">添加房台</h4>
+		<form class="addActor_form">
+			<div>
+				<label>房台编号</label>
+				<input id="fangtai_no" name="faitai_name" class="inputBox" type="text" placeholder="" />
+			</div>
+			<div>
+				<label>房台IP地址</label>
+				<input id="fangtai_ip" name="actor_name" class="inputBox" type="text" placeholder="" />
+			</div>
+			<div>
+				<label>点歌方式</label>
+				<select class="selectBox" id="fangtait_order_type">
+					<option value="鼠标">鼠标</option>
+					<option value="键盘">键盘</option>
+
+				</select>
+			</div>
+			<div>
+				<label>主题皮肤</label>
+				<select class="selectThemeBox selectBox " id="fangtait_theme"></select>
+			</div>
+			<div>
+				<label>麦克频道</label>
+				<input name="actor_name" class="inputBox" type="number" placeholder="" id="fangtait_mic" />
+			</div>
+			<div>
+				<label>机顶盒类型</label>
+				<select class="selectBox" id="fangtait_boxtype">
+					<option value="包房机顶盒">包房机顶盒</option>
+					<option value="门牌机">门牌机</option>
+				</select>
+			</div>
+
+			<div id="dv_batch">
+				<label>批量生成</label>
+				<input type="checkbox" name="aaa" class="switch check_fa" style="width: 70%; height: 0;position: absolute;margin-top: 15px;" id="isbatch"></div>
+
+			<div id="dv_start">
+				<label>开始序号</label>
+				<input name="actor_name" class="inputBox" type="number" placeholder="" id="ft_fanwei_start" />
+			</div>
+
+			<div id="dv_end">
+				<label>结束序号</label>
+				<input name="actor_name" class="inputBox" type="number" placeholder="" id="ft_fanwei_end" />
+			</div>
+			<center>
+				<button type="button" class="btn green" onclick="sendMessage()">提交</button>
+			</center>
+		</form>
+		<script>
+				$(function() {
+						$("#isbatch").change(function() {
+							if($(this)[0].checked) {
+								$("#dv_start").show();
+								$("#dv_end").show();
+								$("#fangtai_no").attr("disabled", true);
+								
+								$("#fangtai_ip").attr("disabled", true);
+							}else{
+								
+								$("#dv_start").hide();
+								$("#dv_end").hide();
+								
+								$("#fangtai_no").attr("disabled", false);
+								$("#fangtai_ip").attr("disabled", false);
+							}
+						});
+						});
+
+//						$.tap(".addActor_outA", function() {
+//							$.toBack($(this).parentU("indexView"));
+//						});
+						
+							$(".addActor_outA").one("click",function(){
+			$.toBack($(this).parentU("indexView"));
+		});
+
+						setInputData();
+
+						function setInputData() {
+							$("#dv_start").hide();
+							$("#dv_end").hide();
+							//              alert("message");
+							var html = "";
+							for(var i = 0; i < ($.data_fangtai.theme).length; i++) {
+								//                  for(var i in $.data_fangtai.theme){
+								var obj = $.data_fangtai.theme[i];
+								html += "<option value=\"" + obj.theme_name + "\">" + obj.theme_name + "</option>";
+							}
+							$(".addActor_form>div>select.selectThemeBox").html(html);
+
+							if($.wherefrom == "updata") {
+
+								$.each($.data_fangtai.rooms, function(i, ele) {
+									if(ele.Room_SerialNo == $.homeinfo_updata) {
+										$("#fangtai_no").val(ele.Room_SerialNo);
+										$("#fangtai_ip").val(ele.Room_IpAddress);
+										if(ele.Room_OrderType == "1") {
+
+											$("#fangtait_order_type").val("鼠标");
+										} else {
+											$("#fangtait_order_type").val("键盘");
+										}
+										if(ele.Room_STBtype == "0") {
+
+											$("#fangtait_boxtype").val("包房机顶盒");
+										} else {
+											$("#fangtait_boxtype").val("门牌机");
+										}
+
+										$("#fangtait_theme").val(ele.skin_name);
+
+										$("#fangtait_mic").val(ele.Room_MAC1);
+
+									}
+								});
+								$("#dv_batch").hide();
+								
+								//隐藏check
+							} else if($.wherefrom == "add") {
+								var data = $.data_fangtai.configures[0];
+								// alert(JSON.stringify($.data_fangtai));
+								$("#fangtai_ip").val(data.Configure_Set51);
+								$("#fangtait_theme").val(data.Configure_Set52);
+							}
+
+						}
+
+						function sendMessage() {
+
+							if($.wherefrom == "updata") {
+								$.createConfirmBox({
+									"title": "系统提示",
+									"content": "确认是否提交修改?",
+									"click": function() {
+										add_boxinfo("updata");
+									}
+								});
+
+							} else if($.wherefrom == "add") {
+								$.createConfirmBox({
+									"title": "系统提示",
+									"content": "确认是否提交添加?",
+									"click": function() {
+										add_boxinfo("add");
+									}
+								});
+
+							}
+							// body...
+						}
+
+						function mtoast(text) {
+							$.createConfirmBoxOK({
+								"title": "系统提示",
+								"content": text,
+								"click": function() {}
+							});
+						}
+
+						function add_boxinfo(datach) {
+
+							var url = $.baseUrl + "/fangtai";
+							var strjson = add_func_info();
+							//                   alert(JSON.stringify(strjson));
+							var mflag = true;
+							
+							if($("#isbatch")[0].checked){
+								strjson.isbatch="1";
+								strjson.startnum=$("#ft_fanwei_start").val();
+								strjson.endnum=$("#ft_fanwei_end").val();
+								
+							}else{
+								strjson.isbatch="0";
+								if(strjson.Room_SerialNo == "") {
+								mtoast("房台号码不能为空")
+								mflag = false;
+							} else if(strjson.Room_IpAddress == "") {
+								mtoast("IP不能为空")
+								mflag = false;
+							} else if(strjson.skin_name == "") {
+								mtoast("主题不能为空")
+								mflag = false;
+							}
+							}
+							
+
+							if(mflag) {
+								$.ajax({
+									type: 'post',
+									url: url,
+									dataType: 'html',
+									data: 'mdata=' + JSON.stringify(strjson) + '&type=1' + '&datachange=' + datach,
+									// data:'imgurl='+strjson+'&type=1',
+									success: function(str) {
+										mtoast(str);
+										$(".addActor_form")[0].reset();
+										// backupview();
+									},
+									error: function(msg) {}
+								});
+							}
+						}
+
+						function backupview() {
+							$.toBack($("#fangtait_theme").parentU("indexView"));
+						}
+
+						function add_func_info() {
+
+							var jsondata = {};
+							var fangtaidata = $.data_fangtai.rooms;
+							// alert(JSON.stringify(fangtaidata));
+							for(var i = 0; i < fangtaidata.length; i++) {
+								if(fangtaidata[i].Room_SerialNo == $("#fangtai_no").val()) {
+									jsondata.Room_ID = fangtaidata[i].Room_ID;
+									jsondata.Room_Old_IpAddress = fangtaidata[i].Room_IpAddress;
+									jsondata.Room_Old_SerialNo = fangtaidata[i].Room_SerialNo;
+									break;
+								}
+							}
+							jsondata.Room_SerialNo = $("#fangtai_no").val();
+							jsondata.Room_IpAddress = $("#fangtai_ip").val();
+							jsondata.skin_name = $("#fangtait_theme").val();
+							jsondata.Room_MAC1 = $("#fangtait_mic").val();
+
+							if($("#fangtait_order_type").val() == "鼠标") {
+								jsondata.Room_OrderType = 1;
+							} else {
+								jsondata.Room_OrderType = 0;
+							}
+
+							if($("#fangtait_boxtype").val() == "包房机顶盒") {
+								jsondata.Room_STBtype = 0;
+							} else {
+								jsondata.Room_STBtype = 1;
+							}
+
+							for(var i in $.data_fangtai.theme) {
+								if($.data_fangtai.theme[i].theme_name == $("#fangtait_theme").val()) {
+									jsondata.skin_theme_id = $.data_fangtai.theme[i].theme_id;
+									break;
+								}
+							}
+
+							// jsondata.skin_theme_id=1;
+
+							return jsondata;
+						}
+		</script>
+	</body>
+
+</html>

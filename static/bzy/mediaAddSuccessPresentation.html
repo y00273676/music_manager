@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<style>
+			.mediaAddSuccessPresentation_outA{
+				width: 45px;
+			    height: 35px;
+			    display: inline-block;
+			    font-size: 20px;
+			    line-height: 30px;
+			    text-align: center;
+			    padding: 0px;
+			    text-decoration: none;
+			    color: #FFFFFF;
+			    position: absolute;
+			    top: 20px;
+			    left: 20px;
+			}
+			.mediaAddSuccessPresentation_pageTitle{
+				width: 100%;
+				position: absolute;
+				top: 16px;
+				font-size: 25px;
+				margin: 0;
+				padding: 0;
+				text-align: center;
+				pointer-events: none;
+			}
+			.mediaAddSuccessPresentation{
+				width: 100%;
+				height: 100%;
+			}
+			.mediaAddSuccessPresentation>div>center>button{
+				margin-top: 20px;
+    			padding: 10px 30px;
+    			margin-left: 10px;
+    			margin-right: 10px;
+			}
+			.mediaAddSuccessPresentation>.optionArea{
+			    width: calc(50% - 60px);
+			    height: calc(100% - 115px);
+			    overflow-y: auto;
+			    box-shadow: 0px 0px 5px #C1C1C1;
+			    border-radius: 5px;
+			    display: inline-block;
+			    position: absolute;
+			    left: calc(30% - 20px);
+			    top: 100px;
+			    background-color: #ffffff;
+			    transition: left .5s;
+			    -webkit-transition: left .5s;
+			}
+			.mediaAddSuccessPresentation>.optionArea.leftMove{
+				width: calc(50% - 60px);
+			    height: calc(100% - 115px);
+			    overflow-y: auto;
+			    box-shadow: 0px 0px 5px #C1C1C1;
+			    border-radius: 5px;
+			    display: inline-block;
+			    position: absolute;
+			    left: 50px;
+			    top: 100px;
+				background-color: #ffffff;
+			}
+			.mediaAddSuccessPresentation>.optionArea>ul>li>b{
+				position: absolute;
+    			right: 15px;
+			}
+			.mediaAddSuccessPresentation>.showCharsDiv{
+				width: calc(50% - 60px);
+			    height: calc(100% - 115px);
+			    box-shadow: 0px 0px 5px #C1C1C1;
+			    border-radius: 5px;
+			    display: inline-block;
+			    position: absolute;
+			    right: 50px;
+			    top: 100px;
+			    opacity: 0;
+			    transform: scale(0,0);
+			    -webkit-transform: scale(0,0);
+			    transition: transform .5s,opacity .5s;
+			    -webkit-transition: -webkit-transform .5s,opacity .5s;
+			}
+			.mediaAddSuccessPresentation>.optionArea.leftMove+.showCharsDiv{
+				opacity: 1;
+				transform: scale(1,1);
+			    -webkit-transform: scale(1,1);
+			}
+			.mediaAddSuccessPresentation>.showCharsDiv>div{
+				width: 100%;
+				height: 100%;
+			}
+		</style>
+		<a class="mediaAddSuccessPresentation_outA btn blue">
+			<i class="icon-arrow-left"></i>
+		</a>
+		<h4 class="mediaAddSuccessPresentation_pageTitle">曲库导入</h4>
+		<div class="mediaAddSuccessPresentation">
+			<div class="optionArea">
+				<label class="titleLabel">上传报告：</label>
+				<ul class="listRadius">
+					<li>导入成功歌曲数目<b></b></li>
+				</ul>
+			</div>
+			<div class="showCharsDiv" >
+				<div id="showChars">
+					
+				</div>
+			</div>
+		</div>
+		<script>
+			$(".mediaAddSuccessPresentation_outA").one("click",function(e){
+				e.stopPropagation();
+				$.toBack($(this).parentU("indexView"));
+			});
+			$.tap(".notFindFileListHTML",function(){
+				$.hrefPage("bzy/notFindFileListShow.html",$(this).parentU("indexView"));
+			});
+			var option = {
+			    title : {
+			        text: '导入结果',
+			        subtext: '结果统计',
+			        x:'center'
+			    },
+			    tooltip : {
+			        trigger: 'item',
+			        formatter: "{a} <br/>{b} : {c} ({d}%)"
+			    },
+			    legend: {
+			        orient: 'vertical',
+			        left: 'left',
+			        data: null
+			    },
+			    series : [
+			        {
+			            name: '曲库导入',
+			            type: 'pie',
+			            radius : '35%',
+			            center: ['50%', '60%'],
+//			            label: {
+//			                normal: {
+//			                    position: 'inner'
+//			                }
+//			            },
+			            data:null,
+			            itemStyle: {
+			                normal:{ 
+			                    label:{ 
+			                       show: true, 
+			                       formatter: '{b} : {c} ({d}%)' 
+			                    }, 
+			                    labelLine :{show:true}
+			                } 
+			            }
+			        }
+			    ]
+			};
+			var myChart = echarts.init(document.getElementById('showChars'));
+			function loadData(){
+				var data = $.data_mediaAddSuccessPresentation;
+				if(!!data){
+					$(".mediaAddSuccessPresentation>.optionArea>ul>li:eq(0)>b").html(data.mediatypeSize);
+					/*
+					var legendData=["导入成功","缺失歌曲"];
+					var seriesData=[{"name":"导入成功","value":data.successCount},{"name":"缺失歌曲","value":data.notFindCount}];
+					option.legend.data=legendData;
+					option.series[0].data=seriesData;
+					$.notFindFileListHTMLNeedData=data.notFindMediaArrList;
+					var timer = window.setInterval(function(){
+						sendGetMediasCount(function(json){
+							if(!!json&&!!json.data){
+								var count = json.data.total;
+								var result = parseFloat((parseInt(count)/parseInt(data.successCount))*100).toFixed(2)+"%";
+								if(data.successCount==0){
+									result="100%";
+									myChart.setOption(option,true,false);
+								}
+								$(".mediaAddSuccessPresentation>.optionArea>ul>li:eq(4)>b").html(result);
+								if(count>=data.successCount){
+									$(".mediaAddSuccessPresentation>.optionArea>ul>li:eq(4)>b").html("100%");
+								}
+								if(json.state.state=="10"){
+									clearInterval(timer);
+									$(".mediaAddSuccessPresentation>.optionArea>ul>li:eq(5)>b").html("完成");
+									$(".mediaAddSuccessPresentation>.optionArea").addClass("leftMove");
+									myChart.setOption(option,true,false);
+									$(".notFindFileListHTML").removeClass("loadBtn");
+									$.createConfirmBox({"title":"系统提示","content":"是否确认关联歌词?","click":function(){
+										$(".notClickDiv").css("display","block");
+										$(".mediaAddSuccessPresentation>.optionArea>ul>li:eq(5)>b").html("开始导入歌词...");
+										sendImportLyricText(function(json){
+											if(!!json&&!!json.msg){
+												$.altAuto(json.msg);
+												return;
+											}
+											if(!!json&&json.code=="0"){
+												$(".notClickDiv").css("display","none");
+												$(".mediaAddSuccessPresentation>.optionArea>ul>li:eq(5)>b").html("完成");
+												$.createConfirmBoxOK({"title":"系统提示","content":"歌词关联完成,共更新"+json.data+"个歌词文件","click":function(){
+													if(!!$.isOpenAutoSeting){
+														$.createConfirmBox({"title":"系统提示","content":"是否开始添加加密狗?","click":function(){
+															$(".index_leftMenu>ul>li.hrefTo").removeClass("active");
+															$(".index_leftMenu>ul>li.hrefTo[href='yeyinlin/encryptiondog.html']").addClass("active");
+															$.createView("加密狗","icon-key","yeyinlin/encryptiondog.html",function(){
+																$(".uploadDog").click();
+															});
+														}});
+													}
+												}});
+											}
+										});
+									}});
+								}
+							}
+						})
+					},1000);*/
+				}
+			}
+			loadData();
+			function sendGetMediasCount(fn){
+				$.ajax({
+					type:"get",
+					url:$.baseUrl+"/medias/count",
+					dataType:"json",
+					success:function(json){
+						if(!!fn)
+							fn(json);
+					},error:function(){
+						$.altAuto("无法访问或服务器发生异常");
+					}
+				});
+			}
+			function sendImportLyricText(fn){
+				$.ajax({
+					type:"get",
+					url:$.baseUrl+"/sql/importLyricText",
+					dataType:"json",
+					success:function(json){
+						if(!!fn)
+							fn(json);
+					},error:function(){
+						$.altAuto("无法访问或服务器发生异常");
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

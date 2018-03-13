@@ -1,0 +1,52 @@
+#supplement_fileUpload{
+	width:50%;
+	height:50px;
+	position:fixed;
+	background:linear-gradient(to bottom,#B9B9B9 0,#747474 100%);
+	left:0px;
+	right:0px;
+	bottom:0px;
+	top:0px;
+	margin:auto;
+	text-align:center;
+	line-height:50px;
+	border-radius:10px;
+	transition:all .5s;
+	transform:scale(0,0);
+	webkit-transform:scale(0,0);
+	opacity:0;
+	z-index:10000;
+}
+#supplement_fileUpload>div{
+	width:90%;
+	height:20px;
+	background:linear-gradient(to bottom,#504C4C 0,#7E7D7D 100%);
+	margin:0 auto;
+	line-height:50px;
+	margin-top:15px;
+	padding-left:5px;
+	padding-right:5px;
+	border-radius:10px;
+}		
+#supplement_fileUpload>div>div{
+	width:0%;
+	height:10px;
+	background:linear-gradient(to bottom,#83B9FD 0,#4D61A0 100%);
+	position:relative;
+	top:5px;
+	border-radius:10px;
+}
+#supplement_fileUpload>div>span{
+	font-family:微软雅黑;
+	position:absolute;
+	left:0px;
+	right:0px;
+	margin:0 auto;
+	color:#ffffff;
+	top:0px;
+	font-size:14px;
+	font-weight:bold;
+	user-select:none;
+	webkit-user-select:none;
+	cursor:default;
+}

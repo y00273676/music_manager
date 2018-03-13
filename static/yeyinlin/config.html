@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <style>
+            .addActor_outA{
+                width: 45px;
+                height: 35px;
+                display: inline-block;
+                font-size: 20px;
+                line-height: 30px;
+                text-align: center;
+                padding: 0px;
+                text-decoration: none;
+                color: #FFFFFF;
+                position: absolute;
+                top: 20px;
+                left: 20px;
+            }
+
+                                .musicManager{
+                width: 100%;
+                height: 100%;
+            }
+            .musicManager>.tableDiv{
+                width: 100%;
+                height: calc( 100% - 100px);
+                overflow: auto;
+                position: relative;
+                box-shadow: 0px -3px 3px #E0E0E0;
+            }
+            .musicManager_musicForm{
+                width: 100%;
+                height: 50px;
+                padding: 5px 10px 5px 10px;
+                text-align: right;
+            }
+            .musicManager_musicForm>input{
+                width: calc( 100% - 125px);
+                height: 40px;
+            }
+            .musicManager_musicForm>button{
+                width: 100px;
+                height: 40px;
+                outline: none;
+                margin-right: 10px;
+            }
+            .musicManager_addMusic{
+                font-size: 18px;
+            }
+            .musicManager>.tableDiv>.table>tbody>tr>td>button{
+                width: 26px;
+                height: 26px;
+                display: inline-block;
+            }
+
+            .musicManager>.tableDiv>.table>tbody>tr>td>button>i.icon-edit{
+                position: relative;
+                left: -1px;
+            }
+            .musicManager>.tableDiv>.table>tbody>tr>td>button>i.icon-reorder{
+                position: relative;
+                left: -1px;
+            }
+
+.starManagerList_actorsForm{
+                width: 100%;
+                height: 50px;
+                padding: 5px 10px 5px 10px;
+                text-align: right;
+            }
+        </style>
+
+    <script id="configDataTemplate" type="text/template">
+            <tr>
+                <td>{[ShowName]}</td>
+                <td>{[AppValue]}</td>
+                <td>{[IsString]}</td>
+                <td>{[result]}</td>
+                <td>{[select]}</td>
+                <td>
+
+                    <button class="btn orange configupdata"> <i class="icon-edit"></i>
+                    </button>
+                    <button class="btn violet configdelete"> <i class="icon-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        </script>
+
+    <a class="addActor_outA btn blue">
+        <i class="icon-arrow-left"></i>
+    </a>
+    <div class="starManagerList">
+        <div class="starManagerList_actorsForm">
+            
+
+            <button type="button" class="btn sky " onclick="addconfig()" id="addconfig">添加</button>
+        </div>
+
+        <!--<button type="button" multiple="multiple" class="btn sky musicManager_addMusic">
+        <i class="icon-plus"></i>
+    </button>
+    -->
+    <div  class="tableDiv">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>名称</th>
+                    <th>AppValue</th>
+                    <th>数据类型</th>
+                    <th>是否多选项</th>
+                    <th>多选项</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+</div>
+
+<script>
+            $.tap(".addActor_outA",function(){
+                $.toBack($(this).parentU("indexView"));
+            });
+
+              $.tap(".starManagerList>.tableDiv>.table>tbody>tr>td>button.configupdata",function(e){
+
+                // e.stopPropagation();
+                        var showname = $(this).parent().parent().children("td").first().html();
+
+                        for(var i=0;i<$.alldata.length;i++){
+                            if(($.alldata)[i].ShowName==showname){
+                                $.configtype="0";
+                                $.selectconfig=$.alldata[i];
+                            }
+                        }
+                 $.hrefPage("yeyinlin/configadd.html",$(this).parentU("indexView"));
+            });
+              $.tap(".starManagerList>.tableDiv>.table>tbody>tr>td>button.configdelete",function(e){
+                   var tempthis= $(this);
+                   var mthis=this;
+
+                $.createConfirmBox({"title":"系统提示","content":"是否确认删除该配置?","click":function(){
+
+                  var showname = tempthis.parent().parent().children("td").first().html();
+                    alert(showname);
+                        for(var i=0;i<$.alldata.length;i++){
+                            if(($.alldata)[i].ShowName==showname){
+                                $.deleteconfig=($.alldata)[i];
+                                break;
+                            }
+                        }
+
+                        senddata($.deleteconfig,"7",mthis);
+
+                }});
+
+
+            });
+
+        findinitdata ();
+         function findinitdata () {
+        var isfiles=0;
+        var mtype=4;
+        var url=$.baseUrl+"/boxsetting";
+        var strjson={}
+
+    $.ajax({
+            type: 'post',
+            url: url,
+            dataType: 'html',
+            data:'imgurl='+JSON.stringify(strjson)+'&type='+mtype+'&isfiles='+isfiles,
+            success: function (str) {
+                // addallview ($.parseJSON(str));
+                // setalldata( $.parseJSON(str));
+
+                    addform($.parseJSON(str));
+                    $.alldata=$.parseJSON(str).option;
+                            },
+            error: function (msg) {
+            }
+        });
+}
+
+
+            function senddata(jsondata,mtype,_this)
+        {
+                var url=$.baseUrl+"/boxsetting";
+
+                var strjson=jsondata;
+                $.ajax({
+                                    type: 'post',
+                                    url: url,
+                                    dataType: 'html',
+                                    data:'imgurl='+JSON.stringify(strjson)+'&type='+mtype,
+                                    success: function (str) {
+                                        alert(str);
+                                        if($.parseJSON(str)['code']=="0"){
+                                              $(_this).parent().parent().remove();
+                                        }
+
+
+                                 },
+                                    error: function (msg) {
+                                    }
+                                });
+
+                        }
+
+
+
+function addform (jsondata) {
+        var html=$.fillData(document.getElementById("configDataTemplate").innerHTML,jsondata.option);
+
+        $(".starManagerList>.tableDiv>.table>tbody").html(html);
+
+}
+
+function addconfig () {
+    $.configtype="1"
+     $.hrefPage("yeyinlin/configadd.html",$("#addconfig").parentU("indexView"));
+     // body...
+}
+
+        </script>
+</body>
+</html>

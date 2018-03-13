@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+
+		<style>
+			.addActor_outb {
+				width: 45px;
+				height: 35px;
+				display: inline-block;
+				font-size: 20px;
+				line-height: 30px;
+				text-align: center;
+				padding: 0px;
+				text-decoration: none;
+				color: #FFFFFF;
+				position: absolute;
+				top: 20px;
+				left: 20px;
+			}
+			
+			.fj_box_seting {
+				width: 560px;
+				height: 560px;
+				overflow-y: auto;
+				box-shadow: 0px 0px 5px #C1C1C1;
+				border-radius: 5px;
+				display: inline-block;
+				position: absolute;
+				left: 0px;
+				right: 0px;
+				margin: 0 auto;
+				top: 20px;
+				background-color: #ffffff;
+			}
+			
+			.selectBox {
+				width: 50%;
+				line-height: 38px;
+				position: absolute;
+				right: 45px;
+				height: 40px;
+			}
+			
+			.switch {
+				position: absolute;
+				right: 75px;
+				top: 35px;
+			}
+			
+			.inputBox {
+				position: absolute;
+				height: 40px;
+				right: 45px;
+				width: 50%;
+			}
+			
+			.btn_one {
+				width: 100px;
+				height: 40px;
+				margin-top: 20px;
+			}
+			
+			.upload_base {
+				width: 40px;
+				height: 40px;
+				line-height: 40px;
+				position: absolute;
+				right: 10px;
+			}
+		</style>
+
+		<a class="addActor_outb btn blue"> <i class="icon-arrow-left"></i>
+		</a>
+		<div class="FujiaManager">
+			<div class="fj_box_seting">
+				<ul class="list">
+
+					<li>
+						<label class="my_box_seting_two">
+			配置文件上传
+		</label>
+						<select class="selectBox" id="my_fujia_set">
+							
+						</select>
+						<button class="btn blue upload_base upload_but"> <i class="icon-plus"></i></button>
+
+					</li>
+
+					<li>
+						<label class="my_box_seting_two">
+			更新图片
+		</label>
+						<select class="selectBox" id="my_fujia_pic">
+						
+						</select>
+						<button class="btn blue upload_base upload_but_pic"> <i class="icon-plus"></i></button>
+
+					</li>
+
+					<li>
+						<label class="my_box_seting_two">
+			更新视频
+		</label>
+						<select class="selectBox" id="my_fujia_video">
+						
+
+						</select>
+						<button class="btn blue upload_base upload_but_video"> <i class="icon-plus"></i></button>
+
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<script>
+			var arrdog = [$.baseUrl + "/fujia?type=1&value=" + "1"];
+			$.tap(".addActor_outb", function() {
+				$.toBack($(this).parentU("indexView"));
+			});
+
+			$("#my_fujia_set").off("change").on("change", function() {
+				arrdog[0] = $.baseUrl + "/fujia?type=1&value=" + $("#my_fujia_set").val();
+				if($("#my_fujia_set").val() == '0') {
+					return;
+				}
+				$(".upload_but").uploadBtn(arrdog[0], function(name, path, size, no) {
+
+				});
+			});
+			
+			var arrdog1 = [$.baseUrl + "/fujia?type=2&value=" + "1"];
+			
+
+			$("#my_fujia_pic").off("change").on("change", function() {
+				arrdog1[0] = $.baseUrl + "/fujia?type=2&value=" + $("#my_fujia_pic").val();
+				if($("#my_fujia_pic").val() == '0') {
+					return;
+				}
+				$(".upload_but_pic").uploadBtn(arrdog1[0], function(name, path, size, no) {
+
+				});
+			});
+			
+			var arrdog2 = [$.baseUrl + "/fujia?type=3&value=" + "1"];
+		
+
+			$("#my_fujia_video").off("change").on("change", function() {
+				arrdog1[0] = $.baseUrl + "/fujia?type=3&value=" + $("#my_fujia_video").val();
+				if($("#my_fujia_video").val() == '0') {
+					return;
+				}
+				$(".upload_but_video").uploadBtn(arrdog2[0], function(name, path, size, no) {
+
+				});
+			});
+			initdata();
+			function initdata(){
+				var url = $.baseUrl + "/fujia";
+				var strjson = {}
+
+				$.ajax({
+					type: 'post',
+					url: url,
+					dataType: 'json',
+					data: 'imgurl=' + JSON.stringify(strjson) + '&type=4&value=',
+					success: function(str) {
+
+						
+						if(str.code=="0"){
+							setinitdata(str.data);
+						}
+						//						addnewview(str);
+					},
+					error: function(msg) {
+
+					}
+				});
+			}
+			
+			function setinitdata(data){
+				var mysetini=[]
+				var mysetpic=[]
+				var mysetvideo=[]
+				
+				var onestr='<option value="0">请选择</option>'
+				var twostr='<option value="0">请选择</option>'
+				var threestr='<option value="0">请选择</option>'
+				
+				for(var i=0;i<data.length;i++){
+					if(data[i].type=='1'){
+						onestr+="<option value='"+data[i].key +"'>"+data[i].name+"</option>"
+					}
+					else if(data[i].type=='2'){
+						twostr+="<option value='"+data[i].key +"'>"+data[i].name+"</option>"
+					}
+					
+					else if(data[i].type=='3'){
+						threestr+="<option value='"+data[i].key +"'>"+data[i].name+"</option>"
+					}
+				}
+				
+				$("#my_fujia_set").html(onestr);
+				$("#my_fujia_pic").html(twostr);
+				$("#my_fujia_video").html(threestr);
+				
+			}
+			
+		</script>
+
+	</body>
+
+</html>

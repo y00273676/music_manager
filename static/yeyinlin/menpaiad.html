@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+
+	<body>
+
+		<style>
+			.addActor_outb_menp {
+				width: 45px;
+				height: 35px;
+				display: inline-block;
+				font-size: 20px;
+				line-height: 30px;
+				text-align: center;
+				padding: 0px;
+				text-decoration: none;
+				color: #FFFFFF;
+				position: absolute;
+				top: 20px;
+				left: 20px;
+			}
+			
+			.MenPManagerList {
+				margin-top: 20px;
+				width: 100%;
+				height: 100%;
+			}
+			
+			.MenPManagerList>.tableDiv {
+				width: 100%;
+				height: calc( 100% - 100px);
+				overflow: auto;
+				position: relative;
+				box-shadow: 0px -3px 3px #E0E0E0;
+			}
+			
+			.MenPManagerList>.tableDiv>.table>tbody>tr>td>button {
+				width: 26px;
+				height: 26px;
+				display: inline-block;
+			}
+			
+			.MenPManagerList>.tableDiv>.table>tbody>tr>td>button>i.icon-edit {
+				position: relative;
+				left: -1px;
+			}
+			
+			.MenPManagerList>.tableDiv>.table>tbody>tr>td>button>i.icon-reorder {
+				position: relative;
+				left: -1px;
+			}
+			
+			.MenPManagerList_actorsForm {
+				width: 100%;
+				height: 50px;
+				padding: 5px 10px 5px 10px;
+				text-align: right;
+			}
+		</style>
+
+		<script id="ADDataTemplate" type="text/template">
+			<tr>
+				<td>{[Room_ID]}</td>
+				<td>{[Room_SerialNo]}</td>
+				<!--<td>{[Room_IpAddress]}</td>-->
+				<td>{[tempadno]}</td>
+				<td>{[tempad]}</td>
+				<td>{[MenPaiType_Name]}</td>
+				<!--<td>{[MenPaiAdSettings_RoomID]}</td>-->
+
+				<td>
+					<button class="btn orange homeupdata"> <i class="icon-edit"></i>
+                    </button>
+					<button class="btn violet ADDelete">
+                        <i class="icon-trash"></i>
+                    </button>
+				</td>
+			</tr>
+		</script>
+		<a class="addActor_outb_menp btn blue"> <i class="icon-arrow-left"></i>
+		</a>
+
+		<div class="MenPManagerList">
+			<div class="MenPManagerList_actorsForm">
+
+				<!--<button type="button" class="btn sky " onclick="addtheme()" id="addmenpai">添加</button>-->
+
+			</div>
+
+			<!--<button type="button" multiple="multiple" class="btn sky musicManager_addMusic">
+        <i class="icon-plus"></i>
+    </button>
+    -->
+			<div class="tableDiv">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>序号</th>
+							<th>房间号码</th>
+							<!--<th>房间ip地址</th>-->
+							<th>广告编号</th>
+							<th>广告名称</th>
+							<th>横竖版</th>
+							<th>操作</th>
+
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+
+		</div>
+
+		<script>
+			//			$.tap(".addActor_outb_menp", function() {
+			//				$.toBack($(this).parentU("indexView"));
+			//			});
+
+			$(".addActor_outb_menp").one("click", function() {
+				$.toBack($(this).parentU("indexView"));
+			});
+
+			$.tap(".MenPManagerList>.tableDiv>.table>tbody>tr>td>button.homeupdata", function(e) {
+				e.stopPropagation();
+				$.adroomid = $(this).parent().parent().children("td").first().html();
+				var roominfo = {}
+				for(var i = 0; i < $.menpaizh.length; i++) {
+					var roomdata = $.menpaizh[i];
+					if(roomdata.Room_ID == $.adroomid) {
+						roominfo = roomdata;
+						break;
+					}
+				}
+
+				$.roomadinfo = roominfo;
+				$.hrefPage("yeyinlin/addmenpai.html", $(this).parentU("indexView"));
+			});
+
+			$.tap(".MenPManagerList>.tableDiv>.table>tbody>tr>td>button.ADDelete", function(e) {
+				var tempthis = $(this);
+				var mthis = this;
+				$.createConfirmBox({
+					"title": "系统提示",
+					"content": "是否确认删除该条目?",
+					"click": function() {
+						$.homeinfo_updata = tempthis.parent().parent().children("td").first().html();
+						delectad($.homeinfo_updata, mthis);
+					}
+				});
+
+			});
+
+			function addform(jsondata) {
+				if(jsondata == null) {
+					mtoast('当前没有设置门牌机');
+				}
+
+				var html = $.fillData(document.getElementById("ADDataTemplate").innerHTML, jsondata);
+
+				$(".MenPManagerList>.tableDiv>.table>tbody").html(html);
+
+			}
+
+			function addtheme() {
+				$.adfrom = "addad"
+				$.hrefPage("yeyinlin/addmenpai.html", $("#addmenpai").parentU("indexView"));
+				// body...
+			}
+
+			initdataad();
+
+			function initdataad() {
+				var url = $.baseUrl + "/menpai";
+				var strjson = {}
+
+				$.ajax({
+					type: 'post',
+					url: url,
+					dataType: 'json',
+					data: 'mdata=' + JSON.stringify(strjson) + '&type=5',
+					success: function(str) {
+						//						alert(JSON.stringify(str));
+
+						if(str.code == "0") {
+							$.menpaidata = str.data;
+							//							$.fangtaiad=str.fangtai;
+							$.mediaad = str.mediaad;
+							$.menpaizh = str.menpaizh;
+							addform(str.menpaizh);
+						}
+						//						addnewview(str);
+					},
+					error: function(msg) {
+						//						mtoast("网络有问题");
+					}
+				});
+			}
+
+			function delectad(adid, _this) {
+
+				var url = $.baseUrl + "/menpai";
+				var strjson = {}
+				strjson.MenPaiAdSetting_Id = adid;
+
+				$.ajax({
+					type: 'post',
+					url: url,
+					dataType: 'json',
+					data: 'mdata=' + JSON.stringify(strjson) + '&type=4',
+					success: function(str) {
+
+						if(str.code == "0") {
+							//删除
+							initdataad();
+						}
+
+					},
+					error: function(msg) {
+						//						mtoast("网络有问题");
+					}
+				});
+
+			}
+
+			function mtoast(text) {
+				$.createConfirmBoxOK({
+					"title": "系统提示",
+					"content": text,
+					"click": function() {}
+				});
+			}
+		</script>
+
+	</body>
+
+</html>

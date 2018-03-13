@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<style>
+			.musicManagerExport{
+				width: 100%;
+				height: 100%;
+			}
+			.musicManagerExport>.tableDiv{
+				width: 100%;
+				height: calc( 100% - 100px);
+				overflow: auto;
+				position: relative;
+				box-shadow: 0px -3px 3px #E0E0E0;
+			}
+			.musicManagerExport_musicForm{
+				width: 100%;
+				height: 50px;
+				padding: 5px 10px 5px 10px;
+				text-align: right;
+			}
+			.musicManagerExport_musicForm>input{
+				width: calc( 100% - 360px);
+				height: 40px;
+			}
+			.musicManagerExport_musicForm>button{
+				width: 100px;
+			    height: 40px;
+			    outline: none;
+			    margin-right: 10px;
+			}
+			.musicManagerExport_addMusic{
+				font-size: 18px;
+			}
+			.musicManagerExport>.tableDiv>.table>tbody>tr>td>button{
+				width: 26px;
+				height: 26px;
+				display: inline-block;
+			}
+			
+			.musicManagerExport>.tableDiv>.table>tbody>tr>td>button>i.icon-edit{
+				position: relative;
+				left: -1px;
+			}
+			.musicManagerExport>.tableDiv>.table>tbody>tr>td>button>i.icon-reorder{
+				position: relative;
+				left: -1px;
+			}
+			.musicManagerExport_outA{
+				width: 45px;
+			    height: 35px;
+			    display: inline-block;
+			    font-size: 20px;
+			    line-height: 30px;
+			    text-align: center;
+			    padding: 0px;
+			    text-decoration: none;
+			    color: #FFFFFF;
+			    margin-right: 10px;
+			}
+			.musicManagerExport>.tableDiv>.table>thead>tr>th>.switch{
+				top: 8px;
+    			margin-right: 50px;
+			}
+			.musicManagerExport>.tableDiv>.table>tbody>tr>td>.switch{
+				top: 8px;
+    			margin-right: 50px;
+			}
+		</style>
+		<script id="musicManagerExportDataTemplate" type="text/template">
+			<tr>
+				<td>{[Media_SerialNo]}</td>
+				<td>{[Media_Name]}</td>
+				<td>{[Actor_Name1]}</td>
+				<td>{[MediaType_Name1]}</td>
+				<td>{[Language_Name]}</td>
+				<td>
+					<input type="checkbox" mediaId="{[Media_SerialNo]}" class="switch musicManagerExport_switch" />
+				</td>
+			</tr>
+		</script>
+		<div class="musicManagerExport">
+			<div class="musicManagerExport_musicForm">
+				<input class="inputBox musicManagerExport_search" type="text" placeholder="检索请输入编号、名称、歌手、类型或语种" />
+				<button type="button" title="检索" class="btn yellow musicManagerExport_formSearch">
+					<i class="icon-search"></i>
+				</button>
+				<button type="button" title="已选导出" class="btn sky musicManagerExport_export">
+					已选导出
+				</button>
+				<button type="button" title="全库导出" class="btn sky musicManagerExport_exportAll">
+					全库导出
+				</button>
+			</div>
+			<div class="tableDiv div_load">
+				<table class="table scroll">
+					<thead>
+						<tr>
+							<th>序号</th>
+							<th>名称</th>
+							<th>歌手</th>
+							<th>类型</th>
+							<th>语种</th>
+							<th><input type="checkbox" class="switch musicManagerExport_allChecked" /></th>
+						</tr>
+					</thead>
+					<tbody>
+
+					</tbody>
+				</table>
+			</div>
+			<footer class="listPageNum">
+			</footer>
+		</div>
+		<script>
+			$(function(){
+				$.data_switchArr=[];
+				sendSelectMusicMax(function(json){
+					if(!!json&&!!json.data){
+						$.data_publicPlayManagerMaxShunXu=$.data_publicPlayManagerMaxId=parseInt(json.data)+1;
+					}
+					$.tap(".musicManagerExport_switch",function(e){
+						e.stopPropagation();
+						switchClick.call(this);
+					});
+					$.tap(".musicManagerExport_allChecked",function(){
+						if(this.checked==true){
+							$(".musicManagerExport_switch").each(function(){
+								this.checked=true;
+								switchClick.call(this);
+							});
+						}else{
+							$(".musicManagerExport_switch").each(function(){
+								this.checked=false;
+								switchClick.call(this);
+							});
+						}
+					})
+					function switchClick(){
+						if(this.checked){
+							$.data_switchArr.push($(this).attr("mediaId"));
+						}else{
+							$.data_switchArr.remove($.data_switchArr.indexOf($(this).attr("mediaId")));
+						}
+						console.log(JSON.stringify($.data_switchArr));
+					}
+					$.tap(".musicManagerExport_export",function(){
+						var _this=$(this);
+						$(".loading").css("display","block");
+						sendExport(JSON.stringify($.data_switchArr),function(json){
+							if(!!json&&!!json.msg){
+								$.createConfirmBoxOK({"title":"系统提示","content":json.msg});
+								$(".loading").css("display","none");
+								return;
+							}
+							if(!!json&&!!json.data){
+								var a = document.createElement("a");
+								a.href=$.baseUrl+"/"+json.data;
+								$(a).attr("download","export.txt");
+								a.style.width="0px";
+								$("body").append($(a));
+								$(".loading").css("display","none");
+								a.click();
+							}
+						});
+					});
+					$.tap(".musicManagerExport_exportAll",function(){
+						var _this=$(this);
+						$.createConfirmBox({"title":"系统提示","content":"全库导出较慢,请耐心等待,是否确认导出？","click":function(){
+							$(".loading").css("display","block");
+							sendExport("[]",function(json){
+								if(!!json&&!!json.msg){
+									$.createConfirmBoxOK({"title":"系统提示","content":json.msg});
+									$(".loading").css("display","none");
+									return;
+								}
+								if(!!json&&!!json.data){
+									var a = document.createElement("a");
+									a.href=$.baseUrl+"/"+json.data;
+									$(a).attr("download","export.txt");
+									a.style.width="0px";
+									$("body").append($(a));
+									$(".loading").css("display","none");
+									a.click();
+								}
+							});
+						}});
+					});
+				});
+				$(".musicManagerExport_outA").one("click",function(e){
+					e.stopPropagation();
+					$.toBack($(this).parentU("indexView"));
+				});
+				$.tap(".musicManagerExport>.tableDiv>.table>tbody>tr",function(e){
+					$(this).find(".musicManagerExport_switch").click();
+				});
+				$(".musicManagerExport_search").off('keyup').on('keyup', function(event) {
+					if (event.keyCode == "13") {
+						searchData();
+					}
+				});
+				$.tap(".musicManagerExport_formSearch",function(){
+					searchData();
+				});
+				function searchData(){
+					$.musicManagerExport_pageNum=1;
+					loadData();
+					sendSelectMusicCount($(".musicManagerExport_search").val(),function(json){
+						$(".listPageNum").paging(json.data.total,$.musicManagerExport_pageNum,$.musicManagerExport_pageSize,function(num){
+							$.musicManagerExport_pageNum=num;
+							loadData();
+						});
+					});
+				}
+				if(!$.musicManagerExport_pageNum)
+					$.musicManagerExport_pageNum=1;
+				if(!$.musicManagerExport_pageSize)
+					$.musicManagerExport_pageSize=10;
+				loadData();
+				function loadData(){
+					$(".tableDiv").addClass("div_load");
+					sendSelectMusic($.musicManagerExport_pageNum,$.musicManagerExport_pageSize,$(".musicManagerExport_search").val(),function(json){
+						if(!json||!json.data||!json.data.matches){
+							$(".musicManagerExport>.tableDiv>.table>tbody").html("");
+							$.altAuto("暂无数据");
+							$(".tableDiv").removeClass("div_load");
+							return;
+						}
+						if($("#musicManagerExportDataTemplate").length>0){
+							var html=$.fillData(document.getElementById("musicManagerExportDataTemplate").innerHTML,json.data.matches);
+							$(".musicManagerExport>.tableDiv>.table>tbody").html(html);
+							loadInitSwitch();
+							$(".tableDiv").removeClass("div_load");
+						}
+					});
+				}
+				function loadInitSwitch(){
+					$(".musicManagerExport_allChecked")[0].checked=false;
+					$(".musicManagerExport>.tableDiv>.table>tbody>tr").each(function(){
+						var no=$(this).children("td").first().html();
+						for(var i in $.data_switchArr){
+							if($.data_switchArr.hasOwnProperty(i)){
+								if($.data_switchArr[i]==no){
+									$(this).children("td").children(".switch")[0].checked=true;
+									break;
+								}
+							}
+						}
+					});
+				}
+				sendSelectMusicCount($(".musicManagerExport_search").val(),function(json){
+					$(".listPageNum").paging(json.data.total,$.musicManagerExport_pageNum,$.musicManagerExport_pageSize,function(num){
+						$.musicManagerExport_pageNum=num;
+						loadData();
+					});
+				});
+				function sendSelectMusicMax(fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/mediauserset/max",
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendSelectMusic(page,pSize,text,fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/mediadetails/list?page="+page+"&psize="+pSize+"&text="+text,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendSelectMusicCount(text,fn){
+					$.ajax({
+						type:"get",
+						url:$.baseUrl+"/mediadetails/count?text="+text,
+						dataType:"json",
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+				function sendExport(data,fn){
+					$.ajax({
+						type:"post",
+						url:$.baseUrl+"/sql/exportData",
+						dataType:"json",
+						data:data,
+						processData:false,
+		                contentType:false,
+						success:function(json){
+							if(!!fn)
+								fn(json);
+						},error:function(){
+							$.altAuto("无法访问或服务器发生异常");
+						}
+					});
+				}
+			});
+		</script>
+	</body>
+</html>

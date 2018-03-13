@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body style="background:#efefef;">
+		<style>
+			.musicManager {
+				width: 100%;
+				height: 100%;
+			}
+			
+			.musicManager>.tableDiv {
+				width: 100%;
+				height: calc( 100% - 100px);
+				overflow: auto;
+				position: relative;
+				box-shadow: 0px -3px 3px #E0E0E0;
+			}
+			
+			.musicManager_musicForm {
+				width: 100%;
+				height: 50px;
+				padding: 5px 10px 5px 10px;
+				text-align: right;
+			}
+			
+			.musicManager_musicForm>input {
+				width: calc( 100% - 125px);
+				height: 40px;
+			}
+			
+			.musicManager_musicForm>button {
+				width: 100px;
+				height: 40px;
+				outline: none;
+				margin-right: 10px;
+			}
+			
+			.musicManager_addMusic {
+				font-size: 18px;
+			}
+			
+			.musicManager>.tableDiv>.table>tbody>tr>td>button {
+				width: 26px;
+				height: 26px;
+				display: inline-block;
+			}
+			
+			.musicManager>.tableDiv>.table>tbody>tr>td>button>i.icon-edit {
+				position: relative;
+				left: -1px;
+			}
+			
+			.musicManager>.tableDiv>.table>tbody>tr>td>button>i.icon-reorder {
+				position: relative;
+				left: -1px;
+			}
+			
+			.starManagerList_actorsForm {
+				width: 100%;
+				height: 50px;
+				padding: 5px 10px 5px 10px;
+				text-align: right;
+			}
+			
+			.starManagerList_actorsForm .btn {
+				margin: 5px 10px 0 0;
+				padding: 3px 5px;
+			}
+		</style>
+		<style>
+			.addActor_outA {
+				width: 45px;
+				height: 35px;
+				display: inline-block;
+				font-size: 20px;
+				line-height: 30px;
+				text-align: center;
+				padding: 0px;
+				text-decoration: none;
+				color: #FFFFFF;
+				position: absolute;
+				top: 20px;
+				left: 20px;
+			}
+			
+			.addActor_pageTitle {
+				width: 100%;
+				position: absolute;
+				top: 16px;
+				font-size: 25px;
+				margin: 0;
+				padding: 0;
+				text-align: center;
+				pointer-events: none;
+			}
+			
+			.addActor_form {
+				width: 370px;
+				height: auto;
+				position: absolute;
+				top: 60px;
+				left: 0px;
+				right: 0px;
+				margin: 0 auto;
+			}
+			
+			.addActor_form>div {
+				width: 100%;
+				height: 40px;
+				position: relative;
+				margin-top: 10px;
+			}
+			
+			.addActor_form>div>label {
+				position: absolute;
+				width: 30%;
+				height: 100%;
+				left: 0px;
+				font-size: 16px;
+				text-align: right;
+				padding-right: 20px;
+				line-height: 40px;
+			}
+			
+			.addActor_form>div>input,
+			.addActor_form>div>select,
+			.addActor_form>div>button {
+				position: absolute;
+				width: 70%;
+				height: 100%;
+				right: 0px;
+			}
+			
+			.addActor_form>div>input[type='file'],
+			.addActor_form>div>select {
+				cursor: pointer;
+			}
+			
+			.addActor_form>div>input[type='file']:active+button.selectBox {
+				background: -webkit-linear-gradient(top, #D0D0D0, #DCDCDC);
+			}
+			
+			.addActor_form>center {
+				margin-top: 20px;
+			}
+			
+			.addActor_form>center>button {
+				font-size: 20px;
+				padding: 6px 30px 8px 30px;
+			}
+			
+			.actorImgUpload {
+				opacity: 0;
+				z-index: 9;
+			}
+			
+			.thumbnailImg {
+				width: 100px;
+				height: 100px;
+				display: block;
+				margin: 0 auto;
+				position: absolute;
+				top: -60px;
+				right: -100px;
+			}
+			
+			.thumbnailImg.hide {
+				display: none;
+			}
+			
+			.font-sizee- {
+				font-size: 12px;
+			}
+			
+			.button_style {
+				width: 10%;
+				background: #009688;
+				font-size: 18px;
+				color: #ffffff;
+			}
+			.starManagerList{
+				width: 100%;
+				height: 100%;
+			}
+			.tableDiv{
+				width: 100%;
+			    height: calc( 100% - 60px);
+			}
+			.radio{
+			    top: 8px;
+    			left: -13px;
+			}
+			.table th>.btn{
+				font-size: 14px;
+			}
+			.table>thead>tr>th{
+				position: relative;
+				cursor: pointer;
+			}
+			.table>thead>tr>th>.tableThSearch{
+				position: absolute;
+			    left: 0px;
+			    width: 80%;
+			    transform: translateY(40px);
+			    -webkit-transform: translateY(40px);
+			    outline: none;
+			    border-radius: 5px;
+			    border: 1px #CCCCCC solid;
+			    color: #333333;
+			    opacity: 0;
+			    transition: transform 0.25s,opacity 0.25s;
+			    transition: -webkit-transform 0.25s,opacity 0.25s;
+			}
+			.table>thead>tr>th.show>.tableThSearch{
+				transform: translateY(0px);
+			    -webkit-transform: translateY(0px);
+			    opacity: 1;
+			}
+		</style>
+
+		<!--设置全屏-->
+
+		<script id="fangTaiDataTemplate" type="text/template">
+			<tr>
+				<td><!--input type="checkbox" class="radio" mac="{[room_mac]}" roomname="{[room_no]}"/--></td>
+				<td>{[room_mac]}</td>
+				<td>{[room_no]}</td>
+				<td>{[room_name]}</td>
+				<td>{[room_ip]}</td>
+				<td>{[skin_name]}</td>
+				<td>{[room_svr]}</td>
+				<td>
+
+					<button class="btn orange homeupdata"> <i class="icon-edit"></i> </button>
+					<button class="btn violet homeDelete"> <i class="icon-trash"></i> </button>
+				</td>
+			</tr>
+		</script>
+		<div class="starManagerList">
+			
+			<ul class="listButton">
+				<li class="fangtaisetting_defuct"><i class="icon-cog">&nbsp;</i>房台默认设置</li>
+				<!--<li class="aultsetall"><i class="icon-plus">&nbsp;</i>全部设置</li>-->
+				<!--li class="aultsetsome"><i class="icon-plus">&nbsp;</i>批量生产</li-->
+				<!--li class="aultsetben"><i class="icon-plus">&nbsp;</i>批量修改</li-->
+				<!--<li class="uploadAddMusicBtn menpaiad" ><i class="icon-cog">&nbsp;</i>门牌广告</li>-->
+				<!--<li class="uploadAddMusicBtn fujiasetting" multiple="multiple"><i class="icon-cog">&nbsp;</i>附加设置</li>-->
+			</ul>
+			
+			<div class="tableDiv">
+				<table class="table scroll">
+					<thead>
+						<tr>
+							<th><!--button class="btn blue allCheck">全选</button><button class="btn orange reverseCheck">反选</button--></th>
+							<th>
+								MAC地址
+								<input type="search" class="tableThSearch" />
+							</th>
+							<th>
+								房间号
+								<input type="search" class="tableThSearch" />
+							</th>
+							<th>
+								房间名称
+								<input type="search" class="tableThSearch" />
+							</th>
+							<th>
+								IP地址
+								<input type="search" class="tableThSearch" />
+							</th>
+							<th>
+								主题皮肤
+								<input type="search" class="tableThSearch" />
+							</th>
+							<th>
+						        默认服务器	
+								<input type="search" class="tableThSearch" />
+							</th>
+							<!--th>
+								麦克风频道
+								<input type="search" class="tableThSearch" />
+							</th>
+							<th>
+								机顶盒类型
+								<input type="search" class="tableThSearch" />
+							</th-->
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+
+		</div>
+		<script>
+			$(".table>thead>tr>th").off("mouseenter").on("mouseenter",function(){
+				$(this).addClass("show").focus();
+			});
+			$(".table>thead>tr>th").off("mouseleave").on("mouseleave",function(){
+				var input=$(this).children(".tableThSearch");
+				if(!input.val())
+					$(this).removeClass("show");
+			});
+			$(".table>thead>tr>th>.tableThSearch").off("input").on("input",function(){
+				$(".table>tbody>tr").show();
+				$(".tableThSearch").each(function(){
+					var _th=$(this);
+					var text=_th.val();
+					if(!!text){
+						var index=$(this).parent().index();
+						$(".table>tbody>tr:visible").each(function(){
+							var _this=$(this);
+							var val=_this.children().eq(index).html();
+							if(val.indexOf(text)>-1)
+								_this.show();
+							else
+								_this.hide();
+						});
+					}else{
+						_th.parent().removeClass("show");
+					}
+				});
+			});
+			$.tap(".allCheck",function(){
+				$(".table>tbody>tr>td>.radio").each(function(){
+					$(this)[0].checked=true;
+				});
+			});
+			$.tap(".reverseCheck",function(){
+				$(".table>tbody>tr>td>.radio").each(function(){
+					$(this)[0].checked=!$(this)[0].checked;
+				});
+			});
+			$.tap(".starManagerList>.tableDiv>.table>tbody>tr>td>button.homeupdata", function(e) {
+				e.stopPropagation();
+				$.roomMac = $(this).parent().parent().children("td").first().next().html();
+                //console.log($.roomMac)
+				$.wherefrom = "updata";
+				$.boxtempid = "0";
+
+				$.each($.data_fangtai.result.matches, function(i, ele) {
+
+					if(ele.room_mac == $.roomMac) {
+						$.fangtai_sign = ele;
+					}
+				});
+
+				$.hrefPage("yeyinlin/boxsetting.html", $(this).parentU("indexView"));
+			});
+			
+			$.tap(".aultsetall", function(e) {
+				$.wherefrom = "updata";
+				$.boxtempid = "3";
+				$.hrefPage("yeyinlin/boxsettingdefult.html", $(this).parentU("indexView"));
+			});
+			
+			$.tap(".aultsetsome", function(e) {
+				//需要查看是否勾选上
+				var arr=[];
+				$(".table>tbody>tr>td>.radio:checked").each(function(){
+					var data={};
+					data.mac=$(this).attr('mac');
+					data.no=$(this).attr('roomname');
+					arr.push(data);
+				
+				});
+				
+				if (arr.length>0){
+					$.wherefrom = "updatapart";
+					$.boxtempid = "4";
+					$.boxarr=arr
+					$.hrefPage("yeyinlin/boxsettingault.html", $(this).parentU("indexView"));
+				}else{
+					mtoast("请选择需要设置的机顶盒")
+				}
+				
+			});
+			$.tap(".aultsetben", function(e) {
+				//需要查看是否勾选上
+				var arr=[];
+				$(".table>tbody>tr>td>.radio:checked").each(function(){
+					var data={};
+					data.mac=$(this).attr('mac');
+					data.no=$(this).attr('roomname');
+					arr.push(data);
+				
+				});
+				
+				if (arr.length>0){
+					$.wherefrom = "updataben";
+					$.boxtempid = "5";
+					$.boxarr=arr
+					$.hrefPage("yeyinlin/boxsettingben.html", $(this).parentU("indexView"));
+				}else{
+					mtoast("请选择需要设置的机顶盒")
+				}
+				
+			});
+			
+			
+			
+			$.tap(".menpaiad", function(e) {
+				$.hrefPage("yeyinlin/menpaiad.html", $(this).parentU("indexView"));
+			});
+			
+			
+
+			$.tap(".starManagerList>.tableDiv>.table>tbody>tr>td>button.homeDelete", function(e) {
+				var tempthis = $(this);
+				var mthis = this;
+				$.createConfirmBox({
+					"title": "系统提示",
+					"content": "是否确认删除该条目?",
+					"click": function() {
+						$.homeinfo_mac = tempthis.parent().parent().children("td").first().next().html();
+                        //console.log($.homeinfo_mac);
+						delete_room($.homeinfo_mac, mthis);
+					}
+				});
+
+			});
+
+			$.tap(".fangtaisetting_defuct", function() {
+				$.wherefrom = "add";
+				$.hrefPage("yeyinlin/boxhome.html", $(this).parentU("indexView"));
+			});
+			
+			$.tap(".fujiasetting", function() {
+				
+				$.hrefPage("yeyinlin/fujiasetting.html", $(this).parentU("indexView"));
+			});
+
+
+			function config() {
+				$.hrefPage("yeyinlin/config.html", $("#config").parentU("indexView"));
+			}
+			
+			function syschoneverywhere(){
+				var aaa=$.baseUrl.split(":")
+				var endurl=":"+aaa[aaa.length-1];
+				var starturl="http://"
+				var fangtai=($.data_fangtai).server;
+				for(var i=0;i<fangtai.length;i++){
+					var centerurl=fangtai[i].FileServer_IpAddress;
+					synchron(starturl+centerurl+endurl);
+				}
+				
+			}
+
+			function synchron() {
+				var url = $.baseUrl + "/boxs";
+				var strjson = {}
+
+				$.ajax({
+					type: 'post',
+					url: url,
+					dataType: 'json',
+					data: 'imgurl=' + JSON.stringify(strjson) + '&type=3',
+					success: function(str) {
+//						alert(JSON.stringify(str));
+						
+						if(str.code=="0"){
+							mtoast("操作成功");
+						}
+						//						addnewview(str);
+					},
+					error: function(msg) {
+//						mtoast("网络有问题");
+					}
+				});
+			}
+
+			load_room_data();
+
+			function load_room_data() {
+
+				var url = $.baseUrl + "/rooms/list";
+				var strjson = {}
+				$.ajax({
+					type: 'get',
+					url: url,
+					dataType: 'json',
+					data: 'mdata=' + JSON.stringify(strjson),
+					success: function(str) {
+						//                                 alert(JSON.stringify(str.rooms));
+						$.data_fangtai = str;
+						addform(str);
+					},
+					error: function(msg) {}
+				});
+			}
+
+
+			function automic() {
+				var url = $.baseUrl + "/fangtai";
+				var strjson = {}
+				$.ajax({
+					type: 'post',
+					url: url,
+					dataType: 'json',
+					data: 'mdata=' + JSON.stringify(strjson) + '&type=4',
+					success: function(str) {
+						mtoast(str.msg);
+						load_room_data();
+					},
+					error: function(msg) {}
+				});
+			}
+
+			function autoserver() {
+				var url = $.baseUrl + "/fangtai";
+				var strjson = {}
+				$.ajax({
+					type: 'post',
+					url: url,
+					dataType: 'json',
+					data: 'mdata=' + JSON.stringify(strjson) + '&type=3',
+					success: function(str) {
+						if(str.code=="0"){
+							mtoast(str.msg);
+						}else{
+							mtoast("操作失败");
+						}
+						
+
+					},
+					error: function(msg) {}
+				});
+			}
+
+			function delete_room(room_mac, _this) {
+				var url = $.baseUrl + "/rooms/del";
+                $.ajax({
+                    type: 'post',
+                    url: url,
+                    dataType: 'json',
+                    data: 'room_mac=' + room_mac,
+                    success: function(str) {
+                        if(str.code == "0") {
+                            $(_this).parent().parent().remove();
+                        } else{
+                            var homeinfo_ip = $(_this).parent().parent().children("td").first().next().next().next().next().html();
+                            if (homeinfo_ip != "") {
+                                mtoast('删除房台信息失败!');
+                            }else{
+                                $(_this).parent().parent().remove();
+                            }
+                        }
+
+                    },
+                    error: function(msg) {}
+                });
+			}
+
+			function addform(jsondata) {
+				$(".starManagerList>.tableDiv>.table>tbody").html("");
+				var html = $.fillData(document.getElementById("fangTaiDataTemplate").innerHTML, jsondata.result.matches);
+
+				$(".starManagerList>.tableDiv>.table>tbody").html(html);
+
+			}
+
+			function mtoast(text) {
+			$.createConfirmBoxOK({
+				"title": "系统提示",
+				"content": text,
+				"click": function() {}
+			});
+		}
+		</script>
+
+	</body>
+
+</html>
